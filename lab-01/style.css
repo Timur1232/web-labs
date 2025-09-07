@@ -45,14 +45,21 @@ header {
     background-color: brown;
 }
 
-/*=================================================================================*/
-
-.article-me {
-    padding: 20px;
+.page-active {
+    background-color: red;
 }
 
 /*=================================================================================*/
 
+.article-me {
+    display: flex;
+    align-content: center;
+    text-align: center;
+    flex-flow: column wrap;
+    padding: 20px;
+}
+
+/*=================================================================================*/
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_overflow/CSS_carousels */
 
 .labs-carousel {
@@ -61,6 +68,7 @@ header {
     justify-content: center;
     text-align: center;
     padding: 20px;
+    padding-bottom: 50px;
 }
 
 .labs-carousel h1 {
@@ -85,6 +93,7 @@ header {
 .labs-carousel ul {
     height: 150px;
     width: 40%;
+    box-sizing: border-box;
     padding: 20px;
     display: flex;
     gap: 4vw;
@@ -144,7 +153,6 @@ header {
     position-anchor: --my-carousel;
     top: calc(anchor(bottom));
     justify-self: anchor-center;
-
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -173,4 +181,18 @@ footer {
 
 .footer-content {
     padding: 15px;
+}
+
+/*=================================================================================*/
+
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.5em 1em;
 }
