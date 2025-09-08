@@ -1,12 +1,24 @@
+/*====================================[General]===================================*/
+
 * {
     margin: 0;
     padding: 0;
+    font-family: "serif";
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 
 .flex-container {
-    min-height: 100vh;
     display: flex;
     flex-flow: column wrap;
+}
+
+body {
+    min-height: 100vh;
 }
 
 header,
@@ -16,7 +28,9 @@ footer {
 }
 
 header {
-    height: 50px;
+    height: 61px;
+    position: sticky;
+    top: 0;
 }
 
 .top-nav-bar {
@@ -38,6 +52,8 @@ header {
     color: whitesmoke;
     padding: 15px;
     text-decoration: none;
+    font-family: "ComputerPixel-7";
+    font-size: 30px;
 }
 
 .top-nav-bar li a:focus,
@@ -49,7 +65,17 @@ header {
     background-color: red;
 }
 
-/*=================================================================================*/
+footer {
+    margin-top: auto;
+    background-color: darkred;
+    color: whitesmoke;
+}
+
+.footer-content {
+    padding: 15px;
+}
+
+/*====================================[index]===================================*/
 
 .article-me {
     display: flex;
@@ -59,7 +85,7 @@ header {
     padding: 20px;
 }
 
-/*=================================================================================*/
+/*---------------------------------------------------------------------------------*/
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_overflow/CSS_carousels */
 
 .labs-carousel {
@@ -171,19 +197,11 @@ header {
     background-color: black;
 }
 
-/*=================================================================================*/
+/*====================================[about_me]===================================*/
 
-footer {
-    margin-top: auto;
-    background-color: darkred;
-    color: whitesmoke;
-}
 
-.footer-content {
-    padding: 15px;
-}
 
-/*=================================================================================*/
+/*====================================[studies]===================================*/
 
 table,
 th,
@@ -195,4 +213,18 @@ td {
 th,
 td {
     padding: 0.5em 1em;
+}
+
+@font-face {
+    font-family: "BarcadeBrawl";
+    src: url("../../fonts/Barcade Brawl/BarcadeBrawlRegular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "ComputerPixel-7";
+    src: url("../../fonts/Computer Pixel-7/computer_pixel-7.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
 }
