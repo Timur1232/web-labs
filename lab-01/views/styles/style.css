@@ -20,6 +20,34 @@
     flex-flow: column wrap;
 }
 
+.content-container {
+    width: 75%;
+    margin: auto;
+    padding: 30px;
+}
+
+.content-container hr {
+    margin: 20px;
+    border-width: 1px;
+    border-style: solid;
+    opacity: 0.3;
+}
+
+.content-title {
+    width: 100%;
+    font-size: 2em;
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+.shadow {
+    box-shadow: 0 3px 5px gray;
+}
+
+.rounded {
+    border-radius: 20px;
+}
+
 body {
     min-height: 100vh;
 }
@@ -204,7 +232,123 @@ footer {
 
 /*====================================[about_me]===================================*/
 
+.me #sigma-me {
+    grid-area: sigma-me;
+    justify-self: center;
+}
 
+.me #name {
+    grid-area: name;
+    font-size: 3em;
+    word-break: break-word;
+}
+
+.me #group {
+    grid-area: group;
+    opacity: 0.6;
+    text-indent: 15px;
+}
+
+.me {
+    display: grid;
+    padding: 40px 0;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 15% 60% 25%;
+    grid-template-areas:
+        "sigma-me ."
+        "sigma-me name"
+        "sigma-me group";
+}
+
+.past h3 {
+    grid-area: title;
+    justify-self: center;
+    align-self: center;
+    font-size: 1.5em;
+}
+
+.past p {
+    grid-area: text;
+    justify-self: end;
+    align-self: center;
+    padding: 15px;
+    font-size: 1.3em;
+}
+
+.past img {
+    grid-area: image;
+}
+
+.past {
+    display: grid;
+    padding: 20px 0;
+    grid-template-columns: 15% 50% 35%;
+    grid-template-rows: 20% 80%;
+    grid-template-areas:
+        ". title image"
+        ". text image";
+}
+
+.university h3 {
+    grid-area: title;
+    justify-self: center;
+    align-self: center;
+    font-size: 1.5em;
+}
+
+.university p {
+    grid-area: text;
+    justify-self: end;
+    align-self: center;
+    text-align: right;
+    padding: 15px;
+    font-size: 1.3em;
+}
+
+.university img {
+    grid-area: image;
+}
+
+.university {
+    padding: 20px 0;
+    display: grid;
+    grid-template-columns: 15% 30% 40% 15%;
+    grid-template-rows: 20% 80%;
+    grid-template-areas:
+        ". image title title"
+        ". image text .";
+}
+
+.computer {
+    text-align: center;
+}
+
+.computer h3 {
+    padding: 20px;
+    font-size: 1.5em;
+}
+
+.computer p {
+    font-size: 1.3em;
+    padding-bottom: 10px;
+}
+
+.attention {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.attention h1 {
+    padding: 30px;
+    font-size: 3em;
+    color: red;
+}
+
+.attention h3 {
+    font-size: 1.5em;
+    padding: 20px;
+}
 
 /*====================================[studies]===================================*/
 
@@ -223,28 +367,17 @@ td {
 /*====================================[photos]===================================*/
 /* https://css-tricks.com/snippets/css/complete-guide-grid/ */
 
-.photo-content {
-    width: 85%;
-    margin: auto;
-    padding: 30px;
-}
-
-.photo-content h1 {
-    width: 100%;
-    text-align: center;
-}
-
 .photo-container {
     display: grid;
     padding: 30px;
     grid-template-columns: repeat(6, minmax(200px, 1fr));
-    gap: 1.5rem;
+    gap: 20px;
 }
 
 .photo-card {
     border-radius: 8px;
     overflow: hidden;
-    border: 2px solid slategray;
+    border: 1px solid black;
     scale: 1;
     transition: 0.2s;
 }
