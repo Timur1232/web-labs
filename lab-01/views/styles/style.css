@@ -4,6 +4,9 @@
     margin: 0;
     padding: 0;
     font-family: "serif";
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
 }
 
 .clearfix::after {
@@ -31,6 +34,8 @@ header {
     height: 61px;
     position: sticky;
     top: 0;
+    will-change: transform;
+    z-index: 1000;
 }
 
 .top-nav-bar {
@@ -214,6 +219,67 @@ th,
 td {
     padding: 0.5em 1em;
 }
+
+/*====================================[photos]===================================*/
+/* https://css-tricks.com/snippets/css/complete-guide-grid/ */
+
+.photo-content {
+    width: 85%;
+    margin: auto;
+    padding: 30px;
+}
+
+.photo-content h1 {
+    width: 100%;
+    text-align: center;
+}
+
+.photo-container {
+    display: grid;
+    padding: 30px;
+    grid-template-columns: repeat(6, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.photo-card {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid slategray;
+    scale: 1;
+    transition: 0.2s;
+}
+
+.photo-card:hover {
+    scale: 1.05;
+    transition: 0.2s;
+}
+
+.photo-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-image-container {
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.photo-lable {
+    text-align: center;
+    padding: 10px;
+    font-size: 1.2em;
+    min-height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+}
+
+/*====================================[fonts]===================================*/
 
 @font-face {
     font-family: "BarcadeBrawl";
