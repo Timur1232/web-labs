@@ -23,6 +23,31 @@
         </nav>
     </header>
     <main>
+        <section class="form-container">
+            <form class="callback-form shadow rounded" method="post" action="mailto:timur.univercity@gmail.com"
+                enctype="text/plain">
+                <label for="full-name">ФИО:</label><br>
+                <input class="input-text" type="text" name="full-name" autofocus /><br>
+                <input type="radio" name="gender" id="male" value="Male" />
+                <label for="male">Мужской</label>
+                <input type="radio" name="gender" id="female" value="Female" />
+                <label for="female">Женский</label><br>
+                <label for="age">Возраст:</label>
+                <select size="1" name="age">
+                    <option>Меньше 16 лет</option>
+                    <option selected>От 16 до 18 лет</option>
+                    <option>От 19 до 25 лет</option>
+                    <option>Больше 25 лет</option>
+                </select><br>
+                <label for="sender-email">Email:</label><br>
+                <input class="input-text" type="email" name="sender-email" /><br>
+                <textarea name="callback-text" rows="5"></textarea>
+                <div class="buttons">
+                    <input class="button-submit" type="submit" value="Отправить" />
+                    <input class="button-reset" type="reset" value="Очистить форму" />
+                </div>
+            </form>
+        </section>
     </main>
     <footer>
         <section class="footer-content">

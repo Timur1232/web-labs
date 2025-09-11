@@ -1,5 +1,9 @@
 /*====================================[General]===================================*/
 
+:root {
+    --header-heigt: 61px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -17,13 +21,22 @@
 
 .flex-container {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: column;
 }
 
 .content-container {
-    width: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 65%;
     margin: auto;
-    padding: 30px;
+    padding: 30px 50px;
+    box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.3);
+    flex: 1;
+}
+
+.content-container > * {
+    width: 100%;
 }
 
 .content-container hr {
@@ -34,22 +47,31 @@
 }
 
 .content-title {
-    width: 100%;
     font-size: 2em;
     text-align: center;
     padding-bottom: 30px;
 }
 
 .shadow {
-    box-shadow: 0 3px 5px gray;
+    box-shadow: 0 4px 10px 2px gray;
 }
 
 .rounded {
     border-radius: 20px;
 }
 
+.contents-list {}
+
+.contents-list ul {}
+
 body {
     min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 header,
@@ -59,7 +81,6 @@ footer {
 }
 
 header {
-    height: 61px;
     position: sticky;
     top: 0;
     will-change: transform;
@@ -72,21 +93,22 @@ header {
 }
 
 .top-nav-bar ul {
-    list-style-type: none;
-    overflow: hidden;
-}
-
-.top-nav-bar li {
-    float: left;
-}
-
-.top-nav-bar li a {
     display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    list-style-type: none;
+    height: 100%;
+}
+
+.top-nav-bar ul li {
+    height: 100%;
+}
+
+.top-nav-bar ul li a {
+    display: inline-block;
     color: whitesmoke;
     padding: 15px;
     text-decoration: none;
-    font-family: "ComputerPixel-7";
-    font-size: 30px;
 }
 
 .top-nav-bar li a:focus,
@@ -99,7 +121,6 @@ header {
 }
 
 footer {
-    margin-top: auto;
     background-color: darkred;
     color: whitesmoke;
 }
@@ -130,6 +151,14 @@ footer {
     padding-bottom: 50px;
 }
 
+.labs-done {
+    color: green;
+}
+
+.labs-not-done {
+    color: red;
+}
+
 .labs-carousel h1 {
     width: 100%;
 }
@@ -151,7 +180,7 @@ footer {
 
 .labs-carousel ul {
     height: 150px;
-    width: 40%;
+    width: 50%;
     box-sizing: border-box;
     padding: 20px;
     display: flex;
@@ -196,15 +225,17 @@ footer {
 }
 
 .labs-carousel ul::scroll-button(left) {
+    height: 40px;
     content: "◄";
-    right: calc(anchor(left) - 70px);
-    bottom: calc(anchor(top));
+    right: calc(anchor(left));
+    bottom: calc(anchor(center) - 20px);
 }
 
 .labs-carousel ul::scroll-button(right) {
+    height: 40px;
     content: "►";
-    left: calc(anchor(right) - 70px);
-    bottom: calc(anchor(top));
+    left: calc(anchor(right));
+    bottom: calc(anchor(center) - 20px);
 }
 
 .labs-carousel ul::scroll-marker-group {
@@ -235,6 +266,8 @@ footer {
 .me #sigma-me {
     grid-area: sigma-me;
     justify-self: center;
+    width: 100%;
+    height: auto;
 }
 
 .me #name {
@@ -252,12 +285,12 @@ footer {
 .me {
     display: grid;
     padding: 40px 0;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 50% 5% 40% 5%;
     grid-template-rows: 15% 60% 25%;
     grid-template-areas:
-        "sigma-me ."
-        "sigma-me name"
-        "sigma-me group";
+        "sigma-me . . ."
+        "sigma-me . name ."
+        "sigma-me . group .";
 }
 
 .past h3 {
@@ -277,16 +310,18 @@ footer {
 
 .past img {
     grid-area: image;
+    width: 80%;
 }
 
 .past {
+    width: 100%;
     display: grid;
     padding: 20px 0;
-    grid-template-columns: 15% 50% 35%;
+    grid-template-columns: 50% 50%;
     grid-template-rows: 20% 80%;
     grid-template-areas:
-        ". title image"
-        ". text image";
+        "title image"
+        "text image";
 }
 
 .university h3 {
@@ -307,16 +342,19 @@ footer {
 
 .university img {
     grid-area: image;
+    width: 100%;
 }
 
 .university {
+    width: 100%;
     padding: 20px 0;
     display: grid;
-    grid-template-columns: 15% 30% 40% 15%;
+    justify-content: center;
+    grid-template-columns: 40% 60%;
     grid-template-rows: 20% 80%;
     grid-template-areas:
-        ". image title title"
-        ". image text .";
+        "image title"
+        "image text";
 }
 
 .computer {
@@ -352,16 +390,24 @@ footer {
 
 /*====================================[studies]===================================*/
 
-table,
-th,
-td {
+.disciplines-table {
+    width: 90%;
+}
+
+.disciplines-table,
+.disciplines-table th,
+.disciplines-table td {
     border: 1px solid black;
     border-collapse: collapse;
 }
 
-th,
-td {
+.disciplines-table th,
+.disciplines-table td {
     padding: 0.5em 1em;
+}
+
+.disciplines-table caption {
+    padding-bottom: 20px;
 }
 
 /*====================================[photos]===================================*/
@@ -370,7 +416,7 @@ td {
 .photo-container {
     display: grid;
     padding: 30px;
-    grid-template-columns: repeat(6, minmax(200px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
 }
 
@@ -383,7 +429,7 @@ td {
 }
 
 .photo-card:hover {
-    scale: 1.05;
+    transform: scale(1.1) translateY(-15px);
     transition: 0.2s;
 }
 
@@ -394,7 +440,7 @@ td {
 }
 
 .photo-image-container {
-    height: 260px;
+    height: 20vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -410,6 +456,83 @@ td {
     align-items: center;
     justify-content: center;
     flex-flow: column;
+    word-break: break-word;
+}
+
+/*====================================[callback]===================================*/
+
+.form-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.callback-form {
+    width: 20%;
+    height: auto;
+    padding: 30px;
+}
+
+.callback-form > * {
+    margin: 10px 0;
+}
+
+.callback-form textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.input-text {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 17.5px;
+    border-color: black;
+    border-width: 1px;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 30px;
+}
+
+.button-submit,
+.button-reset {
+    padding: 10px;
+    border-radius: 20px;
+    border-width: 1px;
+}
+
+.button-submit {
+    background-color: forestgreen;
+    color: whitesmoke;
+    scale: 1;
+    transition: 0.1s;
+}
+
+.button-submit:focus,
+.button-submit:hover {
+    scale: 1.05;
+    transition: 0.1s;
+}
+
+.button-reset {
+    background-color: red;
+    color: whitesmoke;
+    scale: 1;
+    transition: 0.1s;
+}
+
+.button-reset:focus,
+.button-reset:hover {
+    scale: 1.05;
+    transition: 0.1s;
 }
 
 /*====================================[fonts]===================================*/
