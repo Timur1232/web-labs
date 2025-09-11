@@ -1,9 +1,5 @@
 /*====================================[General]===================================*/
 
-:root {
-    --header-heigt: 61px;
-}
-
 * {
     margin: 0;
     padding: 0;
@@ -28,14 +24,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 65%;
+    width: 55%;
     margin: auto;
     padding: 30px 50px;
     box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.3);
     flex: 1;
 }
 
-.content-container > * {
+.content-container>* {
     width: 100%;
 }
 
@@ -60,9 +56,19 @@
     border-radius: 20px;
 }
 
-.contents-list {}
 
-.contents-list ul {}
+.name {
+    grid-area: name;
+    font-size: 3em;
+    word-break: break-word;
+}
+
+.group {
+    grid-area: group;
+    opacity: 0.6;
+    text-indent: 15px;
+    margin-top: 15px;
+}
 
 body {
     min-height: 100vh;
@@ -129,6 +135,14 @@ footer {
     padding: 15px;
 }
 
+.footer-content a {
+    color: cornflowerblue;
+}
+
+.footer-content a:visited {
+    color: hotpink;
+}
+
 /*====================================[index]===================================*/
 
 .article-me {
@@ -137,6 +151,12 @@ footer {
     text-align: center;
     flex-flow: column wrap;
     padding: 20px;
+}
+
+.main-image {
+    width: 40%;
+    margin: 20px;
+    align-self: center;
 }
 
 /*---------------------------------------------------------------------------------*/
@@ -270,18 +290,6 @@ footer {
     height: auto;
 }
 
-.me #name {
-    grid-area: name;
-    font-size: 3em;
-    word-break: break-word;
-}
-
-.me #group {
-    grid-area: group;
-    opacity: 0.6;
-    text-indent: 15px;
-}
-
 .me {
     display: grid;
     padding: 40px 0;
@@ -388,6 +396,10 @@ footer {
     padding: 20px;
 }
 
+.attention img {
+    width: 100%;
+}
+
 /*====================================[studies]===================================*/
 
 .disciplines-table {
@@ -450,7 +462,7 @@ footer {
 .photo-lable {
     text-align: center;
     padding: 10px;
-    font-size: 1.2em;
+    font-size: 0.93em;
     min-height: 3em;
     display: flex;
     align-items: center;
@@ -474,7 +486,7 @@ footer {
     padding: 30px;
 }
 
-.callback-form > * {
+.callback-form>* {
     margin: 10px 0;
 }
 
@@ -535,6 +547,138 @@ footer {
     transition: 0.1s;
 }
 
+/*====================================[my_interests]===================================*/
+
+.content-with-aside {
+    width: 75%;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    gap: 10px;
+    flex: 1;
+}
+
+.content-with-aside .content-container {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.contents-list-box {
+    background-color: #ffeba1;
+    border: 0;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 40px 0;
+    background-image: url(../../media/sticky-note.jpg);
+    background-size: contain;
+    background-repeat: repeat-y;
+}
+
+.contents-list {
+    position: sticky;
+    top: 10vh;
+    width: 100%;
+}
+
+.contents-list ul {
+    list-style-type: none;
+    margin-top: 20px;
+}
+
+.contents-list a {
+    text-decoration: none;
+    font-family: "Lenov-SP";
+    font-size: 15px;
+}
+
+.contents-list li {
+    padding: 5px 0;
+}
+
+.contents-list-box h4 {
+    font-family: "Lenov-SP";
+    font-size: 17px;
+}
+
+/*----------------------------[interests-section]----------------------------*/
+
+.interests-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    border-radius: 12px;
+    scroll-margin-top: 50px;
+}
+
+.interests-section h1 {
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.interest-item {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px gray;
+    transition: 0.3s;
+    position: relative;
+}
+
+.interest-item h2 {
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+.interest-item p {
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/*====================================[not-exist]===================================*/
+
+.not-exist {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.not-exist a:visited,
+.not-exist a {
+    color: black;
+    opacity: 0.6;
+    margin-top: 50px;
+    font-size: 1.3em;
+}
+
+.not-exist-box {
+    width: auto;
+    height: auto;
+    background-color: darkred;
+    justify-items: center;
+    align-content: center;
+    padding: 30px 70px;
+    border: 0;
+    border-radius: 90px;
+}
+
+.not-exist-title {
+    color: whitesmoke;
+    font-weight: 300;
+    font-size: 4em;
+}
+
+.not-exist-sorry {
+    color: whitesmoke;
+    opacity: 0.5;
+    font-weight: 300;
+    font-size: 2em;
+    margin-top: 20px;
+}
+
 /*====================================[fonts]===================================*/
 
 @font-face {
@@ -547,6 +691,13 @@ footer {
 @font-face {
     font-family: "ComputerPixel-7";
     src: url("../../fonts/Computer Pixel-7/computer_pixel-7.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Lenov-SP";
+    src: url("../../fonts/Leonov SP/LeonovSP.otf") format("opentype");
     font-style: normal;
     font-weight: normal;
 }
