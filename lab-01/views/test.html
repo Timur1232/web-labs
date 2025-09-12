@@ -18,22 +18,54 @@
                 <li><a class="nav-link" href="my_interests.html">Мои интересы</a></li>
                 <li><a class="nav-link" href="studies.html">Учеба</a></li>
                 <li><a class="nav-link" href="photos.html">Фотоальбом</a></li>
-                <li><a class="nav-link page-active" href="test.html">Тест</a></li>
+                <li><a class="nav-link" href="callback.html">Контакт/a></li>
             </ul>
         </nav>
     </header>
     <main>
         <section class="content-container">
-
+            <h1 class="content-title">Тест по Высшей Математике</h1>
+            <form>
+                <article class="test-question" id="question1">
+                    <h2>1. Вычислите предел:</h2>
+                    <img src="../media/limit.png" alt="lim_{x->0} sin(5x)/x" title="lim_x->0 sin(5x)/x" />
+                    <div class="question-form">
+                        <textarea name="answer-field" rows="4"></textarea>
+                    </div>
+                </article>
+                <article class="test-question" id="question2">
+                    <h2>2. Выберите верное утверждение о сходимости ряда:</h2>
+                    <div class="question-form">
+                        <input type="radio" name="series" id="answ1" value="answ1" />
+                        <label for="answ1">Ряд <img src="../media/sum1.png" alt="sum_{n=1}^{\infinity} 1/n" />
+                            является сходящимся.</label><br>
+                        <input type="radio" name="series" id="answ2" value="answ2" />
+                        <label for="answ2">Ряд <img src="../media/sum2.png" alt="sum_{n=1}^{\infinity} 1/(n^2)" />
+                            является сходящимся.</label><br>
+                    </div>
+                </article>
+                <article class="test-question" id="question3">
+                    <h2>3. Выберите правильный ответ:</h2>
+                    <p>2 + 2 = ?</p>
+                    <div class="question-form">
+                        <select size="1" name="hard-one">
+                            <option>22</option>
+                            <option>Compilation Error</option>
+                            <option>4</option>
+                        </select><br>
+                    </div>
+                </article>
+                <div class="buttons">
+                    <input class="button-submit" type="submit" value="Отправить" />
+                    <input class="button-reset" type="reset" value="Очистить форму" />
+                </div>
+            </form>
         </section>
     </main>
     <footer>
         <section class="footer-content">
             <h4>Контакты</h4>
             <p>Email: <a href="mailto:timur.univercity@gmail.com">timur.univercity@gmail.com</a></p>
-            <div class="callback">
-                <a href="callback.html">Свяжитесь со мной</a>
-            </div>
         </section>
     </footer>
 </body>
