@@ -1,21 +1,32 @@
-/* #BEACB8
-#2C1D27
-#DBC2A4
-#CF3E29
-#782221
-*/
 /*====================================[General]===================================*/
 
 :root {
     --main-color: #cf3e29;
     --main-second-color: #782221;
+    --main-dark-color: #2c1d27;
+    --main-light-color: whitesmoke;
+    --main-text-color: var(--main-dark-color);
+
     --header-highlight: #a02e2c;
     --header-active-color: #501716;
     --header-bg-color: #641d1b;
+
+    --footer-bg-color: var(--header-bg-color);
+
     --content-bg-color: #dbc2a4;
-    --main-dark-color: #2c1d27;
-    --main-light-color: white;
+
     --shadow-color: rgba(0, 0, 0, 0.3);
+
+    --link-color: cornflowerblue;
+    --link-visited-color: hotpink;
+
+    --lab-done-color: green;
+    --lab-not-done-color: red;
+
+    --submit-button-color: forestgreen;
+    --reset-button-color: red;
+
+    --sticky-note-color: #ffeba1;
 }
 
 * {
@@ -25,6 +36,7 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;
+    color: var(--main-text-color);
 }
 
 .clearfix::after {
@@ -97,7 +109,6 @@
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px var(--shadow-color);
-    transition: 0.3s;
     position: relative;
 }
 
@@ -107,7 +118,7 @@
 }
 
 .content-block p {
-    color: #444;
+    color: gray;
     line-height: 1.6;
     margin-bottom: 15px;
 }
@@ -136,6 +147,14 @@ header {
     z-index: 1000;
 }
 
+a {
+    color: var(--link-color);
+}
+
+a:visited {
+    color: var(--link-visited-color);
+}
+
 .top-nav-bar {
     height: 100%;
     background-color: var(--header-bg-color);
@@ -157,7 +176,7 @@ header {
 
 .top-nav-bar ul li a {
     display: inline-block;
-    color: whitesmoke;
+    color: var(--main-light-color);
     padding: 15px;
     text-decoration: none;
 }
@@ -172,20 +191,15 @@ header {
 }
 
 footer {
-    background-color: var(--main-second-color);
-    color: whitesmoke;
+    background-color: var(--footer-bg-color);
 }
 
 .footer-content {
     padding: 15px;
 }
 
-.footer-content a {
-    color: cornflowerblue;
-}
-
-.footer-content a:visited {
-    color: hotpink;
+.footer-content>* {
+    color: var(--main-light-color);
 }
 
 /*====================================[index]===================================*/
@@ -219,11 +233,11 @@ footer {
 }
 
 .labs-done {
-    color: green;
+    color: var(--lab-done-color);
 }
 
 .labs-not-done {
-    color: red;
+    color: var(--lab-not-done-color);
 }
 
 .labs-carousel h1 {
@@ -237,11 +251,11 @@ footer {
 }
 
 .labs-carousel li:hover {
-    outline: 3px solid slategray;
+    outline: 2px solid var(--link-color);
 }
 
 .labs-carousel li a {
-    color: black;
+    color: var(--main-text-color);
     text-decoration: none;
 }
 
@@ -260,18 +274,17 @@ footer {
 
 .labs-carousel li {
     list-style-type: none;
-    outline: 1px solid black;
     border-radius: 10px;
     flex: 0 0 100%;
     scroll-snap-align: center;
-    background-color: white;
+    background-color: var(--main-light-color);
 }
 
 .labs-carousel ul::scroll-button(*) {
     border: 0;
     font-size: 2rem;
     background: none;
-    color: black;
+    color: var(--main-text-color);
     opacity: 0.7;
     cursor: pointer;
     position: absolute;
@@ -320,13 +333,12 @@ footer {
     content: "";
     width: 16px;
     height: 16px;
-    background-color: transparent;
-    border: 2px solid black;
+    border: 2px solid var(--main-dark-color);
     border-radius: 50%;
 }
 
 .labs-carousel ul li::scroll-marker:target-current {
-    background-color: black;
+    background-color: var(--main-dark-color);
 }
 
 /*====================================[about_me]===================================*/
@@ -453,7 +465,7 @@ footer {
 
 .disciplines-table {
     width: 90%;
-    background-color: white;
+    background-color: var(--main-light-color);
 }
 
 .disciplines-table,
@@ -556,7 +568,7 @@ footer {
     justify-content: center;
     flex-flow: column;
     word-break: break-word;
-    background-color: white;
+    background-color: var(--main-light-color);
 }
 
 /*====================================[callback]===================================*/
@@ -573,7 +585,7 @@ footer {
     height: auto;
     padding: 20px;
     min-width: 500px;
-    background-color: white;
+    background-color: var(--main-light-color);
     margin: 20px;
 }
 
@@ -593,7 +605,7 @@ footer {
     box-sizing: border-box;
     padding: 10px;
     border-radius: 17.5px;
-    border-color: black;
+    border-color: var(--main-dark-color);
     border-width: 1px;
 }
 
@@ -613,8 +625,8 @@ footer {
 }
 
 .button-submit {
-    background-color: forestgreen;
-    color: whitesmoke;
+    background-color: var(--submit-button-color);
+    color: var(--main-light-color);
     scale: 1;
     transition: 0.1s;
 }
@@ -626,8 +638,8 @@ footer {
 }
 
 .button-reset {
-    background-color: red;
-    color: whitesmoke;
+    background-color: var(--reset-button-color);
+    color: var(--main-light-color);
     scale: 1;
     transition: 0.1s;
 }
@@ -655,7 +667,7 @@ footer {
 }
 
 .contents-list-box {
-    background-color: #ffeba1;
+    background-color: var(--sticky-note-color);
     border: 0;
     border-radius: 5px;
     padding: 20px;
@@ -752,7 +764,7 @@ footer {
 .not-exist-box {
     width: auto;
     height: auto;
-    background-color: darkred;
+    background-color: var(--main-second-color);
     justify-items: center;
     align-content: center;
     padding: 30px 70px;
