@@ -456,10 +456,14 @@ footer {
 /*====================================[photos]===================================*/
 /* https://css-tricks.com/snippets/css/complete-guide-grid/ */
 
+.content-container#photoalbum {
+    width: 85%;
+}
+
 .photo-container {
     display: grid;
     padding: 30px;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 20px;
 }
 
@@ -677,6 +681,10 @@ footer {
 .question-form {
     height: auto;
     padding: 10px;
+}
+
+.question-form img {
+    align-self: center;
 }
 
 /*====================================[not-exist]===================================*/
