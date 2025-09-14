@@ -22,7 +22,7 @@ func main() {
 	e.GET("/callback", callback)
 	e.GET("/not_exist", not_exist)
 
-	e.Logger.Fatal(e.Start(":5500"))
+	e.Logger.Fatal(e.Start(":42069"))
 }
 
 func index(c echo.Context) error {

@@ -1,4 +1,22 @@
+/* #BEACB8
+#2C1D27
+#DBC2A4
+#CF3E29
+#782221
+*/
 /*====================================[General]===================================*/
+
+:root {
+    --main-color: #cf3e29;
+    --main-second-color: #782221;
+    --header-highlight: #a02e2c;
+    --header-active-color: #501716;
+    --header-bg-color: #641d1b;
+    --content-bg-color: #dbc2a4;
+    --main-dark-color: #2c1d27;
+    --main-light-color: white;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
 
 * {
     margin: 0;
@@ -26,9 +44,10 @@
     align-items: center;
     width: 65%;
     margin: auto;
-    padding: 30px 50px;
-    box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.3);
+    padding: 0 50px;
+    box-shadow: 0 0 30px 20px var(--shadow-color);
     flex: 1;
+    background-color: var(--content-bg-color);
 }
 
 .content-container>* {
@@ -45,11 +64,12 @@
 .content-title {
     font-size: 2em;
     text-align: center;
-    padding-bottom: 30px;
+    padding: 10px 0;
+    margin: 20px;
 }
 
 .shadow {
-    box-shadow: 0 4px 10px 2px gray;
+    box-shadow: 0 4px 10px 2px var(--shadow-color);
     transition: 0.2s;
 }
 
@@ -71,8 +91,30 @@
     margin-top: 15px;
 }
 
+.content-block {
+    background: var(--main-light-color);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    transition: 0.3s;
+    position: relative;
+}
+
+.content-block h2 {
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+.content-block p {
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
 body {
     min-height: 100vh;
+    background-color: var(--main-color);
 }
 
 main {
@@ -96,10 +138,11 @@ header {
 
 .top-nav-bar {
     height: 100%;
-    background-color: darkred;
+    background-color: var(--header-bg-color);
 }
 
 .top-nav-bar ul {
+    justify-content: center;
     display: flex;
     flex-direction: row;
     overflow: hidden;
@@ -109,6 +152,7 @@ header {
 
 .top-nav-bar ul li {
     height: 100%;
+    background-color: var(--main-second-color);
 }
 
 .top-nav-bar ul li a {
@@ -120,15 +164,15 @@ header {
 
 .top-nav-bar li a:focus,
 .top-nav-bar li a:hover {
-    background-color: brown;
+    background-color: var(--header-highlight);
 }
 
 .page-active {
-    background-color: red;
+    background-color: var(--header-active-color);
 }
 
 footer {
-    background-color: darkred;
+    background-color: var(--main-second-color);
     color: whitesmoke;
 }
 
@@ -152,10 +196,12 @@ footer {
     text-align: center;
     flex-flow: column wrap;
     padding: 20px;
+    width: fit-content;
+    margin-top: 40px;
+    padding-top: 0;
 }
 
 .main-image {
-    width: 30%;
     margin-bottom: 20px;
     align-self: center;
 }
@@ -218,6 +264,7 @@ footer {
     border-radius: 10px;
     flex: 0 0 100%;
     scroll-snap-align: center;
+    background-color: white;
 }
 
 .labs-carousel ul::scroll-button(*) {
@@ -293,7 +340,8 @@ footer {
 
 .me {
     display: grid;
-    padding: 40px 0;
+    padding: 20px;
+    margin-top: 40px;
     grid-template-columns: 50% 5% 40% 5%;
     grid-template-rows: 15% 60% 25%;
     grid-template-areas:
@@ -325,7 +373,7 @@ footer {
 .past {
     width: 100%;
     display: grid;
-    padding: 20px 0;
+    padding: 20px;
     grid-template-columns: 50% 50%;
     grid-template-rows: 20% 80%;
     grid-template-areas:
@@ -356,7 +404,7 @@ footer {
 
 .university {
     width: 100%;
-    padding: 20px 0;
+    padding: 20px;
     display: grid;
     justify-content: center;
     grid-template-columns: 40% 60%;
@@ -405,6 +453,7 @@ footer {
 
 .disciplines-table {
     width: 90%;
+    background-color: white;
 }
 
 .disciplines-table,
@@ -420,7 +469,7 @@ footer {
 }
 
 .disciplines-table caption {
-    padding-bottom: 20px;
+    padding: 20px;
 }
 
 .test-button {
@@ -473,6 +522,9 @@ footer {
     border: 1px solid black;
     scale: 1;
     transition: 0.2s;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .photo-card:hover {
@@ -487,11 +539,11 @@ footer {
 }
 
 .photo-image-container {
-    height: 20vh;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex: 1;
 }
 
 .photo-lable {
@@ -504,6 +556,7 @@ footer {
     justify-content: center;
     flex-flow: column;
     word-break: break-word;
+    background-color: white;
 }
 
 /*====================================[callback]===================================*/
@@ -519,6 +572,9 @@ footer {
     width: 20%;
     height: auto;
     padding: 20px;
+    min-width: 500px;
+    background-color: white;
+    margin: 20px;
 }
 
 .callback-form>* {
@@ -649,26 +705,6 @@ footer {
     text-align: center;
 }
 
-.interest-item {
-    background: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px gray;
-    transition: 0.3s;
-    position: relative;
-}
-
-.interest-item h2 {
-    margin-bottom: 10px;
-    font-size: 1.4em;
-}
-
-.interest-item p {
-    color: #444;
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
 
 /*====================================[test]===================================*/
 
@@ -684,6 +720,14 @@ footer {
 }
 
 .question-form img {
+    align-self: center;
+}
+
+.question-form textarea {
+    width: 100%;
+    resize: vertical;
+    max-height: 200px;
+    min-height: 50px;
     align-self: center;
 }
 
@@ -734,21 +778,21 @@ footer {
 
 @font-face {
     font-family: "BarcadeBrawl";
-    src: url("../../fonts/Barcade Brawl/BarcadeBrawlRegular.ttf") format("truetype");
+    src: url("/fonts/Barcade Brawl/BarcadeBrawlRegular.ttf") format("truetype");
     font-style: normal;
     font-weight: normal;
 }
 
 @font-face {
     font-family: "ComputerPixel-7";
-    src: url("../../fonts/Computer Pixel-7/computer_pixel-7.ttf") format("truetype");
+    src: url("/fonts/Computer Pixel-7/computer_pixel-7.ttf") format("truetype");
     font-style: normal;
     font-weight: normal;
 }
 
 @font-face {
     font-family: "Lenov-SP";
-    src: url("../../fonts/Leonov SP/LeonovSP.otf") format("opentype");
+    src: url("/fonts/Leonov SP/LeonovSP.otf") format("opentype");
     font-style: normal;
     font-weight: normal;
 }
