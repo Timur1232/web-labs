@@ -158,19 +158,17 @@ a:visited {
     color: var(--link-visited-color);
 }
 
-.top-nav-bar {}
-
 .top-nav-bar ul {
     justify-content: center;
     display: flex;
     flex-direction: row;
     overflow: hidden;
     list-style-type: none;
-    height: 100%;
+    height: var(--header-height);
 }
 
 .top-nav-bar ul li {
-    height: 100%;
+    height: var(--header-height);
     background-color: var(--main-second-color);
 }
 
@@ -179,6 +177,8 @@ a:visited {
     color: var(--main-light-color);
     padding: 15px;
     text-decoration: none;
+    height: var(--header-height);
+    box-sizing: border-box;
 }
 
 .top-nav-bar li a:focus,
@@ -191,57 +191,61 @@ a:visited {
     visibility: hidden;
 }
 
-.burger-image-closed {
-    visibility: hidden;
-    position: absolute;
-    width: var(--header-height);
-    height: var(--header-height);
-}
-
+.burger-image-closed,
 .burger-image-opened {
-    visibility: hidden;
+    display: none;
     position: absolute;
     width: var(--header-height);
     height: var(--header-height);
 }
 
-.burger-image-closed img {
-    width: 100%;
-    height: 100%;
-}
-
+.burger-image-closed img,
 .burger-image-opened img {
     width: 100%;
     height: 100%;
 }
 
-@media (max-width: 616px) {
+@media (max-width: 660px) {
     .burger-image-closed {
-        visibility: visible;
-        cursor: pointer;
         display: block;
     }
 
     .burger-image-opened {
-        visibility: hidden;
+        display: none;
     }
 
-    .burger-menu:checked+.burger-image-opened {
-        visibility: hidden;
-    }
-
-    .burger-menu:checked+.burger-image-closed {
-        visibility: visible;
-        cursor: pointer;
+    .burger-menu:checked~.burger-image-opened {
         display: block;
     }
 
-    .burger-menu:checked {
-        visibility: visible;
+    .burger-menu:checked~.burger-image-closed {
+        display: none;
     }
 
     .top-nav-bar {
-        visibility: hidden;
+        display: none;
+    }
+
+    .burger-menu:checked~.top-nav-bar {
+        display: block;
+    }
+
+    .burger-menu:checked~.top-nav-bar ul {
+        display: flex;
+        position: absolute;
+        top: var(--header-height);
+        flex-direction: column;
+        height: calc(100vh - var(--header-height));
+        justify-content: start;
+    }
+
+    .burger-menu:checked~.top-nav-bar ul li {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .burger-menu:checked~.top-nav-bar ul li a {
+        flex: 1;
     }
 }
 
