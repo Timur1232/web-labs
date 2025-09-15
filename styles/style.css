@@ -598,6 +598,9 @@ footer {
     padding: 15px;
     border-radius: 10px;
     box-sizing: border-box;
+    resize: vertical;
+    max-height: 200px;
+    min-height: 50px;
 }
 
 .input-text {
@@ -683,9 +686,9 @@ footer {
     width: 100%;
 }
 
-.contents-list ul {
-    list-style-type: none;
+.contents-list ol {
     margin-top: 20px;
+    margin-left: 20px;
 }
 
 .contents-list a {
@@ -717,6 +720,21 @@ footer {
     text-align: center;
 }
 
+.interest-image-single {
+    width: 100%;
+}
+
+.interest-image-gallery {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.interest-image {
+    width: 100%;
+    aspect-ratio: 1/1;
+}
 
 /*====================================[test]===================================*/
 
