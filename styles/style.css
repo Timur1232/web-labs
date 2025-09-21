@@ -90,20 +90,6 @@
     border-radius: 20px;
 }
 
-
-.name {
-    grid-area: name;
-    font-size: 3em;
-    word-break: break-word;
-}
-
-.group {
-    grid-area: group;
-    opacity: 0.6;
-    text-indent: 15px;
-    margin-top: 15px;
-}
-
 .content-block {
     background: var(--main-light-color);
     padding: 20px;
@@ -124,6 +110,19 @@
     margin-bottom: 15px;
 }
 
+.name {
+    font-size: 3em;
+    word-break: break-word;
+    text-align: center;
+}
+
+.group {
+    opacity: 0.6;
+    text-indent: 15px;
+    text-align: center;
+    margin-top: 15px;
+}
+
 body {
     min-height: 100vh;
     background-color: var(--main-color);
@@ -142,7 +141,7 @@ footer {
 }
 
 header {
-    position: fixed;
+    position: sticky;
     top: 0;
     will-change: transform;
     z-index: 1000;
@@ -272,11 +271,15 @@ footer {
     display: flex;
     align-content: center;
     text-align: center;
-    flex-flow: column wrap;
+    flex-flow: column;
     padding: 20px;
     width: fit-content;
     margin-top: 40px;
     padding-top: 0;
+}
+
+.article-me * {
+    text-align: center;
 }
 
 .main-image {
@@ -414,12 +417,21 @@ footer {
     height: auto;
 }
 
+.me #name {
+    grid-area: name;
+}
+
+.me #group {
+    grid-area: group;
+}
+
 .me {
     display: grid;
+    word-wrap: break-word;
     padding: 20px;
     margin-top: 40px;
     grid-template-columns: 50% 5% 40% 5%;
-    grid-template-rows: 15% 60% 25%;
+    grid-template-rows: 15fr 60fr 25fr;
     grid-template-areas:
         "sigma-me . . ."
         "sigma-me . name ."
@@ -451,7 +463,7 @@ footer {
     display: grid;
     padding: 20px;
     grid-template-columns: 50% 50%;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 20fr 80fr;
     grid-template-areas:
         "title image"
         "text image";
@@ -484,7 +496,7 @@ footer {
     display: grid;
     justify-content: center;
     grid-template-columns: 40% 60%;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 20fr 80fr;
     grid-template-areas:
         "image title"
         "image text";
@@ -492,6 +504,7 @@ footer {
 
 .computer {
     text-align: center;
+    word-break: break-all;
 }
 
 .computer h3 {
@@ -525,11 +538,70 @@ footer {
     width: 100%;
 }
 
+@media (max-width: 1125px) {
+    .me {
+        display: grid;
+        word-wrap: break-word;
+        padding: 20px;
+        margin-top: 40px;
+        align-items: center;
+        justify-items: center;
+        grid-template-columns: 15fr 70fr 15fr;
+        grid-template-rows: 70fr 20fr 10fr;
+        grid-template-areas:
+            ". sigma-me ."
+            ". name ."
+            ". group .";
+    }
+
+    .me #name {
+        grid-area: name;
+        font-size: 3em;
+        word-break: break-word;
+        text-align: center;
+        align-self: end;
+    }
+
+    .me #group {
+        grid-area: group;
+        opacity: 0.6;
+        text-indent: 15px;
+        margin-top: 15px;
+        align-self: self-start;
+    }
+
+    .past {
+        width: 100%;
+        display: grid;
+        padding: 20px;
+        justify-items: center;
+        grid-template-columns: 30fr 70fr;
+        grid-template-rows: 30fr 70fr;
+        grid-template-areas:
+            "title title"
+            "text image";
+    }
+
+    .university {
+        width: 100%;
+        padding: 20px;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: 15fr 70fr 15fr;
+        grid-template-rows: 4em auto auto;
+        grid-template-areas:
+            ". title ."
+            ". image ."
+            ". text .";
+    }
+}
+
 /*====================================[studies]===================================*/
 
 .disciplines-table {
     width: 90%;
     background-color: var(--main-light-color);
+    min-width: 840px;
 }
 
 .disciplines-table,
@@ -556,26 +628,30 @@ footer {
     border-radius: 20px;
     padding: 20px;
     width: 45%;
-    justify-self: center;
     font-size: 1.2em;
     color: rgba(0, 0, 0, 0.8);
     background-color: burlywood;
-}
-
-.test-link {
     text-decoration: none;
     transition: 0.2s;
     transform: scale(1);
 }
 
-.test-link:hover {
+.test-link {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.test-button:hover {
     transform: scale(1.02) translateY(-5px);
     transition: 0.2s;
 }
 
-.test-button:hover {
-    box-shadow: 0 7px 15px 4px gray;
-    transition: 0.2s;
+@media (max-width: 1125px) {
+    .disciplines-table {
+        width: 840px;
+        height: auto;
+    }
 }
 
 /*====================================[photos]===================================*/
@@ -874,6 +950,41 @@ footer {
     font-size: 2em;
     margin-top: 20px;
 }
+
+@media (max-width: 1190px) {
+
+    .content-container,
+    .content-container#photoalbum {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100vw;
+        box-sizing: border-box;
+        padding: 0 50px;
+        flex: 1;
+        background-color: var(--content-bg-color);
+    }
+
+    .content-with-aside {
+        width: 100vw;
+        display: flex;
+        flex-direction: row;
+        margin: auto;
+        gap: 5px;
+        flex: 1;
+    }
+
+    .contents-list-box {
+        width: 150px;
+    }
+}
+
+@media (max-width: 800px) {
+    .contents-list-box {
+        display: none;
+    }
+}
+
 
 /*====================================[fonts]===================================*/
 
