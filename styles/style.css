@@ -187,12 +187,12 @@ a:visited {
 
 .burger-menu {
     position: absolute;
-    display: none;
+    visibility: hidden;
 }
 
 .burger-icon-closed,
 .burger-icon-opened {
-    display: none;
+    visibility: hidden;
     position: fixed;
     top: 0;
     width: var(--header-height);
@@ -207,27 +207,27 @@ a:visited {
 
 @media (max-width: 660px) {
     .burger-icon-closed {
-        display: block;
+        visibility: visible;
     }
 
     .burger-icon-opened {
-        display: none;
+        visibility: hidden;
     }
 
     .burger-menu:checked~.burger-icon-opened {
-        display: block;
+        visibility: visible;
     }
 
     .burger-menu:checked~.burger-icon-closed {
-        display: none;
+        visibility: hidden;
     }
 
     .top-nav-bar {
-        display: none;
+        visibility: hidden;
     }
 
     .burger-menu:checked~.top-nav-bar {
-        display: block;
+        visibility: visible;
     }
 
     .burger-menu:checked~.top-nav-bar ul {
@@ -671,7 +671,6 @@ footer {
 .photo-card {
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid black;
     scale: 1;
     transition: 0.2s;
     height: 300px;
@@ -680,7 +679,7 @@ footer {
 }
 
 .photo-card:hover {
-    transform: scale(1.1) translateY(-15px);
+    transform: scale(1.1);
     transition: 0.2s;
 }
 
@@ -698,7 +697,7 @@ footer {
     flex: 1;
 }
 
-.photo-lable {
+.photo-label {
     text-align: center;
     padding: 10px;
     font-size: 0.93em;

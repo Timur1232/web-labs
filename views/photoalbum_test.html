@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="ru-RU">
+
+<head>
+    <title>Сайт Баймурадова Тимура</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel=stylesheet type="text/css" href="/styles/style.css">
+    <link rel="icon" href="/media/favicon.ico">
+    <script type="text/javascript" src="/js/photoalbum.js" defer></script>
+</head>
+
+<body class="flex-container">
+    <header>
+        <input type="checkbox" id="burger-menu-checkbox" class="burger-menu"
+            title="https://www.flaticon.com/ru/authors/andy-horvath" />
+        <label for="burger-menu-checkbox" class="burger-icon-closed">
+            <img src="/media/burger.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
+        </label>
+        <label for="burger-menu-checkbox" class="burger-icon-opened">
+            <img src="/media/cross.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
+        </label>
+        <nav class="top-nav-bar">
+            <ul>
+                <li><a class="nav-link" href="/">Главная</a></li>
+                <li><a class="nav-link" href="/about_me">Обо мне</a></li>
+                <li><a class="nav-link" href="/my_interests">Мои интересы</a></li>
+                <li><a class="nav-link" href="/studies">Учеба</a></li>
+                <li><a class="nav-link page-active" href="/photoalbum">Фотоальбом</a></li>
+                <li><a class="nav-link" href="/callback">Контакт</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="content-container" id="photoalbum">
+            <h1 class="content-title">Мои любимые фотокарточки</h1>
+            <template id="photo-card-template">
+                <li class="photo-card shadow">
+                    <div class="photo-image-container"></div>
+                    <div class="photo-label"></div>
+                </li>
+            </template>
+            <ul class="photo-container"></ul>
+        </section>
+    </main>
+    <footer>
+        <section class="footer-content">
+            <h4>Контакты</h4>
+            <p>Email: <a href="mailto:timur.univercity@gmail.com">timur.univercity@gmail.com</a></p>
+        </section>
+    </footer>
+</body>
+
+</html>

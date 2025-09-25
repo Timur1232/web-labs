@@ -12,6 +12,7 @@ func main() {
 	e.Static("/styles", "styles")
 	e.Static("/media", "media")
 	e.Static("/fonts", "fonts")
+	e.Static("/js", "js")
 
 	e.GET("/", index)
 	e.GET("/about_me", about_me)
@@ -46,7 +47,7 @@ func test(c echo.Context) error {
 }
 
 func photoalbum(c echo.Context) error {
-	return c.File("views/photoalbum.html")
+	return c.File("views/photoalbum_test.html")
 }
 
 func callback(c echo.Context) error {

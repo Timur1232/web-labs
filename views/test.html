@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
     <link rel="icon" href="/media/favicon.ico">
+    <script type="module" src="/js/form_checker.js"></script>
+    <script type="module" src="/js/test_form_validation.js" defer></script>
 </head>
 
 <body class="flex-container">
@@ -34,33 +36,34 @@
     <main>
         <section class="content-container">
             <h1 class="content-title">Тест по Высшей Математике</h1>
-            <form>
+            <form id="test-form">
                 <article class="test-question content-block" id="question1">
                     <h2>1. Вычислите предел:</h2>
                     <img src="/media/limit.png" alt="lim_{x->0} sin(5x)/x" title="lim_x->0 sin(5x)/x" />
                     <div class="question-form">
-                        <textarea name="answer-field" rows="4"></textarea>
+                        <textarea name="answer_field" rows="4"></textarea>
                     </div>
                 </article>
-                <article class="test-question content-block" id="question2">
+                <article class="test-question content-block">
                     <h2>2. Выберите верное утверждение о сходимости ряда:</h2>
                     <div class="question-form">
-                        <input type="radio" name="series" id="answ1" value="answ1" />
+                        <input class="input-radio" type="radio" name="series" value="answ1" />
                         <label for="answ1">Ряд <img src="/media/sum1.png" alt="sum_{n=1}^{\infinity} 1/n" />
                             является сходящимся.</label><br>
-                        <input type="radio" name="series" id="answ2" value="answ2" />
+                        <input class="input-radio" type="radio" name="series" value="answ2" />
                         <label for="answ2">Ряд <img src="/media/sum2.png" alt="sum_{n=1}^{\infinity} 1/(n^2)" />
                             является сходящимся.</label><br>
                     </div>
                 </article>
-                <article class="test-question content-block" id="question3">
+                <article class="test-question content-block">
                     <h2>3. Выберите правильный ответ:</h2>
                     <p>2 + 2 = ?</p>
                     <div class="question-form">
                         <select size="1" name="hard-one">
-                            <option>22</option>
-                            <option>Compilation Error</option>
-                            <option>4</option>
+                            <option value="">--Выберите ответ--</option>
+                            <option value="22">22</option>
+                            <option value="ce">Compilation Error</option>
+                            <option value="4">4</option>
                         </select><br>
                     </div>
                 </article>
