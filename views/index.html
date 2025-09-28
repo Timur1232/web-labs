@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
     <link rel="icon" href="/media/favicon.ico">
+    <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
+    <script type="module" src="/js/clock.js" defer></script>
 </head>
 
 <body class="flex-container">
@@ -19,16 +21,17 @@
         <label for="burger-menu-checkbox" class="burger-icon-opened">
             <img src="/media/cross.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
         </label>
-        <nav class="top-nav-bar">
-            <ul>
+        <nav>
+            <ul class="top-nav-bar">
                 <li><a class="nav-link page-active" href="/">Главная</a></li>
                 <li><a class="nav-link" href="/about_me">Обо мне</a></li>
-                <li><a class="nav-link" href="/my_interests">Мои интересы</a></li>
-                <li><a class="nav-link" href="/studies">Учеба</a></li>
+                <li id="interests-link"><a class="nav-link" href="/my_interests">Мои интересы</a></li>
+                <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
                 <li><a class="nav-link" href="/photoalbum">Фотоальбом</a></li>
                 <li><a class="nav-link" href="/callback">Контакт</a></li>
             </ul>
         </nav>
+        <div id="clock" class="clock"></div>
     </header>
     <main>
         <section class="content-container">
@@ -38,54 +41,6 @@
                 <h1 class="name">Баймурадов Тимур Рашидович</h1>
                 <h3 class="group">ИС/б-23-1-о</h3>
             </article>
-            <hr>
-            <section class="labs-carousel">
-                <h1>Лабораторные работы</h1>
-                <ul>
-                    <li>
-                        <a href="/not_exist">
-                            <div class="labs-carousel-block labs-not-done">
-                                <h2>Работа №1</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/not_exist">
-                            <div class="labs-carousel-block labs-not-done">
-                                <h2>Работа №2</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/not_exist">
-                            <div class="labs-carousel-block labs-not-done">
-                                <h2>Работа №3</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/not_exist">
-                            <div class="labs-carousel-block labs-not-done">
-                                <h2>Работа №4</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/not_exist">
-                            <div class="labs-carousel-block labs-not-done">
-                                <h2>Работа №5</h2>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/not_exist">
-                            <div class="labs-carousel-block labs-not-done">
-                                <h2>Работа №6</h2>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </section>
         </section>
     </main>
     <footer>

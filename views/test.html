@@ -10,6 +10,8 @@
     <link rel="icon" href="/media/favicon.ico">
     <script type="module" src="/js/form_checker.js"></script>
     <script type="module" src="/js/test_form_validation.js" defer></script>
+    <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
+    <script type="module" src="/js/clock.js" defer></script>
 </head>
 
 <body class="flex-container">
@@ -22,16 +24,17 @@
         <label for="burger-menu-checkbox" class="burger-icon-opened">
             <img src="/media/cross.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
         </label>
-        <nav class="top-nav-bar">
-            <ul>
+        <nav>
+            <ul class="top-nav-bar">
                 <li><a class="nav-link" href="/">Главная</a></li>
                 <li><a class="nav-link" href="/about_me">Обо мне</a></li>
-                <li><a class="nav-link" href="/my_interests">Мои интересы</a></li>
-                <li><a class="nav-link" href="/studies">Учеба</a></li>
+                <li id="interests-link"><a class="nav-link" href="/my_interests">Мои интересы</a></li>
+                <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
                 <li><a class="nav-link" href="/photoalbum">Фотоальбом</a></li>
                 <li><a class="nav-link" href="/callback">Контакт</a></li>
             </ul>
         </nav>
+        <div id="clock" class="clock"></div>
     </header>
     <main>
         <section class="content-container">

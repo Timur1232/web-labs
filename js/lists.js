@@ -12,7 +12,7 @@ function createAnchorList(...items) {
     const f = document.createDocumentFragment();
 
     const listItemsHtml = validItems.map(item =>
-        `<li><a href="${item.id}">${item.text}</a></li>`
+        `<li><a href="${item.href}">${item.text}</a></li>`
     ).join("");
 
     t.innerHTML = listItemsHtml;

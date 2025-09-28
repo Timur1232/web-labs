@@ -30,7 +30,7 @@ function validateTestForm(form) {
             return true;
         }
     }
-    alert("Ответ должен содержать зотя бы одно вещественное число.");
+    alert("Ответ должен содержать хотя бы одно вещественное число.");
     return false;
 }
 
