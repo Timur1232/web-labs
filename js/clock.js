@@ -14,7 +14,7 @@ function formatClock(date) {
         'Декабря',
     ];
     const month = months[date.getMonth()];
-    return `${date.getHours()} ${month} ${date.getFullYear()}`;
+    return `${date.getDate()} ${month} ${date.getFullYear()}`;
 }
 
 function updateClock(element) {
