@@ -1010,6 +1010,78 @@ footer {
     }
 }
 
+/*====================================[calendar]===================================*/
+
+.calendar {
+    background: white;
+    padding: 15px;
+    display: none;
+    width: 280px;
+    margin: auto;
+}
+
+.calendar.show {
+    display: block;
+}
+
+.calendar-header {
+    display: flex row;
+    justify-content: space-between;
+    align-content: center;
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+.calendar-controls {
+    padding: 5px 10px;
+    display: flex row;
+    align-content: center;
+}
+
+.calendar-header {
+    font-weight: bold;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 5px;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    color: #666;
+    padding: 5px;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.day {
+    border: none;
+    background: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.day:hover {
+    background: var(--main-light-color);
+}
+
+.day.today {
+    background: gray;
+    color: white;
+}
+
+.day.selected {
+    background: var(--main-color);
+    color: white;
+}
 
 /*====================================[fonts]===================================*/
 

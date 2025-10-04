@@ -12,6 +12,7 @@
     <script type="module" src="/js/callback_form_validation.js" defer></script>
     <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
     <script type="module" src="/js/clock.js" defer></script>
+    <script type="module" src="/js/calendar.js" defer></script>
 </head>
 
 <body class="flex-container">
@@ -49,14 +50,44 @@
                 <label for="age">Возраст:</label>
                 <select size="1" name="age">
                     <option selected value="">--Выберите возраст--</option>
-                    <option class="0..16">Меньше 16 лет</option>
-                    <option class="16..=18">От 16 до 18 лет</option>
-                    <option class="19..=25">От 19 до 25 лет</option>
-                    <option class="25..">Больше 25 лет</option>
+                    <option value="0..16">Меньше 16 лет</option>
+                    <option value="16..=18">От 16 до 18 лет</option>
+                    <option value="19..=25">От 19 до 25 лет</option>
+                    <option value="25..">Больше 25 лет</option>
                 </select><br>
-                <label for="burthday-date">Дата рождения:</label><br>
-                <input class="input-text" type="text" name="birthday-date" id="birthday-date" />
-                <div id="calendar" class="calendar"></div>
+                <label for="burthday">Дата рождения:</label><br>
+
+                <input class="input-text" type="text" name="birthday" id="birthday-date-input"></input>
+                <div id="calendar" class="calendar shadow rounded">
+                    <div class="calendar-controls">
+                        <select id="month-select" class="month-select">
+                            <option value="0">Январь</option>
+                            <option value="1">Февраль</option>
+                            <option value="2">Март</option>
+                            <option value="3">Апрель</option>
+                            <option value="4">Май</option>
+                            <option value="5">Июнь</option>
+                            <option value="6">Июль</option>
+                            <option value="7">Август</option>
+                            <option value="8">Сентябрь</option>
+                            <option value="9">Октябрь</option>
+                            <option value="10">Ноябрь</option>
+                            <option value="11">Декабрь</option>
+                        </select>
+                        <select id="year-select" class="year-select"></select>
+                    </div>
+                    <ul class="calendar-header">
+                        <li class="calendar-weekday">Пн</li>
+                        <li class="calendar-weekday">Вт</li>
+                        <li class="calendar-weekday">Ср</li>
+                        <li class="calendar-weekday">Чт</li>
+                        <li class="calendar-weekday">Пт</li>
+                        <li class="calendar-weekday">Сб</li>
+                        <li class="calendar-weekday">Вс</li>
+                    </ul>
+                    <div id="calendar-body" class="calendar-body"></div>
+                </div>
+
                 <label for="sender-email">Email:</label><br>
                 <input class="input-text" type="email" name="sender-email" /><br>
                 <label for="phone">Телефон:</label><br>
@@ -67,11 +98,6 @@
                     <input class="button-reset" type="reset" value="Очистить форму" />
                 </div>
             </form>
-            <template id="calendar-template">
-                <div class="calendar-head"></div>
-                <div class="days-of-week"></div>
-                <div class="days"></div>
-            </template>
         </section>
     </main>
     <footer>
