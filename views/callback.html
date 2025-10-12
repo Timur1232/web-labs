@@ -3,16 +3,18 @@
 <html lang="ru-RU">
 
 <head>
-    <title>Сайт Баймурадова Тимура</title>
+    <title>Контакт</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
     <link rel="icon" href="/media/favicon.ico">
-    <script type="module" src="/js/form_checker.js"></script>
-    <script type="module" src="/js/callback_form_validation.js" defer></script>
+    <!-- <script type="module" src="/js/form_checker.js"></script> -->
+    <!-- <script type="module" src="/js/callback_form_validation.js" defer></script> -->
     <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
     <script type="module" src="/js/clock.js" defer></script>
     <script type="module" src="/js/calendar.js" defer></script>
+    <script type="text/javascript" src="/js/callback_validation.js" defer></script>
+    <script type="text/javascript" src="/js/history.js"></script>
 </head>
 
 <body class="flex-container">
@@ -33,31 +35,36 @@
                 <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
                 <li><a class="nav-link" href="/photoalbum">Фотоальбом</a></li>
                 <li><a class="nav-link page-active" href="/callback">Контакт</a></li>
+                <li><a class="nav-link" href="/history">История</a></li>
             </ul>
         </nav>
         <div id="clock" class="clock"></div>
     </header>
     <main>
         <section class="form-container">
-            <form class="callback-form shadow rounded" method="post" action="mailto:timur.univercity@gmail.com"
-                enctype="text/plain">
-                <label for="full_name">ФИО:</label><br>
-                <input class="input-text" type="text" name="full_name" autofocus /><br>
-                <input class="input-radio" type="radio" name="gender" id="male" value="male" />
-                <label for="male">Мужской</label>
-                <input class="input-radio" type="radio" name="gender" id="female" value="female" />
-                <label for="female">Женский</label><br>
+            <form id="callback-form" class="callback-form shadow rounded" method="post"
+                action="mailto:timur.univercity@gmail.com" enctype="text/plain">
+                <label for="full-name">ФИО:</label><br>
+                <input id="full-name" class="input-text" type="text" name="full-name" autofocus /><br>
+
+                <div id="gender-radios">
+                    <input class="input-radio" type="radio" name="gender" id="male" value="male" />
+                    <label for="male">Мужской</label>
+                    <input class="input-radio" type="radio" name="gender" id="female" value="female" />
+                    <label for="female">Женский</label>
+                </div>
+
                 <label for="age">Возраст:</label>
-                <select size="1" name="age">
+                <select id="age" size="1" name="age">
                     <option selected value="">--Выберите возраст--</option>
                     <option value="0..16">Меньше 16 лет</option>
                     <option value="16..=18">От 16 до 18 лет</option>
                     <option value="19..=25">От 19 до 25 лет</option>
                     <option value="25..">Больше 25 лет</option>
                 </select><br>
-                <label for="burthday">Дата рождения:</label><br>
 
-                <input class="input-text" type="text" name="birthday" id="birthday-date-input"></input>
+                <label for="burthday">Дата рождения:</label><br>
+                <input class="input-text" type="text" name="birthday" id="birthday-date-input"></input><br>
                 <div id="calendar" class="calendar shadow rounded">
                     <div class="calendar-controls">
                         <select id="month-select" class="month-select">
@@ -89,10 +96,14 @@
                 </div>
 
                 <label for="sender-email">Email:</label><br>
-                <input class="input-text" type="email" name="sender-email" /><br>
+                <input id="email" class="input-text" type="email" name="sender-email" /><br>
+
                 <label for="phone">Телефон:</label><br>
-                <input class="input-text" type="tel" name="phone" /><br>
-                <textarea name="callback-text" rows="5"></textarea>
+                <input id="phone" class="input-text" type="tel" name="phone" /><br>
+
+                <label for="callback-text">Текст письма:</label><br>
+                <textarea id="text" name="callback-text" rows="5"></textarea>
+
                 <div class="buttons">
                     <input class="button-submit" type="submit" value="Отправить" />
                     <input class="button-reset" type="reset" value="Очистить форму" />

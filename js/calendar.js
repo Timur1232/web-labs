@@ -26,13 +26,19 @@ document.addEventListener('click', (event) => {
 
 function showCalendar() {
     calendar.classList.add('show');
-    renderCalendar(today.getFullYear(), today.getMonth());
+    selectDate(selectedDate);
+    renderCalendar(selectedDate.getFullYear(), selectedDate.getMonth());
 }
 
 function hideCalendar() {
     calendar.classList.remove('show');
 }
 
+function checkDateGreater(d1, d2) {
+    const d1Time = d1.getTime();
+    const d2Time = d2.getTime();
+    return d1Time > d2Time;
+}
 
 function renderCalendar(year, month) {
     const firstDay = new Date(year, month, 1);
@@ -52,24 +58,34 @@ function renderCalendar(year, month) {
     }
 
     for (let i = 1; i <= daysInMonth; i += 1) {
-        const day = document.createElement('button');
-        day.className = 'day';
-        day.textContent = i;
+        let day = null;
+        if (checkDateGreater(new Date(year, month, i), today)) {
+            day = document.createElement('div');
+            day.classList.add('day');
+            day.classList.add('future');
+            day.textContent = i;
+        } else {
+            day = document.createElement('button');
+            day.className = 'day';
+            day.textContent = i;
 
-        if (year === today.getFullYear() &&
-            month === today.getMonth() &&
-            i === today.getDate()) {
-            day.classList.add('today');
+            if (year === today.getFullYear()
+                && month === today.getMonth()
+                && i === today.getDate()) {
+                day.classList.add('today');
+            }
+
+            if (selectedDate
+                && year === selectedDate.getFullYear()
+                && month === selectedDate.getMonth()
+                && i === selectedDate.getDate()) {
+                day.classList.add('selected');
+            }
+            day.addEventListener('click', () => {
+                selectDate(new Date(year, month, i));
+                input.focus();
+            });
         }
-
-        if (selectedDate &&
-            year === selectedDate.getFullYear() &&
-            month === selectedDate.getMonth() &&
-            i === selectedDate.getDate()) {
-            day.classList.add('selected');
-        }
-
-        day.addEventListener('click', () => selectDate(new Date(year, month, i)));
         calendarBody.appendChild(day);
     }
 
@@ -86,7 +102,7 @@ function selectDate(date) {
     input.value = formatDate(date);
     selectedDate = date;
     monthSelect.value = date.getMonth();
-    renderCalendar(date.getFullYear(), date.getMonth());
+    yearSelect.value = date.getFullYear();
 }
 
 function formatDate(date) {

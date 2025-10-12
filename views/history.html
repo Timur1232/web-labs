@@ -3,7 +3,7 @@
 <html lang="ru-RU">
 
 <head>
-    <title>Сайт Баймурадова Тимура</title>
+    <title>История посещений</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
@@ -24,25 +24,30 @@
         </label>
         <nav>
             <ul class="top-nav-bar">
-                <li><a class="nav-link page-active" href="/">Главная</a></li>
+                <li><a class="nav-link" href="/">Главная</a></li>
                 <li><a class="nav-link" href="/about_me">Обо мне</a></li>
                 <li id="interests-link"><a class="nav-link" href="/my_interests">Мои интересы</a></li>
                 <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
                 <li><a class="nav-link" href="/photoalbum">Фотоальбом</a></li>
                 <li><a class="nav-link" href="/callback">Контакт</a></li>
-                <li><a class="nav-link" href="/history">История</a></li>
+                <li><a class="nav-link page-active" href="/history">История</a></li>
             </ul>
         </nav>
         <div id="clock" class="clock"></div>
     </header>
     <main>
         <section class="content-container">
-            <article class="article-me content-block">
-                <h1 class="content-title">Кто я?</h1>
-                <img class="main-image shadow rounded" src="/media/me.jpg" alt="Ну хз, что сказать..." title="Ы">
-                <h1 class="name">Баймурадов Тимур Рашидович</h1>
-                <h3 class="group">ИС/б-23-1-о</h3>
-            </article>
+            <button onclick="resetHistory()">Сброс истории</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">История посещений текущего сеанса</th>
+                        <th colspan="2">Вся история посещений</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table">
+                </tbody>
+            </table>
         </section>
     </main>
     <footer>
@@ -51,6 +56,9 @@
             <p>Email: <a href="mailto:timur.univercity@gmail.com">timur.univercity@gmail.com</a></p>
         </section>
     </footer>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', _ => displayHistory());
+    </script>
 </body>
 
 </html>

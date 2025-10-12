@@ -51,6 +51,10 @@
     flex-flow: column;
 }
 
+.error {
+    color: #c53030;
+}
+
 .content-container {
     display: flex;
     flex-direction: column;
@@ -736,6 +740,28 @@ footer {
     background-color: var(--main-light-color);
 }
 
+#fullscreen-photo {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+#fullscreen-photo img {
+    max-width: 70vw;
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+#fullscreen-photo.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /*====================================[callback]===================================*/
 
 .form-container {
@@ -1064,7 +1090,6 @@ footer {
     border: none;
     background: none;
     padding: 8px;
-    cursor: pointer;
     border-radius: 3px;
     font-size: 14px;
 }
@@ -1081,6 +1106,11 @@ footer {
 .day.selected {
     background: var(--main-color);
     color: white;
+}
+
+.day.future {
+    background-color: white;
+    color: lightgrey;
 }
 
 /*====================================[fonts]===================================*/

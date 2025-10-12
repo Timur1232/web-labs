@@ -22,6 +22,7 @@ func main() {
 	e.GET("/photoalbum", photoalbum)
 	e.GET("/callback", callback)
 	e.GET("/not_exist", not_exist)
+	e.GET("/history", history)
 
 	e.Logger.Fatal(e.Start(":42069"))
 }
@@ -56,4 +57,8 @@ func callback(c echo.Context) error {
 
 func not_exist(c echo.Context) error {
 	return c.File("views/not_exist.html")
+}
+
+func history(c echo.Context) error {
+	return c.File("views/history.html")
 }

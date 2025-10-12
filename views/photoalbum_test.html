@@ -3,7 +3,7 @@
 <html lang="ru-RU">
 
 <head>
-    <title>Сайт Баймурадова Тимура</title>
+    <title>Фотоальбом</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
@@ -11,6 +11,7 @@
     <script type="text/javascript" src="/js/photoalbum.js" defer></script>
     <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
     <script type="module" src="/js/clock.js" defer></script>
+    <script type="text/javascript" src="/js/history.js"></script>
 </head>
 
 <body class="flex-container">
@@ -31,6 +32,7 @@
                 <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
                 <li><a class="nav-link page-active" href="/photoalbum">Фотоальбом</a></li>
                 <li><a class="nav-link" href="/callback">Контакт</a></li>
+                <li><a class="nav-link" href="/history">История</a></li>
             </ul>
         </nav>
         <div id="clock" class="clock"></div>
@@ -45,6 +47,7 @@
                 </li>
             </template>
             <ul class="photo-container"></ul>
+            <div id="fullscreen-photo"></div>
         </section>
     </main>
     <footer>

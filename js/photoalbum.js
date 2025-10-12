@@ -43,3 +43,31 @@ for (let i = 0; i < photos.length; i += 1) {
 }
 
 photoAlbum.appendChild(fragment);
+
+const fullscreenDiv = document.getElementById('fullscreen-photo');
+let fullscreenOpen = false;
+function openFullscreen(src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.className = 'rounded';
+    fullscreenDiv.appendChild(img);
+    fullscreenDiv.classList.add('show');
+    fullscreenOpen = true;
+}
+
+const photoCards = document.querySelectorAll('.photo-card');
+photoCards.forEach(card => card.addEventListener('click', e => {
+    const img = e.currentTarget.querySelector('img');
+    openFullscreen(img.src);
+}));
+
+fullscreenDiv.addEventListener('click', e => {
+    if (fullscreenOpen) {
+        const img = fullscreenDiv.querySelector('img');
+        if (e.target !== img) {
+            img.remove();
+            fullscreenDiv.classList.remove('show');
+            fullscreenOpen = false;
+        }
+    }
+})
