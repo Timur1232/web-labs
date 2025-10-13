@@ -7,6 +7,7 @@
   set text(
     lang: "ru",
     size: 14pt,
+    font: "Times New Roman"
   )
 
   set heading(
@@ -89,7 +90,7 @@
 
   v(6em)
 
-  align(right)[Информационные технологии и системы]
+  align(right)[Институт информационных технологий]
 
   v(4em)
 
@@ -133,7 +134,7 @@
   let current_number = context listing_counter.display()
 
   [
-    Листинг #current_number - #caption
+    Листинг #current_number -- #caption
     #parbreak()
     #text(
       font: "Linux Libertine Mono O",
@@ -157,10 +158,10 @@
   listing_code(body: text(code), caption: caption)
 }
 
-#let figure_image(path, caption: none) = {
+#let figure_img(path, caption: none, width: 100%) = {
   figure(
     caption: if caption != none [ -- #caption] else [],
-    image(path)
+    image(path, width: width),
   )
 }
 
@@ -193,10 +194,26 @@
     }
     let type = path.split(".").last()
     if type in image_types {
-      figure_image(path, caption: caption)
+      figure_img(path, caption: caption)
     } else {
       listing_code_file(path, caption: caption)
     }
     v(2em)
   }
+}
+
+#let simple_header(number: 1, lab_name: none) = {
+  counter(heading).update(number - 1)
+  align(
+    center,
+  )[
+    #block(
+      below: 1em,
+      heading(
+        numbering: (..nums) => [],
+        [ЛАБОРТОРНАЯ РАБОТА №#number],
+      )
+    )
+    «#lab_name»
+  ]
 }

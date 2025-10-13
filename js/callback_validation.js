@@ -28,9 +28,11 @@ function validateNameInput() {
             fullNameError.remove();
         }
         fullNameError = createErrorMessage(fullNameInput, err);
-    } else if (fullNameError != null) {
-        fullNameError.remove();
-        fullNameError = null;
+    } else {
+        if (fullNameError != null) {
+            fullNameError.remove();
+            fullNameError = null;
+        }
         return false;
     }
     return true;
@@ -89,10 +91,12 @@ function validateAgeSelect() {
         appendElement(ageSelect, error);
         prependElement(error, br);
         ageError = br;
-    } else if (ageError != null) {
-        ageError.nextSibling.remove();
-        ageError.remove();
-        ageError = null;
+    } else {
+        if (ageError != null) {
+            ageError.nextSibling.remove();
+            ageError.remove();
+            ageError = null;
+        }
         return false;
     }
     return true;
@@ -120,9 +124,11 @@ function validateBirthdayInput() {
             birthdayError.remove();
         }
         birthdayError = createErrorMessage(birthdayInput, err);
-    } else if (birthdayError != null) {
-        birthdayError.remove();
-        birthdayError = null;
+    } else {
+        if (birthdayError != null) {
+            birthdayError.remove();
+            birthdayError = null;
+        }
         return false;
     }
     return true;
@@ -141,9 +147,11 @@ function validateEmailInput() {
             emailError.remove();
         }
         emailError = createErrorMessage(emailInput, 'Введите электронную почту.');
-    } else if (emailError != null) {
-        emailError.remove();
-        emailError = null;
+    } else {
+        if (emailError != null) {
+            emailError.remove();
+            emailError = null;
+        }
         return false;
     }
     return true;
@@ -163,9 +171,11 @@ function validatePhoneNumberInput() {
             phoneError.remove();
         }
         phoneError = createErrorMessage(phoneInput, err);
-    } else if (phoneError != null) {
-        phoneError.remove();
-        phoneError = null;
+    } else {
+        if (phoneError != null) {
+            phoneError.remove();
+            phoneError = null;
+        }
         return false;
     }
     return true;
@@ -184,9 +194,11 @@ function validateTextInput() {
             textError.remove();
         }
         textError = createErrorMessage(textInput, 'Введите текст письма.');
-    } else if (textError != null) {
-        textError.remove();
-        textError = null;
+    } else {
+        if (textError != null) {
+            textError.remove();
+            textError = null;
+        }
         return false;
     }
     return true;
@@ -195,13 +207,13 @@ function validateTextInput() {
 const form = document.getElementById('callback-form');
 form.addEventListener('submit', (e) => {
     let err = false;
-    err = validateNameInput();
-    err = validateGenderRadios();
-    err = validateAgeSelect();
-    err = validateBirthdayInput();
-    err = validateEmailInput();
-    err = validatePhoneNumberInput();
-    err = validateTextInput();
+    err |= validateNameInput();
+    err |= validateGenderRadios();
+    err |= validateAgeSelect();
+    err |= validateBirthdayInput();
+    err |= validateEmailInput();
+    err |= validatePhoneNumberInput();
+    err |= validateTextInput();
     if (err) {
         e.preventDefault();
         return false;
@@ -259,7 +271,7 @@ function checkPhoneNumber(phoneNumber) {
         return 'Введите номер.';
     }
 
-    if ((phoneNumber[0] !== '+' || phoneNumber[0] !== '+') && (phoneNumber[1] !== '7' || phoneNumber[1] !== '3')) {
+    if (phoneNumber.charAt(0) !== '+' || (phoneNumber.charAt(1) !== '7' && phoneNumber.charAt(1) !== '3')) {
         return 'Номер телефона должен начинать с +7 или +3.';
     }
 
@@ -282,7 +294,7 @@ function checkPhoneNumber(phoneNumber) {
     }
 
     if (otherCount !== 0) {
-        return 'Номер телефона может иметь только цифры и символ ' + '.';
+        return 'Номер телефона может иметь только цифры и символ \'+\'.';
     }
 
     if (digitCount < 9 || digitCount > 11) {

@@ -51,7 +51,7 @@ function setSessionHistoryInCookies(history) {
     document.cookie = `pageNames=${pageNames}`;
     document.cookie = `pageLinks=${pageLinks}`;
     document.cookie = `times=${times}`;
-    document.cookie = 'Max-Age=86400';
+    document.cookie = `Max-Age=${60 * 60}`;
 }
 
 function getAllTimeHistoryFromLS() {
@@ -67,7 +67,6 @@ function setAllTimeHistoryInLS(history) {
 }
 
 function formatDate(date) {
-    date = new Date(date);
     const year = date.getFullYear().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
@@ -84,6 +83,13 @@ function max(a, b) {
     }
 }
 
+function parseDate(dateStr) {
+    const [date, time] = dateStr.split(' ');
+    const [day, month, year] = date.split('.');
+    const [hour, minute] = time.split(':');
+    return new Date(year, month-1, day, hour, minute);
+}
+
 function displayHistory() {
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
@@ -97,14 +103,14 @@ function displayHistory() {
 
         if (i < sessionHistory.length) {
             html += `<th style="text-align:left">${i + 1}. <a href="${sessionHistory[i].pageLink}">${sessionHistory[i].pageName}</a></th>
-                     <th style="text-align:left">${formatDate(sessionHistory[i].time)}</th>`;
+                     <th style="text-align:left">${formatDate(parseDate(sessionHistory[i].time))}</th>`;
         } else {
             html += '<th></th><th></th>';
         }
 
         if (i < allTimeHistory.length) {
             html += `<th style="text-align:left">${i + 1}. <a href="${allTimeHistory[i].pageLink}">${allTimeHistory[i].pageName}</a></th>
-                     <th style="text-align:left">${formatDate(allTimeHistory[i].time)}</th>`;
+                     <th style="text-align:left">${formatDate(parseDate(allTimeHistory[i].time))}</th>`;
         } else {
             html += '<th></th><th></th>';
         }
@@ -118,13 +124,13 @@ function displayHistory() {
 function trackPage(pageName, pageLink) {
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
-    const now = new Date();
+    let now = formatDate(new Date());
 
-    if (sessionHistory.length >= 48) {
+    if (sessionHistory.length >= 121) {
         for (let i = 0; i < sessionHistory.length - 1; i += 1) {
             sessionHistory[i] = sessionHistory[i + 1];
         }
-        sessionHistory[47] = {
+        sessionHistory[120] = {
             pageName: pageName,
             pageLink: pageLink,
             time: now,
@@ -158,4 +164,11 @@ function resetHistory() {
     historyTable.innerHTML = '';
 }
 
-document.addEventListener('DOMContentLoaded', _ => trackPage(document.title, window.location.href));
+document.addEventListener('DOMContentLoaded', _ => {
+    const pathDecomposed = window.location.href.split('/');
+    if (pathDecomposed[pathDecomposed.length - 1] === 'history') {
+        return;
+    }
+    const href = '/' + pathDecomposed[pathDecomposed.length - 1];
+    trackPage(document.title, href);
+});
