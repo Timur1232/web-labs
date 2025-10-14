@@ -10,7 +10,8 @@
     <link rel="icon" href="/media/favicon.ico">
     <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
     <script type="module" src="/js/clock.js" defer></script>
-    <script type="text/javascript" src="/js/history.js"></script>
+    <script type="module" src="/js/history.js"></script>
+    <script type="module" src="/js/set_history_reset.js" defer></script>
 </head>
 
 <body class="flex-container">
@@ -37,7 +38,7 @@
     </header>
     <main>
         <section class="content-container">
-            <button onclick="resetHistory()">Сброс истории</button>
+            <button id="reset-history">Сброс истории</button>
             <table>
                 <thead>
                     <tr>
@@ -56,7 +57,8 @@
             <p>Email: <a href="mailto:timur.univercity@gmail.com">timur.univercity@gmail.com</a></p>
         </section>
     </footer>
-    <script type="text/javascript">
+    <script type="module">
+        import { displayHistory } from '/js/history.js'
         document.addEventListener('DOMContentLoaded', _ => displayHistory());
     </script>
 </body>

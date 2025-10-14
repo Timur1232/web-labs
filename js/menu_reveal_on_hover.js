@@ -23,7 +23,6 @@ function appendDropMenuToElement(element, anchors) {
     }
 
     element.appendChild(dropMenu);
-
 }
 
 function addDropMenuEventLiseners(element, anchors) {

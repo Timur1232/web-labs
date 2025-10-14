@@ -37,7 +37,7 @@ function getSessionHistoryFromCookies() {
     return history;
 }
 
-function setSessionHistoryInCookies(history) {
+function setSessionHistoryInCookies(history, path) {
     let pageNames = history[0].pageName;
     let pageLinks = history[0].pageLink;
     let times = history[0].time;
@@ -48,10 +48,9 @@ function setSessionHistoryInCookies(history) {
         times += '&' + history[i].time;
     }
 
-    document.cookie = `pageNames=${pageNames}`;
-    document.cookie = `pageLinks=${pageLinks}`;
-    document.cookie = `times=${times}`;
-    document.cookie = `Max-Age=${60 * 60}`;
+    document.cookie = `pageNames=${pageNames};max-age=10;path=${path}`;
+    document.cookie = `pageLinks=${pageLinks};max-age=10;path=${path}`;
+    document.cookie = `times=${times};max-age=10;path=${path}`;
 }
 
 function getAllTimeHistoryFromLS() {
@@ -87,10 +86,10 @@ function parseDate(dateStr) {
     const [date, time] = dateStr.split(' ');
     const [day, month, year] = date.split('.');
     const [hour, minute] = time.split(':');
-    return new Date(year, month-1, day, hour, minute);
+    return new Date(year, month - 1, day, hour, minute);
 }
 
-function displayHistory() {
+export function displayHistory() {
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
 
@@ -121,7 +120,7 @@ function displayHistory() {
     historyTable.innerHTML = html;
 }
 
-function trackPage(pageName, pageLink) {
+export function trackPage(pageName, pageLink, path = '/') {
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
     let now = formatDate(new Date());
@@ -149,11 +148,11 @@ function trackPage(pageName, pageLink) {
         time: now,
     });
 
-    setSessionHistoryInCookies(sessionHistory);
+    setSessionHistoryInCookies(sessionHistory, path);
     setAllTimeHistoryInLS(allTimeHistory);
 }
 
-function resetHistory() {
+export function resetHistory() {
     setSessionHistoryInCookies([{
         pageName: '',
         pageLink: '',
@@ -164,11 +163,18 @@ function resetHistory() {
     historyTable.innerHTML = '';
 }
 
-document.addEventListener('DOMContentLoaded', _ => {
+export function getEndpoint() {
     const pathDecomposed = window.location.href.split('/');
     if (pathDecomposed[pathDecomposed.length - 1] === 'history') {
         return;
     }
-    const href = '/' + pathDecomposed[pathDecomposed.length - 1];
-    trackPage(document.title, href);
-});
+    let href = '';
+    for (let i = 3; i < pathDecomposed.length; i += 1) {
+        href += '/' + pathDecomposed[i];
+    }
+    if (href === '') {
+        return '/';
+    } else {
+        return href;
+    }
+}
