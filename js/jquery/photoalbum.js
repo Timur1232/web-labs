@@ -19,10 +19,12 @@ const photos = [
     { filename: 'photo18.jpg', alt: 'Динозавры-лудоманы', title: 'Let\'s go gambling!', label: 'Дино-лудомания' }
 ];
 
+let currentPhoto = null;
+
 $(document).ready(function() {
     const cardTemplate = $('#photo-card-template');
 
-    function createImageCard(photoSpecs) {
+    function createImageCard(photoSpecs, num) {
         const card = cardTemplate.contents().clone();
         const imageContainer = card.find('.photo-image-container');
         const labelContainer = card.find('.photo-label');
@@ -35,36 +37,69 @@ $(document).ready(function() {
 
         $('<p>').text(photoSpecs.label).appendTo(labelContainer);
 
+        card.data('num', String(num));
         return card;
     }
 
     const photoContainer = $('.photo-container');
-    photos.forEach(p => {
-        photoContainer.append(createImageCard(p));
-    });
+    for (let i = 0; i < photos.length; i += 1) {
+        photoContainer.append(createImageCard(photos[i], i));
+    }
 
     const fullscreenDiv = $('#fullscreen-photo');
     let fullscreenOpen = false;
-    function openFullscreen(src) {
+    function openFullscreen(src, num) {
         $('<img>', {
             src: src,
             class: 'rounded',
-        }).appendTo(fullscreenDiv);
+        }).prependTo(fullscreenDiv);
         fullscreenDiv.addClass('show');
         fullscreenOpen = true;
+
+        fullscreenDiv.find('#photo-number')
+            .text(`${num+1} / ${photos.length}`);
+        currentPhoto = Number(num);
     }
 
     $('.photo-card').click(function() {
         const imgSrc = $(this).find('img').attr('src');
-        openFullscreen(imgSrc);
+        const num = Number($(this).data('num'));
+        openFullscreen(imgSrc, num);
     });
 
-    fullscreenDiv.click(function (e) {
-        if (fullscreenOpen && !$(e.target).is('img')) {
-            $(this).find('img').remove();
-            $(this).removeClass('show');
-            fullscreenOpen = false;
+    function closePhoto(p) {
+        $(p).find('img').remove();
+        $(p).removeClass('show');
+        fullscreenOpen = false;
+    }
+
+    fullscreenDiv.click(function(e) {
+        if (fullscreenOpen && !$(e.target).is('img') && !$(e.target).is('span')) {
+            closePhoto(this);
+            currentPhoto = null;
+        } else {
+            e.stopPropagation();
         }
+    });
+
+    $('#prev-photo').click(function() {
+        if (currentPhoto <= 0) {
+            return;
+        }
+        closePhoto($(this).closest('#fullscreen-photo'));
+        currentPhoto -= 1;
+        const src = `/media/photo/${photos[currentPhoto].filename}`;
+        openFullscreen(src, currentPhoto);
+    });
+
+    $('#next-photo').click(function() {
+        if (currentPhoto >= photos.length - 1) {
+            return;
+        }
+        closePhoto($(this).closest('#fullscreen-photo'));
+        currentPhoto += 1;
+        const src = `/media/photo/${photos[currentPhoto].filename}`;
+        openFullscreen(src, currentPhoto);
     });
 });
 

@@ -750,17 +750,27 @@ footer {
 }
 
 #fullscreen-photo img {
-    max-width: 70vw;
-    max-height: 70vh;
+    max-width: 70wh;
     width: auto;
-    height: auto;
+    height: 70vh;
     object-fit: contain;
 }
 
 #fullscreen-photo.show {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#fullscreen-photo.show #controls span {
+    font-size: 2em;
+    color: white;
+}
+
+.arrow-button {
+    cursor: pointer;
+    user-select: none;
 }
 
 /*====================================[callback]===================================*/
