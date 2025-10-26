@@ -8,14 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
     <link rel="icon" href="/media/favicon.ico">
-    <!-- <script type="module" src="/js/form_checker.js"></script> -->
-    <!-- <script type="module" src="/js/callback_form_validation.js" defer></script> -->
-    <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
-    <script type="module" src="/js/clock.js" defer></script>
-    <script type="module" src="/js/calendar.js" defer></script>
-    <script type="text/javascript" src="/js/callback_validation.js" defer></script>
-    <script type="module" src="/js/history.js"></script>
-    <script type="module" src="/js/track_page.js"></script>
+    <script type="text/javascript" src="/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/js/jquery/menu_reveal_on_hover.js"></script>
+    <script type="text/javascript" src="/js/jquery/clock.js"></script>
+    <script type="text/javascript" src="/js/jquery/calendar.js" defer></script>
+    <script type="text/javascript" src="/js/jquery/callback_validation.js"></script>
+    <script type="module" src="/js/jquery/history.js"></script>
+    <script type="module" src="/js/jquery/track_page.js"></script>
 </head>
 
 <body class="flex-container">
@@ -48,21 +47,13 @@
                 <label for="full-name">ФИО:</label><br>
                 <input id="full-name" class="input-text" type="text" name="full-name" autofocus /><br>
 
+                <label for="gender">Пол:</label><br>
                 <div id="gender-radios">
                     <input class="input-radio" type="radio" name="gender" id="male" value="male" />
                     <label for="male">Мужской</label>
                     <input class="input-radio" type="radio" name="gender" id="female" value="female" />
                     <label for="female">Женский</label>
                 </div>
-
-                <label for="age">Возраст:</label>
-                <select id="age" size="1" name="age">
-                    <option selected value="">--Выберите возраст--</option>
-                    <option value="0..16">Меньше 16 лет</option>
-                    <option value="16..=18">От 16 до 18 лет</option>
-                    <option value="19..=25">От 19 до 25 лет</option>
-                    <option value="25..">Больше 25 лет</option>
-                </select><br>
 
                 <label for="burthday">Дата рождения:</label><br>
                 <input class="input-text" type="text" name="birthday" id="birthday-date-input"></input><br>

@@ -48,7 +48,7 @@ func test(c echo.Context) error {
 }
 
 func photoalbum(c echo.Context) error {
-	return c.File("views/photoalbum_test.html")
+	return c.File("views/photoalbum.html")
 }
 
 func callback(c echo.Context) error {

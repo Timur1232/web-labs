@@ -19,11 +19,10 @@ const photos = [
     { filename: 'photo18.jpg', alt: 'Динозавры-лудоманы', title: 'Let\'s go gambling!', label: 'Дино-лудомания' }
 ];
 
-$(function() {
+$(document).ready(function() {
     const cardTemplate = $('#photo-card-template');
 
     function createImageCard(photoSpecs) {
-        console.log(cardTemplate.html());
         const card = cardTemplate.contents().clone();
         const imageContainer = card.find('.photo-image-container');
         const labelContainer = card.find('.photo-label');
@@ -55,15 +54,15 @@ $(function() {
         fullscreenOpen = true;
     }
 
-    $('.photo-card').on('click', e => {
-        const imgSrc = $(e.currentTarget).find('img').attr('src');
+    $('.photo-card').click(function() {
+        const imgSrc = $(this).find('img').attr('src');
         openFullscreen(imgSrc);
     });
 
-    fullscreenDiv.on('click', e => {
+    fullscreenDiv.click(function (e) {
         if (fullscreenOpen && !$(e.target).is('img')) {
-            $(e.currentTarget).find('img').remove();
-            $(e.currentTarget).removeClass('show');
+            $(this).find('img').remove();
+            $(this).removeClass('show');
             fullscreenOpen = false;
         }
     });

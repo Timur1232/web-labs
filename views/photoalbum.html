@@ -3,13 +3,17 @@
 <html lang="ru-RU">
 
 <head>
-    <title>Сайт Баймурадова Тимура</title>
+    <title>Фотоальбом</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel=stylesheet type="text/css" href="/styles/style.css">
     <link rel="icon" href="/media/favicon.ico">
-    <script type="text/javascript" src="/js/menu_reveal_on_hover.js" defer></script>
-    <script type="module" src="/js/clock.js" defer></script>
+    <script type="text/javascript" src="/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/js/jquery/menu_reveal_on_hover.js"></script>
+    <script type="text/javascript" src="/js/jquery/photoalbum.js"></script>
+    <script type="text/javascript" src="/js/jquery/clock.js"></script>
+    <script type="module" src="/js/jquery/history.js"></script>
+    <script type="module" src="/js/jquery/track_page.js"></script>
 </head>
 
 <body class="flex-container">
@@ -30,6 +34,7 @@
                 <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
                 <li><a class="nav-link page-active" href="/photoalbum">Фотоальбом</a></li>
                 <li><a class="nav-link" href="/callback">Контакт</a></li>
+                <li><a class="nav-link" href="/history">История</a></li>
             </ul>
         </nav>
         <div id="clock" class="clock"></div>
@@ -37,160 +42,14 @@
     <main>
         <section class="content-container" id="photoalbum">
             <h1 class="content-title">Мои любимые фотокарточки</h1>
-            <ul class="photo-container">
+            <template id="photo-card-template">
                 <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo1.jpg" alt="Горящее пианино" title="Это Imagine Dragons?" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Огненная музыка</p>
-                    </div>
+                    <div class="photo-image-container"></div>
+                    <div class="photo-label"></div>
                 </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo2.jpg" alt="Волынщик на моноколесе" title="HELL YEAH!!!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Эпичный волынщик</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo3.jpg" alt="Гаст из майнкрафта с атомной бомбой"
-                            title="Надеюсь ничего не произойдет" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Гаст с царь бимбой</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo4.jpg" alt="Лягушка со скрипкой"
-                            title="Это среда чувакииииииии!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Лягушка</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo5.jpg" alt="Круглый пруд" title="Везде обман! Торт это ЛОЖЬ!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Круглый пруд</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo6.jpg" alt="Корова с лестницей на голове"
-                            title="Любопытной корове вымя оторвали" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Любопытная корова</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo7.jpg" alt="Мужик с крокодилом"
-                            title="Это могли бы быть мы с тобой, но ты не крокодил в очках" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Мужик с крокодилом</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo8.jpg" alt="Страшные костюмы"
-                            title="Я и мои последние две извилины" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Ночной кошмар</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo9.jpg" alt="ААААААААААААААА!!!"
-                            title="ААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА" />
-                    </div>
-                    <div class="photo-label">
-                        <p>АААААААААААААА!!!!!!</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo10.jpg" alt="Младенец с РПГ"
-                            title="Я не знаю что тут дополнять" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Идеальный солдат</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo11.jpg" alt="Круто!" title="Круто!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Круто!</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo12.jpg" alt="Японец с огненным оружием" title="Эпично!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Огненная крутилка</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo13.jpg" alt="Закрытая на ночь игровая площадка с супермаркете"
-                            title="Обернись" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Когда остался один в супермаркете</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo14.jpg" alt="Кот на скейтборде" title="Крутой!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Кот на скейтборде</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo15.jpg" alt="Депресивный Гарфилд" title="Тупа я" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Самый счастливый студент СевГУ</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo16.jpg" alt="Собака в каске" title="Старое фото" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Собака в каске</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo17.jpg" alt="Бабка в костюме из травы" title="Фото холмов" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Ну тут хз</p>
-                    </div>
-                </li>
-                <li class="photo-card shadow">
-                    <div class="photo-image-container">
-                        <img src="/media/photo/photo18.jpg" alt="Динозавры-лудоманы" title="Let's go gambling!" />
-                    </div>
-                    <div class="photo-label">
-                        <p>Дино-лудомания</p>
-                    </div>
-                </li>
-            </ul>
+            </template>
+            <ul class="photo-container"></ul>
+            <div id="fullscreen-photo"></div>
         </section>
     </main>
     <footer>
