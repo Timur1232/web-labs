@@ -1174,6 +1174,14 @@ footer {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: white;
+    font-size: 2em;
+}
+
+.confirm-window .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
 }
 
 /*====================================[fonts]===================================*/

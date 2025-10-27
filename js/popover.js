@@ -81,41 +81,49 @@ function restartDeleteTimer(popoverSpecs) {
 }
 
 function addPopoverListener(popoverSpecs) {
-    $(popoverSpecs.id).on('mouseover', function() {
-        if ($('.popover').data('id') === popoverSpecs.id && globalTimer!= null) {
+    $(popoverSpecs.selector).on('mouseover', function() {
+        if ($('.popover').data('selector') === popoverSpecs.selector && globalTimer!= null) {
             restartDeleteTimer(popoverSpecs);
             return;
         } else if (globalTimer != null) {
-            restartDeleteTimer(popoverSpecs);
+            clearTimeout(globalTimer);
+            globalTimer = null;
         }
         createPopover(this, $(`<span>${popoverSpecs.text}</span>`), popoverSpecs.horizontal);
-        $('.popover').data('id', popoverSpecs.id);
+        $('.popover').data('selector', popoverSpecs.selector);
     }).on('mouseleave', function() {
         restartDeleteTimer(popoverSpecs);
     });
 }
 
 const popover1 = {
-    id: '#test',
+    selector: '#test',
     sec: 5,
     horizontal: false,
     text: 'popover',
 }
 const popover2 = {
-    id: '#test2',
+    selector: '#test2',
     sec: 5,
     horizontal: true,
     text: 'popover left',
 }
 const popover3 = {
-    id: '#test3',
+    selector: '#test3',
     sec: 5,
     horizontal: true,
     text: 'popover rigth',
+}
+const popoverButton = {
+    selector: '#test-confirm',
+    sec: 1,
+    horizontal: false,
+    text: 'Нажмите для подтверждения',
 }
 
 $(document).ready(function() {
     addPopoverListener(popover1);
     addPopoverListener(popover2);
     addPopoverListener(popover3);
+    addPopoverListener(popoverButton);
 });

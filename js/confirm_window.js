@@ -3,18 +3,20 @@ function createConfirmWindow(message, callback) {
         .addClass('confirm-window')
         .text(message);
 
+    const buttons = $('<div>').addClass('buttons');
     $('<button>Подтвердить</button>')
         .click(function() {
             alert('confirmed');
             callback();
             deleteConfirmWindow();
-        }).appendTo(div);
+        }).appendTo(buttons);
     $('<button>Отменить</button>')
         .click(function() {
             alert('canceled');
             deleteConfirmWindow();
-        }).appendTo(div);
+        }).appendTo(buttons);
 
+    buttons.appendTo(div);
     div.appendTo('main');
 }
 
