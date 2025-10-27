@@ -13,6 +13,8 @@
     <script type="text/javascript" src="/js/jquery/clock.js"></script>
     <script type="module" src="/js/jquery/history.js"></script>
     <script type="module" src="/js/jquery/track_page.js"></script>
+    <script type="text/javascript" src="/js/popover.js"></script>
+    <script type="text/javascript" src="/js/confirm_window.js"></script>
 </head>
 
 <body class="flex-container">
@@ -39,13 +41,19 @@
     </header>
     <main>
         <section class="content-container">
+            <button id="test-confirm">Нажмите</button>
             <article class="article-me content-block">
                 <h1 class="content-title">Кто я?</h1>
                 <img class="main-image shadow rounded" src="/media/me.jpg" alt="Ну хз, что сказать..." title="Ы">
+                <p id="test">Наведи на меня</p>
                 <h1 class="name">Баймурадов Тимур Рашидович</h1>
                 <h3 class="group">ИС/б-23-1-о</h3>
             </article>
         </section>
+        <aside id="aside-test">
+            <p id="test2">наведи</p>
+            <p id="test3">наведи</p>
+        </aside>
     </main>
     <footer>
         <section class="footer-content">

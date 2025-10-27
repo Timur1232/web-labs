@@ -48,9 +48,12 @@ $(document).ready(function() {
 
     const fullscreenDiv = $('#fullscreen-photo');
     let fullscreenOpen = false;
-    function openFullscreen(src, num) {
+    function openFullscreen(num) {
+        const src = `/media/photo/${photos[num].filename}`;
         $('<img>', {
             src: src,
+            alt: photos[num].alt,
+            title: photos[num].title,
             class: 'rounded',
         }).prependTo(fullscreenDiv);
         fullscreenDiv.addClass('show');
@@ -58,13 +61,14 @@ $(document).ready(function() {
 
         fullscreenDiv.find('#photo-number')
             .text(`${num+1} / ${photos.length}`);
+        fullscreenDiv.find('#photo-label')
+            .text(photos[num].label);
         currentPhoto = Number(num);
     }
 
     $('.photo-card').click(function() {
-        const imgSrc = $(this).find('img').attr('src');
         const num = Number($(this).data('num'));
-        openFullscreen(imgSrc, num);
+        openFullscreen(num);
     });
 
     function closePhoto(p) {
@@ -88,8 +92,7 @@ $(document).ready(function() {
         }
         closePhoto($(this).closest('#fullscreen-photo'));
         currentPhoto -= 1;
-        const src = `/media/photo/${photos[currentPhoto].filename}`;
-        openFullscreen(src, currentPhoto);
+        openFullscreen(currentPhoto);
     });
 
     $('#next-photo').click(function() {
@@ -98,8 +101,7 @@ $(document).ready(function() {
         }
         closePhoto($(this).closest('#fullscreen-photo'));
         currentPhoto += 1;
-        const src = `/media/photo/${photos[currentPhoto].filename}`;
-        openFullscreen(src, currentPhoto);
+        openFullscreen(currentPhoto);
     });
 });
 
