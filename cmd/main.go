@@ -48,11 +48,11 @@ func test(c echo.Context) error {
 }
 
 func photoalbum(c echo.Context) error {
-	return c.File("views/photoalbum.html")
+	return c.File("views/vue/photoalbum.html")
 }
 
 func callback(c echo.Context) error {
-	return c.File("views/callback.html")
+	return c.File("views/vue/callback.html")
 }
 
 func not_exist(c echo.Context) error {

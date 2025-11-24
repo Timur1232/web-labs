@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="ru-RU">
+
+<head>
+    <title>Контакт</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TODO: изменить display на календаре -->
+    <link rel=stylesheet type="text/css" href="/styles/style.css">
+    <link rel="icon" href="/media/favicon.ico">
+    <script type="text/javascript" src="/js/vue/vue.js"></script>
+    <script type="module" src="/js/vue/calendar.js"></script>
+    <script type="module" src="/js/vue/form.js" defer></script>
+    <script type="text/javascript" src="/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/js/jquery/menu_reveal_on_hover.js"></script>
+    <script type="text/javascript" src="/js/jquery/clock.js"></script>
+    <script type="module" src="/js/jquery/history.js"></script>
+    <script type="module" src="/js/jquery/track_page.js"></script>
+</head>
+
+<body class="flex-container">
+    <header>
+        <input type="checkbox" id="burger-menu-checkbox" class="burger-menu"
+            title="https://www.flaticon.com/ru/authors/andy-horvath" />
+        <label for="burger-menu-checkbox" class="burger-icon-closed">
+            <img src="/media/burger.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
+        </label>
+        <label for="burger-menu-checkbox" class="burger-icon-opened">
+            <img src="/media/cross.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
+        </label>
+        <nav>
+            <ul class="top-nav-bar">
+                <li><a class="nav-link" href="/">Главная</a></li>
+                <li><a class="nav-link" href="/about_me">Обо мне</a></li>
+                <li id="interests-link"><a class="nav-link" href="/my_interests">Мои интересы</a></li>
+                <li id="studies-link"><a class="nav-link" href="/studies">Учеба</a></li>
+                <li><a class="nav-link" href="/photoalbum">Фотоальбом</a></li>
+                <li><a class="nav-link page-active" href="/callback">Контакт</a></li>
+                <li><a class="nav-link" href="/history">История</a></li>
+            </ul>
+        </nav>
+        <div id="clock" class="clock"></div>
+    </header>
+    <main>
+        <section id="form" class="form-container">
+            <form class="callback-form shadow rounded" method="post"
+                action="mailto:timur.univercity@gmail.com" enctype="text/plain">
+                <label for="full-name">ФИО:</label><br>
+                <p v-if="errors.fullName" class="error">{{ errors.fullName }}</p>
+                <input v-model="formData.fullName" class="input-text" type="text" id="full-name" autofocus
+                    @input="validateFullName" /><br>
+
+                <p>Пол:</p>
+                <p v-if="errors.gender" class="error">{{ errors.gender }}</p>
+                <div v-for="option in genders">
+                    <input v-model="formData.gender" :id="option" class="input-radio" type="radio" name="gender"
+                        :value="option"/>
+                    <label :for="option">{{ option }}</label>
+                </div>
+
+                <label for="birthday">Дата рождения:</label><br>
+                <p v-if="errors.birthday" class="error">{{ errors.birthday }}</p>
+                <input v-model="formData.birthday"
+                    @focusin="openCalendar"
+                    @input="validateBirthdayDate"
+                    id="birthday" class="input-text" type="text" /><br>
+
+                <calendar v-if="isCalendarOpen"
+                    v-click-outside="closeCalendar"
+                    :selected-date-str="formData.birthday"
+                    @date-selected="setSelectedDate"></calendar>
+
+                <label for="sender-email">Email:</label><br>
+                <p v-if="errors.email" class="error">{{ errors.email }}</p>
+                <input v-model="formData.email" class="input-text" type="email" id="sender-email"
+                    @focusout="validateEmail"
+                    @input="validateEmail" /><br>
+
+                <label for="phone">Телефон:</label><br>
+                <p v-if="errors.phone" class="error">{{ errors.phone }}</p>
+                <input v-model="formData.phone" class="input-text" type="tel" id="phone"
+                    @focusout="validatePhoneNumber"
+                    @input="validatePhoneNumber"/><br>
+
+                <label for="callback-text">Текст письма:</label><br>
+                <p v-if="errors.text" class="error">{{ errors.text }}</p>
+                <textarea v-model="formData.text" id="callback-text" rows="5"
+                    @focusout="validateTextInput"
+                    @input="validateTextInput"></textarea>
+
+                <div class="buttons">
+                    <input class="button-submit" type="submit" value="Отправить"
+                        @click="validateAll"/>
+                    <input class="button-reset" type="reset" value="Очистить форму"
+                        @click.passive="clearErrors"/>
+                </div>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <section class="footer-content">
+            <h4>Контакты</h4>
+            <p>Email: <a href="mailto:timur.univercity@gmail.com">timur.univercity@gmail.com</a></p>
+        </section>
+    </footer>
+</body>
+
+</html>
