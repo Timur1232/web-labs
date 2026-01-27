@@ -1,0 +1,37 @@
+<section class="content-container">
+    <article class="me content-block">
+        <img id="sigma-me" class="shadow rounded" src="/public/media/sigma.gif" alt="Ну и ну..."
+            title="я сигма крутой я сигма сигма сигма сигма" />
+        <h1 id="name" class="name">Баймурадов Тимур Рашидович</h1>
+        <h2 id="group" class="group">ИС/б-23-1-о</h2>
+    </article>
+    <hr>
+    <h2 class="content-title">Факты обо мне</h2>
+    <article class="past content-block">
+        <h3>1. Родился в Казахстане</h3>
+        <p>Это я в прошлом правда правда --></p>
+        <img class="shadow rounded" src="/public/media/kazah2.jpeg" alt="Ну хз что сказать..." title="Да да я"
+            width="350px" />
+    </article>
+    <hr>
+    <article class="university content-block">
+        <h3>2. СевГУ</h3>
+        <img class="shadow rounded" src="/public/media/giga-sevsu.jpg" alt="Вот зараза..." title="Лучший университет!"
+            width="350px" />
+        <p>Учусь в самом лучшем, прекрасном, восхитительном, удивительном, невообразимом,
+            современном, блестящем, потресающем, несравнительном, дивном, обворожительном,
+            изумительном
+            Высшем Учебном Заведении в мире - в Севастопольском Государственном Университете!</p>
+    </article>
+    <hr>
+    <article class="computer content-block">
+        <h3>3. Я использую Linux, btw, и neovim, btw.:w</h3>
+        <p>Neovim делает jjjkkkkkjj:w:wdwdwdw:wcipddyapci":w:w:wci"yyjjjjpciw:wuu:w :Sex!</p>
+    </article>
+    <hr>
+    <article class="attention content-block">
+        <h1>ВНИМАНИЕ!</h1>
+        <img src="/public/media/live-reaction.png" alt="тут должен быть мем" title="pov" />
+        <h3>Спасибо за внимание.</h3>
+    </article>
+</section>
