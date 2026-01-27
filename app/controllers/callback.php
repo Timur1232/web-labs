@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Controllers;
+use App\Core\{Controller, View, JSScript};
+
 require_once 'app/core/controller.php';
 require_once 'app/core/model.php';
 

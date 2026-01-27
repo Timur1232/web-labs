@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 final class Model {
 
 }

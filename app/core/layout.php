@@ -1,5 +1,5 @@
 <?php
-function layout(View $view): void {
+function layout(App\Core\View $view): void {
 ?>
     <!DOCTYPE html>
     <html lang="ru-RU">

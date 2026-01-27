@@ -1,7 +1,11 @@
 <?php
 
+namespace App\Controllers;
+use App\Core\{Controller, View};
+
 require_once 'app/core/controller.php';
 require_once 'app/core/model.php';
+
 
 class AboutMeController extends Controller {
     public function __construct() {

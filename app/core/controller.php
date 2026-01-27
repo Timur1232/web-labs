@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 require_once 'app/core/view.php';
 require_once 'app/core/model.php';
 

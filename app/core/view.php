@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 require_once 'app/core/layout.php';
 
 enum JSScriptType : string {
