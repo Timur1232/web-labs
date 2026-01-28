@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controllers\History;
-use App\Core\{View, Request, JSScriptType};
+namespace App\Controllers;
+use App\Core\{View, Request};
 
-function index(Request $req): void {
-    $view = new View('history', 'История просмотра');
-    $view->script('/public/js/jquery/set_history_reset.js', JSScriptType::Module);
-    $view->render_layout();
+final class History {
+    public static function index(Request $req): void {
+        $view = new View();
+        echo $view->render_layout(template_page: 'history', title: 'История просмотра');
+    }
 }

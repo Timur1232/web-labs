@@ -11,7 +11,7 @@ final class PhotoItem {
     ) { }
 }
 
-final class Photoalbum {
+final class PhotoalbumModel {
     /** @var array<PhotoItem> $photos */
     public array $photos;
 

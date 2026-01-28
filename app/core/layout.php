@@ -1,21 +1,34 @@
 <?php
-function layout(App\Core\View $view): void { ?>
+
+namespace App\Core;
+
+final class LayoutData {
+    public function __construct(
+        public string $title,
+        public string $page,
+        public string $template_page,
+        public View $content,
+    ) { }
+}
+
+function layout(LayoutData $data): void { ?>
     <!DOCTYPE html>
     <html lang="ru-RU">
     <head>
-        <title><?= $view->data['title'] ?></title>
+        <title><?= $data->title ?></title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="/public/styles/style_scss.css">
         <link rel="icon" href="/public/media/favicon.ico">
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
         <script type="text/javascript" src="/public/js/jquery/jquery.js"></script>
-        <script type="text/javascript" src="/public/js/jquery/menu_reveal_on_hover.js"></script>
-        <script type="text/javascript" src="/public/js/jquery/clock.js"></script>
-        <script type="module" src="/public/js/jquery/history.js"></script>
-        <script type="module" src="/public/js/jquery/track_page.js"></script>
+        <script type="text/javascript" src="/public/js/menu_reveal_on_hover.js"></script>
+        <script type="text/javascript" src="/public/js/clock.js"></script>
+        <script type="text/javascript" src="/public/js/history.js"></script>
+        <script>trackPage(document.title, getEndpoint())</script>
         <?php
-            foreach ($view->scripts as $script) {
-                echo $script->get_script();
+            foreach ($data->content->scripts as $script) {
+                echo $script->render_script();
             }
         ?>
     </head>
@@ -33,33 +46,54 @@ function layout(App\Core\View $view): void { ?>
             <nav>
                 <ul class="top-nav-bar">
                     <li>
-                        <a class="nav-link <?= $view->page == 'index' ? ' page-active' : '' ?>" href="/">Главная</a>
+                        <a
+                            class="nav-link <?= $data->page == 'index' ? ' page-active' : '' ?>"
+                            href="/"
+                        >Главная</a>
                     </li>
                     <li>
-                        <a class="nav-link <?= $view->page == 'about_me' ? ' page-active' : '' ?>" href="/about_me">Обо мне</a>
+                        <a
+                            class="nav-link <?= $data->page == 'about_me' ? ' page-active' : '' ?>"
+                            href="/about_me"
+                        >Обо мне</a>
                     </li>
                     <li id="interests-link">
-                        <a class="nav-link <?= $view->page == 'my_interests' ? ' page-active' : '' ?>" href="/my_interests">Мои интересы</a>
+                        <a
+                            class="nav-link <?= $data->page == 'interests' ? ' page-active' : '' ?>"
+                            href="/interests"
+                        >Мои интересы</a>
                     </li>
                     <li id="studies-link">
-                        <a class="nav-link <?= $view->page == 'studies' ? ' page-active' : '' ?>" href="/study">Учеба</a>
+                        <a
+                            class="nav-link <?= $data->page == 'study' || $data->page == 'test' ? ' page-active' : '' ?>"
+                            href="/study"
+                        >Учеба</a>
                     </li>
                     <li>
-                        <a class="nav-link <?= $view->page == 'photoalbum' ? ' page-active' : '' ?>" href="/photoalbum">Фотоальбом</a>
+                        <a
+                            class="nav-link <?= $data->page == 'photoalbum' ? ' page-active' : '' ?>"
+                            href="/photoalbum"
+                        >Фотоальбом</a>
                     </li>
                     <li>
-                        <a class="nav-link <?= $view->page == 'callback' ? ' page-active' : '' ?>" href="/callback">Контакт</a>
+                        <a
+                            class="nav-link <?= $data->page == 'callback' ? ' page-active' : '' ?>"
+                            href="/callback"
+                        >Контакт</a>
                     </li>
                     <li>
-                        <a class="nav-link <?= $view->page == 'history' ? ' page-active' : '' ?>" href="/history">История</a>
+                        <a
+                            class="nav-link <?= $data->page == 'history' ? ' page-active' : '' ?>"
+                            href="/history"
+                        >История</a>
                     </li>
                 </ul>
             </nav>
             <div id="clock" class="clock"></div>
         </header>
         <main>
-            <?php
-                $view->render();
+            <?=
+                $data->content->render($data->template_page);
             ?>
         </main>
         <footer>

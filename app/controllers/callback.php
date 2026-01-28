@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Controllers\Callback;
+namespace App\Controllers;
 use App\Core\{Request, View};
 
-function index(Request $req): void {
-    $view = new View('callback', 'Обратная связь');
-    $view->script('/public/js/jquery/calendar.js')
-        ->script('/public/js/jquery/callback_validation.js');
-    $view->render_layout();
+final class Callback {
+    public static function index(Request $req): void {
+        $view = new View();
+        $view->script('/public/js/calendar.js')
+            ->script('/public/js/callback_validation.js');
+        echo $view->render_layout(template_page: 'callback', title: 'Обратная связь');
+    }
 }

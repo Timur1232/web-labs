@@ -130,7 +130,7 @@
         </tr>
     </table>
     <div class="test-link">
-        <a href="/studies/test" class="test-button shadow">
+        <a href="/study/test" class="test-button shadow">
             Пройти тест по высшей математике
         </a>
     </div>

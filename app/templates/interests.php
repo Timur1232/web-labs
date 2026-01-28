@@ -1,6 +1,32 @@
+<?php 
+use App\Models\InterestsModel;
+/** @var InterestsModel $model */
+?>
 <section class="content-with-aside">
     <section class="content-container">
         <h1 class="content-title">Мои интересы</h1>
+        <?php foreach ($model->sections as $section): ?>
+            <hr>
+            <section class="interests-section" id="<?= $section->id ?>">
+                <h1><?= $section->title ?></h1>
+                <?php foreach ($section->articles as $article): ?>
+                    <article class="content-block">
+                        <h2><?= $article->title ?></h2>
+                        <p><?= $article->caption ?></p>
+                        <?php if (count($article->images) > 1): ?>
+                            <div class="interest-image-gallery">
+                        <?php endif ?>
+                        <?php foreach ($article->images as $img): ?>
+                            <?= $img->render() ?>
+                        <?php endforeach ?>
+                        <?php if (count($article->images) > 1): ?>
+                            </div>
+                        <?php endif ?>
+                    </article>
+                <?php endforeach ?>
+            </section>
+        <?php endforeach ?>
+<!--
         <section class="interests-section" id="hobbies">
             <h1>Мои хобби</h1>
             <article class="content-block">
@@ -107,7 +133,7 @@
                         alt="Pink Floyd" title="Pink Floyd" />
                 </div>
             </article>
-        </section>
+        </section>-->
     </section>
     <aside class="contents-list-box shadow">
         <div class="contents-list">

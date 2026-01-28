@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Controllers\AboutMe;
+namespace App\Controllers;
 use App\Core\{Request, View};
 
-function index(Request $req): void {
-    $view = new View('about_me', 'Обо мне');
-    $view->render_layout();
+final class AboutMe {
+    public static function index(Request $req): void {
+        $view = new View();
+        echo $view->render_layout(template_page: 'about_me', title: 'Обо мне');
+    }
 }

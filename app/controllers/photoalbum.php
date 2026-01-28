@@ -1,15 +1,20 @@
 <?php
 
-namespace App\Controllers\Photoalbum;
+namespace App\Controllers;
 
 require_once 'app/models/photoalbum.php';
+require_once 'app/views/photoalbum.php';
 
-use App\Core\{Request, View};
-use App\Models\Photoalbum;
+use App\Core\Request;
+use App\Models\PhotoalbumModel;
+use App\Views\PhotoalbumView;
 
-function index(Request $req): void {
-    $view = new View('photoalbum', 'Фотоальбом');
-    $view->data('photos', new Photoalbum());
-    $view->script('/public/js/jquery/photoalbum.js');
-    $view->render_layout();
+final class Photoalbum {
+    public static function index(Request $req): void {
+        $view = new PhotoalbumView();
+        $model = new PhotoalbumModel();
+        $view->data('model', $model);
+        $view->script('/public/js/photoalbum.js');
+        echo $view->render_layout(template_page: 'photoalbum', title: 'Фотофльбом');
+    }
 }

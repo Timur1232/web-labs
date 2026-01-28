@@ -1,5 +1,5 @@
 <section class="content-container">
-    <button id="reset-history">Сброс истории</button>
+    <button id="reset-history" onclick="resetHistory()">Сброс истории</button>
     <table>
         <thead>
             <tr>
@@ -11,7 +11,4 @@
         </tbody>
     </table>
 </section>
-<script type="module">
-import { displayHistory } from '/public/js/jquery/history.js'
-document.addEventListener('DOMContentLoaded', _ => displayHistory());
-</script>
+<script>displayHistory()</script>

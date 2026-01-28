@@ -824,6 +824,7 @@ footer {
     max-height: 200px;
     min-height: 50px;
     align-self: center;
+    padding: 15px;
   }
 }
 
@@ -967,7 +968,7 @@ footer {
 
 @font-face {
   font-family: "Lenov-SP";
-  src: url("/public/fonts/Leonov SP/LeonovSP.otf") format("opentype");
+  src: url("/fonts/Leonov SP/LeonovSP.otf") format("opentype");
   font-style: normal;
   font-weight: normal;
 }
