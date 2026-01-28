@@ -93,34 +93,30 @@ export function displayHistory() {
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
 
-    const historyTable = document.getElementById('history-table');
-    let html = '';
+    const historyTable = $('#history-table');
 
     let maxLength = max(sessionHistory.length, allTimeHistory.length);
     for (let i = 0; i < maxLength; i += 1) {
-        html += '<tr>'
-
+        const row = $('<tr>');
         if (i < sessionHistory.length) {
-            html += `<th style="text-align:left">${i + 1}. <a href="${sessionHistory[i].pageLink}">${sessionHistory[i].pageName}</a></th>
-                     <th style="text-align:left">${formatDate(parseDate(sessionHistory[i].time))}</th>`;
+            row.append(`<th style="text-align:left">${i + 1}. <a href="${sessionHistory[i].pageLink}">${sessionHistory[i].pageName}</a></th>
+                     <th style="text-align:left">${formatDate(parseDate(sessionHistory[i].time))}</th>`);
         } else {
-            html += '<th></th><th></th>';
+            row.append('<th>', '<th>');
         }
 
         if (i < allTimeHistory.length) {
-            html += `<th style="text-align:left">${i + 1}. <a href="${allTimeHistory[i].pageLink}">${allTimeHistory[i].pageName}</a></th>
-                     <th style="text-align:left">${formatDate(parseDate(allTimeHistory[i].time))}</th>`;
+            row.append(`<th style="text-align:left">${i + 1}. <a href="${allTimeHistory[i].pageLink}">${allTimeHistory[i].pageName}</a></th>`,
+                     `<th style="text-align:left">${formatDate(parseDate(allTimeHistory[i].time))}</th>`);
         } else {
-            html += '<th></th><th></th>';
+            row.append('<th>', '<th>');
         }
-
-        html += '</tr>'
+        row.appendTo(historyTable);
     }
-
-    historyTable.innerHTML = html;
 }
 
 export function trackPage(pageName, pageLink, path = '/') {
+    if (pageLink == null) return;
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
     let now = formatDate(new Date());
@@ -159,14 +155,14 @@ export function resetHistory() {
         time: '',
     }]);
     setAllTimeHistoryInLS([]);
-    const historyTable = document.getElementById('history-table');
-    historyTable.innerHTML = '';
+    const historyTable = $('#history-table');
+    historyTable.html('');
 }
 
 export function getEndpoint() {
     const pathDecomposed = window.location.href.split('/');
     if (pathDecomposed[pathDecomposed.length - 1] === 'history') {
-        return;
+        return null;
     }
     let href = '';
     for (let i = 3; i < pathDecomposed.length; i += 1) {

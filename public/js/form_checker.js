@@ -1,8 +1,8 @@
 export function validateForm(form) {
-    const textareas = form.querySelectorAll("textarea");
-    const radios = form.querySelectorAll(".input-radio");
-    const inputs = form.querySelectorAll(".input-text");
-    const selects = form.querySelectorAll("select");
+    const textareas = $(form).find("textarea");
+    const radios = $(form).find(".input-radio:checked");
+    const inputs = $(form).find(".input-text");
+    const selects = $(form).find("select");
 
     let err = false;
 
@@ -27,15 +27,9 @@ export function validateForm(form) {
         }
     });
 
-    let unchecked = 0;
-    for (let i = 0; i < radios.length; i += 1) {
-        if (!radios[i].checked) {
-            unchecked += 1;
-        }
-    }
-
-    if (radios.length != 0 && unchecked == radios.length) {
-        showError(radios[0], "Input-radio: Выберите один из элементов.");
+    let unchecked = radios.get().length == 0;
+    if (unchecked) {
+        showError($(form).find(".input-radio").get(0), "Input-radio: Выберите один из элементов.");
         err = true;
     }
 

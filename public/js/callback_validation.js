@@ -1,28 +1,82 @@
-function prependElement(element, prepend) {
-    element.parentNode.insertBefore(prepend, element);
-}
-
-function appendElement(element, prepend) {
-    element.parentNode.insertBefore(prepend, element.nextSibling);
-}
-
-function createErrorMessage(element, message) {
-    const error = document.createElement('span');
-    error.textContent = message;
-    error.className = 'error';
-    appendElement(element, error);
-    return error;
-}
-
-const fullNameInput = document.getElementById('full-name');
 let fullNameError = null;
+let genderError = null;
+let birthdayError = null;
+let emailError = null;
+let phoneError = null;
+let textError = null;
 
-fullNameInput.addEventListener('focusout', (_) => {
-    validateNameInput();
+$(document).ready(function() {
+    $('#full-name').on('focusout', function() {
+        validateNameInput();
+    });
+
+    $('#gender-radios').on('change', function() {
+        validateGenderRadios();
+    });
+
+    $('#birthday-date-input').on('focusout', function() {
+        validateBirthdayInput();
+    }).on('focusin', function() {
+        validateBirthdayInput();
+    });
+
+    $('#email').on('focusout', function() {
+        validateEmailInput();
+    });
+
+    $('#phone').on('focusout', function() {
+        validatePhoneNumberInput();
+    });
+
+    $('#text').on('focusout', function() {
+        validateTextInput();
+    });
+
+    $('#callback-form').on('submit', function(e) {
+        let err = false;
+        err |= validateNameInput();
+        err |= validateGenderRadios();
+        err |= validateBirthdayInput();
+        err |= validateEmailInput();
+        err |= validatePhoneNumberInput();
+        err |= validateTextInput();
+        if (err) {
+            e.preventDefault();
+            return false;
+        }
+        return true;
+    }).on('reset', function() {
+        if (fullNameError != null) {
+            fullNameError.remove();
+            fullNameError = null;
+        }
+        if (genderError != null) {
+            genderError.next().remove();
+            genderError.remove();
+            genderError = null;
+        }
+        if (birthdayError != null) {
+            birthdayError.remove();
+            birthdayError = null;
+        }
+        if (emailError != null) {
+            emailError.remove();
+            emailError = null;
+        }
+        if (phoneError != null) {
+            phoneError.remove();
+            phoneError = null;
+        }
+        if (textError != null) {
+            textError.remove();
+            textError = null;
+        }
+    });
 });
 
 function validateNameInput() {
-    const err = checkFIO(fullNameInput.value);
+    const fullNameInput = $('#full-name');
+    const err = checkFIO(fullNameInput.val());
     if (err != null) {
         if (fullNameError != null) {
             fullNameError.remove();
@@ -38,87 +92,32 @@ function validateNameInput() {
     return true;
 }
 
-const genderRadiosDiv = document.getElementById('gender-radios');
-const genderRadios = genderRadiosDiv.querySelectorAll('input');
-let genderError = null;
-
 function validateGenderRadios() {
-    let unchecked = 0;
-    for (let i = 0; i < genderRadios.length; i += 1) {
-        if (!genderRadios[i].checked) {
-            unchecked += 1;
-        }
-    }
-    if (genderRadios.length != 0 && unchecked == genderRadios.length) {
+    const genderRadiosDiv = $('#gender-radios');
+    const genderRadios = genderRadiosDiv.find('input:checked');
+    let unchecked = genderRadios.get().length == 0;
+
+    if (unchecked) {
         if (genderError == null) {
-            const br = document.createElement('br');
-            const error = document.createElement('span');
-            error.textContent = 'Выберите один из элементов.';
-            error.className = 'error';
-            appendElement(genderRadiosDiv, error);
-            appendElement(error, br);
-            genderError = error;
+            genderError = $('<span>')
+                .text('Выберите один из элементов.')
+                .addClass('error')
+                .appendTo(genderRadiosDiv);
+            genderError.before($('<br>'), $('<br>'));
         }
         return true;
     }
     if (genderError != null) {
-        genderError.nextSibling.remove();
+        genderError.next().remove();
         genderError.remove();
         genderError = null;
     }
     return false;
 }
 
-genderRadios.forEach(r => {
-    r.addEventListener('change', _ => {
-        validateGenderRadios();
-    });
-});
-
-const ageSelect = document.getElementById('age');
-let ageError = null;
-
-function validateAgeSelect() {
-    if (ageSelect.value === '') {
-        if (ageError != null) {
-            ageError.nextSibling.remove();
-            ageError.remove();
-        }
-        const br = document.createElement('br');
-        const error = document.createElement('span');
-        error.textContent = 'Выберите один из пунктов.';
-        error.className = 'error';
-        appendElement(ageSelect, error);
-        prependElement(error, br);
-        ageError = br;
-    } else {
-        if (ageError != null) {
-            ageError.nextSibling.remove();
-            ageError.remove();
-            ageError = null;
-        }
-        return false;
-    }
-    return true;
-}
-
-ageSelect.addEventListener('change', _ => {
-    validateAgeSelect();
-});
-
-const birthdayInput = document.getElementById('birthday-date-input');
-let birthdayError = null;
-
-birthdayInput.addEventListener('focusout', (_) => {
-    validateBirthdayInput();
-});
-
-birthdayInput.addEventListener('focusin', (_) => {
-    validateBirthdayInput();
-});
-
 function validateBirthdayInput() {
-    const err = checkBirthdayDate(birthdayInput.value);
+    const birthdayInput = $('#birthday-date-input');
+    const err = checkBirthdayDate(birthdayInput.val());
     if (err != null) {
         if (birthdayError != null) {
             birthdayError.remove();
@@ -134,15 +133,9 @@ function validateBirthdayInput() {
     return true;
 }
 
-const emailInput = document.getElementById('email');
-let emailError = null;
-
-emailInput.addEventListener('focusout', (_) => {
-    validateEmailInput();
-});
-
 function validateEmailInput() {
-    if (emailInput.value === '') {
+    const emailInput = $('#email');
+    if (emailInput.val() === '') {
         if (emailError != null) {
             emailError.remove();
         }
@@ -157,15 +150,9 @@ function validateEmailInput() {
     return true;
 }
 
-const phoneInput = document.getElementById('phone');
-let phoneError = null;
-
-phoneInput.addEventListener('focusout', (_) => {
-    validatePhoneNumberInput();
-});
-
 function validatePhoneNumberInput() {
-    const err = checkPhoneNumber(phoneInput.value);
+    const phoneInput = $('#phone');
+    const err = checkPhoneNumber(phoneInput.val());
     if (err != null) {
         if (phoneError != null) {
             phoneError.remove();
@@ -181,15 +168,9 @@ function validatePhoneNumberInput() {
     return true;
 }
 
-const textInput = document.getElementById('text');
-let textError = null;
-
-textInput.addEventListener('focusout', (_) => {
-    validateTextInput();
-});
-
 function validateTextInput() {
-    if (textInput.value === '') {
+    const textInput = $('#text');
+    if (textInput.val() === '') {
         if (textError != null) {
             textError.remove();
         }
@@ -204,56 +185,15 @@ function validateTextInput() {
     return true;
 }
 
-const form = document.getElementById('callback-form');
-form.addEventListener('submit', (e) => {
-    let err = false;
-    err |= validateNameInput();
-    err |= validateGenderRadios();
-    err |= validateAgeSelect();
-    err |= validateBirthdayInput();
-    err |= validateEmailInput();
-    err |= validatePhoneNumberInput();
-    err |= validateTextInput();
-    if (err) {
-        e.preventDefault();
-        return false;
-    }
-    return true;
-}, false);
+// utils
 
-form.addEventListener('reset', _ => {
-    if (fullNameError != null) {
-        fullNameError.remove();
-        fullNameError = null;
-    }
-    if (genderError != null) {
-        genderError.nextSibling.remove();
-        genderError.remove();
-        genderError = null;
-    }
-    if (ageError != null) {
-        ageError.nextSibling.remove();
-        ageError.remove();
-        ageError = null;
-    }
-    if (birthdayError != null) {
-        birthdayError.remove();
-        birthdayError = null;
-    }
-    if (emailError != null) {
-        emailError.remove();
-        emailError = null;
-    }
-    if (phoneError != null) {
-        phoneError.remove();
-        phoneError = null;
-    }
-    if (textError != null) {
-        textError.remove();
-        textError = null;
-    }
-
-});
+function createErrorMessage(element, message) {
+    const err = $('<span>')
+        .text(message)
+        .addClass('error');
+    element.after(err);
+    return err;
+}
 
 function checkFIO(fio) {
     if (fio === '') {

@@ -1,5 +1,5 @@
 import { trackPage, getEndpoint } from './history.js'
 
-document.addEventListener('DOMContentLoaded', _ => {
-    trackPage(document.title, getEndpoint());
+$(document).ready().on('DOMContentLoaded', function() {
+    trackPage(this.title, getEndpoint());
 });

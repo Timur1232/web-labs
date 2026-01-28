@@ -17,14 +17,15 @@ function formatClock(date) {
     return `${date.getDate()} ${month} ${date.getFullYear()}`;
 }
 
-function updateClock(element) {
+function updateClock() {
     const now = new Date();
-    element.textContent = formatClock(now);
+    $('.clock').text(formatClock(now));
 }
 
-const clock = document.getElementById('clock');
-updateClock(clock);
+$(document).ready(function() {
+    updateClock();
 
-setInterval(() => {
-    updateClock(clock);
-}, 1000);
+    setInterval(() => {
+        updateClock();
+    }, 1000);
+});

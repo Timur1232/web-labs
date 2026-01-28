@@ -1,4 +1,7 @@
 import { resetHistory } from './history.js';
-document.getElementById('reset-history').addEventListener('click', _ => {
-    resetHistory();
-})
+
+$(document).ready(function() {
+    $('#reset-history').click(function() {
+        resetHistory();
+    });
+});

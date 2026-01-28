@@ -1,127 +1,127 @@
-const calendar = document.getElementById('calendar');
-const input = document.getElementById('birthday-date-input');
-const yearSelect = document.getElementById('year-select');
-const monthSelect = document.getElementById('month-select');
-let today = new Date();
-let selectedDate = today;
-selectDate(selectedDate);
+$(document).ready(function() {
+    const calendar = $('#calendar');
+    const input = $('#birthday-date-input');
+    const yearSelect = $('#year-select');
+    const monthSelect = $('#month-select');
+    let today = new Date();
+    let selectedDate = today;
 
-for (let year = 1900; year <= today.getFullYear(); year += 1) {
-    const yearOption = document.createElement('option');
-    yearOption.value = year;
-    yearOption.textContent = String(year);
-    yearSelect.appendChild(yearOption);
-}
-yearSelect.value = today.getFullYear();
-
-input.addEventListener('focusin', () => {
-    showCalendar();
-});
-
-document.addEventListener('click', (event) => {
-    if (!calendar.contains(event.target) && event.target !== input) {
-        hideCalendar();
-    }
-});
-
-function showCalendar() {
-    calendar.classList.add('show');
-    selectDate(selectedDate);
-    renderCalendar(selectedDate.getFullYear(), selectedDate.getMonth());
-}
-
-function hideCalendar() {
-    calendar.classList.remove('show');
-}
-
-function checkDateGreater(d1, d2) {
-    const d1Time = d1.getTime();
-    const d2Time = d2.getTime();
-    return d1Time > d2Time;
-}
-
-function renderCalendar(year, month) {
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-
-    let firstDayOfWeek = firstDay.getDay();
-    firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-
-    const calendarBody = document.getElementById('calendar-body');
-    calendarBody.innerHTML = '';
-
-    for (let i = 0; i < firstDayOfWeek; i += 1) {
-        const blankDay = document.createElement('div');
-        blankDay.className = 'blank-day';
-        calendarBody.appendChild(blankDay);
+    function selectDate(date) {
+        input.val(formatDate(date));
+        selectedDate = date;
+        monthSelect.val(date.getMonth());
+        yearSelect.val(date.getFullYear());
     }
 
-    for (let i = 1; i <= daysInMonth; i += 1) {
-        let day = null;
-        if (checkDateGreater(new Date(year, month, i), today)) {
-            day = document.createElement('div');
-            day.classList.add('day');
-            day.classList.add('future');
-            day.textContent = i;
-        } else {
-            day = document.createElement('button');
-            day.className = 'day';
-            day.textContent = i;
+    function showCalendar() {
+        calendar.addClass('show');
+        selectDate(selectedDate);
+        renderCalendar(selectedDate.getFullYear(), selectedDate.getMonth());
+    }
 
-            if (year === today.getFullYear()
-                && month === today.getMonth()
-                && i === today.getDate()) {
-                day.classList.add('today');
-            }
+    function checkDateGreater(d1, d2) {
+        const d1Time = d1.getTime();
+        const d2Time = d2.getTime();
+        return d1Time > d2Time;
+    }
 
-            if (selectedDate
-                && year === selectedDate.getFullYear()
-                && month === selectedDate.getMonth()
-                && i === selectedDate.getDate()) {
-                day.classList.add('selected');
-            }
-            day.addEventListener('click', () => {
-                selectDate(new Date(year, month, i));
-                input.focus();
-            });
+    function renderCalendar(year, month) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+
+        let firstDayOfWeek = firstDay.getDay();
+        firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+
+        const calendarBody = $('#calendar-body');
+        calendarBody.empty();
+
+        for (let i = 0; i < firstDayOfWeek; i += 1) {
+            $('<div>')
+                .addClass('blank-day')
+                .appendTo(calendarBody);
         }
-        calendarBody.appendChild(day);
+
+        for (let i = 1; i <= daysInMonth; i += 1) {
+            let day = null;
+            if (checkDateGreater(new Date(year, month, i), today)) {
+                day = $('<div>')
+                    .addClass('day', 'future')
+                    .text(String(i));
+            } else {
+                day = $('<button>')
+                    .addClass('day')
+                    .text(String(i));
+
+                if (year === today.getFullYear()
+                    && month === today.getMonth()
+                    && i === today.getDate()) {
+                    day.addClass('today');
+                }
+
+                if (selectedDate
+                    && year === selectedDate.getFullYear()
+                    && month === selectedDate.getMonth()
+                    && i === selectedDate.getDate()) {
+                    day.addClass('selected');
+                }
+                day.click(function() {
+                    selectDate(new Date(year, month, i));
+                    input.focus();
+                });
+            }
+            calendarBody.append(day);
+        }
+
+        const totalCells = 35;
+        const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+        for (let i = 0; i < remainingCells; i += 1) {
+            $('<div>')
+                .addClass('blank-day')
+                .appendTo(calendarBody);
+        }
     }
 
-    const totalCells = 35;
-    const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
-    for (let i = 0; i < remainingCells; i += 1) {
-        const blankDay = document.createElement('div');
-        blankDay.className = 'blank-day';
-        calendarBody.appendChild(blankDay);
+    function formatDate(date) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
     }
-}
 
-function selectDate(date) {
-    input.value = formatDate(date);
-    selectedDate = date;
-    monthSelect.value = date.getMonth();
-    yearSelect.value = date.getFullYear();
-}
+    selectDate(selectedDate);
 
-function formatDate(date) {
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
-}
+    for (let year = 1900; year <= today.getFullYear(); year += 1) {
+        $('<option>')
+            .attr('value', year)
+            .text(String(year))
+            .appendTo(yearSelect);
+    }
+    yearSelect.val(today.getFullYear());
 
-yearSelect.addEventListener('change', (event) => {
-    const year = Number(event.currentTarget.value);
-    const month = Number(monthSelect.value);
-    renderCalendar(year, month);
+    input.on('focusin', function() {
+        showCalendar(calendar);
+    });
+
+    $(document).click(function(e) {
+        const has = calendar.get(0).contains(e.target);
+        const is = e.target === input.get(0);
+        if (!has && !is) {
+            calendar.removeClass('show');
+        }
+    });
+
+    yearSelect.on('change', function() {
+        const year = Number($(this).val());
+        const month = Number(monthSelect.val());
+        renderCalendar(year, month);
+    });
+
+    monthSelect.on('change', function() {
+        const month = Number($(this).val());
+        const year = Number(yearSelect.val());
+        renderCalendar(year, month);
+    });
+
 });
-
-monthSelect.addEventListener('change', (event) => {
-    const month = Number(event.currentTarget.value);
-    const year = Number(yearSelect.value);
-    renderCalendar(year, month);
-});
-
 
