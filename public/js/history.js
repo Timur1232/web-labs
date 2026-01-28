@@ -89,7 +89,7 @@ function parseDate(dateStr) {
     return new Date(year, month - 1, day, hour, minute);
 }
 
-export function displayHistory() {
+function displayHistory() {
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
 
@@ -115,7 +115,7 @@ export function displayHistory() {
     }
 }
 
-export function trackPage(pageName, pageLink, path = '/') {
+function trackPage(pageName, pageLink, path = '/') {
     if (pageLink == null) return;
     const allTimeHistory = getAllTimeHistoryFromLS();
     const sessionHistory = getSessionHistoryFromCookies();
@@ -148,7 +148,7 @@ export function trackPage(pageName, pageLink, path = '/') {
     setAllTimeHistoryInLS(allTimeHistory);
 }
 
-export function resetHistory() {
+function resetHistory() {
     setSessionHistoryInCookies([{
         pageName: '',
         pageLink: '',
@@ -159,7 +159,7 @@ export function resetHistory() {
     historyTable.html('');
 }
 
-export function getEndpoint() {
+function getEndpoint() {
     const pathDecomposed = window.location.href.split('/');
     if (pathDecomposed[pathDecomposed.length - 1] === 'history') {
         return null;

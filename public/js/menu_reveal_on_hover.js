@@ -36,7 +36,7 @@ function addDropMenuEventLiseners(element, anchors) {
 
 $(document).ready(function() {
     const interestsLink = $('#interests-link');
-    dddDropMenuEventLiseners(interestsLink, [
+    addDropMenuEventLiseners(interestsLink, [
         { href: '/interests#hobbies', text: 'Мои хобби' },
         { href: '/interests#games', text: 'Любимые игры' },
         { href: '/interests#music', text: 'Любимая музыка' },
