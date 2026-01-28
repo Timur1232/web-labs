@@ -618,7 +618,7 @@ footer {
   border-radius: 5px;
   padding: 20px;
   margin: 40px 0;
-  background-image: url(../../media/sticky-note.jpg);
+  background-image: url(/public/media/sticky-note.jpg);
   background-size: contain;
   background-repeat: repeat-y;
 }
@@ -832,7 +832,7 @@ footer {
 /*====================================[fonts]===================================*/
 @font-face {
   font-family: "Lenov-SP";
-  src: url("/fonts/Leonov SP/LeonovSP.otf") format("opentype");
+  src: url("/public/fonts/Leonov SP/LeonovSP.otf") format("opentype");
   font-style: normal;
   font-weight: normal;
 }

@@ -1,18 +1,10 @@
 <?php
 
-namespace App\Controllers;
-use App\Core\{Controller, View, JSScript, JSScriptType};
+namespace App\Controllers\History;
+use App\Core\{View, Request, JSScriptType};
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
-
-class HistoryController extends Controller {
-    public function __construct() {
-        global $model;
-        parent::__construct(new View('history', 'История просмотра'), $model);
-
-        $this->view->scripts = array (
-            new JSScript('/public/js/jquery/set_history_reset.js', JSScriptType::Module),
-        );
-    }
+function index(Request $req): void {
+    $view = new View('history', 'История просмотра');
+    $view->script('/public/js/jquery/set_history_reset.js', JSScriptType::Module);
+    $view->render_layout();
 }

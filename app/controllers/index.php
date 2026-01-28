@@ -1,14 +1,9 @@
 <?php
 
-namespace App\Controllers;
-use App\Core\{Controller, View};
+namespace App\Controllers\Index;
+use App\Core\{View, Request};
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
-
-class IndexController extends Controller {
-    public function __construct() {
-        global $model;
-        parent::__construct(new View('index', 'Мой сайт'), $model);
-    }
+function index(Request $req): void {
+    $view = new View('index', 'Мой сайт');
+    $view->render_layout();
 }

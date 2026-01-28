@@ -1,21 +1,11 @@
 <?php
 
-namespace App\Controllers;
-use App\Core\{Controller, View, JSScript};
+namespace App\Controllers\Callback;
+use App\Core\{Request, View};
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
-
-class CallbackController extends Controller {
-
-    public function __construct() {
-        global $model;
-        parent::__construct(new View('callback', 'Обратная связь'), $model);
-
-        $this->view->scripts = array (
-            new JSScript('/public/js/jquery/calendar.js'),
-            new JSScript('/public/js/jquery/callback_validation.js'),
-        );
-    }
-
+function index(Request $req): void {
+    $view = new View('callback', 'Обратная связь');
+    $view->script('/public/js/jquery/calendar.js')
+        ->script('/public/js/jquery/callback_validation.js');
+    $view->render_layout();
 }

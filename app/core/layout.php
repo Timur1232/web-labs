@@ -1,10 +1,9 @@
 <?php
-function layout(App\Core\View $view): void {
-?>
+function layout(App\Core\View $view): void { ?>
     <!DOCTYPE html>
     <html lang="ru-RU">
     <head>
-    <title><?= $view->title ?></title>
+        <title><?= $view->data['title'] ?></title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="/public/styles/style_scss.css">
@@ -15,11 +14,8 @@ function layout(App\Core\View $view): void {
         <script type="module" src="/public/js/jquery/history.js"></script>
         <script type="module" src="/public/js/jquery/track_page.js"></script>
         <?php
-            if ($view->scripts != null) {
-                foreach ($view->scripts as $script) {
-                    $type = $script->type->value;
-                    echo "<script type=\"$type\" src=\"$script->src\"></script>";
-                }
+            foreach ($view->scripts as $script) {
+                echo $script->get_script();
             }
         ?>
     </head>
@@ -63,8 +59,7 @@ function layout(App\Core\View $view): void {
         </header>
         <main>
             <?php
-                $page = 'app/views/'.$view->page.'.php';
-                include $page;
+                $view->render();
             ?>
         </main>
         <footer>

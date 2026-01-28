@@ -1,6 +1,8 @@
 <?php
 
 require_once 'app/core/router.php';
+require_once 'app/core/view.php';
+
 require_once 'app/controllers/index.php';
 require_once 'app/controllers/about_me.php';
 require_once 'app/controllers/my_interests.php';
@@ -10,16 +12,41 @@ require_once 'app/controllers/callback.php';
 require_once 'app/controllers/history.php';
 
 use App\Core\Router;
+use App\Controllers\{
+    Index,
+    AboutMe,
+    Interests,
+    Study,
+    Photoalbum,
+    Callback,
+    History,
+};
 
 $router = new Router();
 
-$router->GET('/', [App\Controllers\IndexController::class, 'get']);
-$router->GET('/about_me', [App\Controllers\AboutMeController::class, 'get']);
-$router->GET('/my_interests', [App\Controllers\InterestsController::class, 'get']);
-$router->GET('/study', [App\Controllers\StudyController::class, 'get']);
-$router->GET('/study/test', [App\Controllers\StudyController::class, 'test']);
-$router->GET('/photoalbum', [App\Controllers\PhotoalbumController::class, 'get']);
-$router->GET('/callback', [App\Controllers\CallbackController::class, 'get']);
-$router->GET('/history', [App\Controllers\HistoryController::class, 'get']);
+$router->GET('/',             Index\index(...));
+$router->GET('/about_me',     AboutMe\index(...));
+$router->GET('/my_interests', Interests\index(...));
 
-$router->route($_SERVER['REQUEST_URI']);
+$study = $router->group('/study');
+$study->GET('/',              Study\index(...));
+$study->GET('/test',          Study\test(...));
+
+$router->GET('/photoalbum',   Photoalbum\index(...));
+$router->GET('/callback',     Callback\index(...));
+$router->GET('/history',      History\index(...));
+
+$router->dispatch();
+
+
+
+
+
+
+
+
+
+
+
+
+

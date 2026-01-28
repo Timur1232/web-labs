@@ -1,27 +1,15 @@
 <?php
 
-namespace App\Controllers;
-use App\Core\{Controller, View, JSScript};
+namespace App\Controllers\Study;
+use App\Core\{View, Request};
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
-
-class StudyController extends Controller {
-
-    private View $test_view;
-
-    public function __construct() {
-        global $model;
-        parent::__construct(new View('study', 'Учеба'), $model);
-
-        $this->test_view = new View('test', 'Тест');
-        $this->test_view->scripts = array (
-            new JSScript('/public/js/jquery/test_form_validation.js'),
-        );
-    }
-
-    public function test(): void {
-        $this->test_view->render();
-    }
+function index(Request $req): void {
+    $view = new View('study', 'Учеба');
+    $view->render_layout();
 }
 
+function test(Request $req): void {
+    $test_view = new View('test', 'Тест');
+    $test_view->script('/public/js/jquery/test_form_validation.js');
+    $test_view->render_layout();
+}

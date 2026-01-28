@@ -22,28 +22,9 @@ const photos = [
 let currentPhoto = null;
 
 $(document).ready(function() {
-    const cardTemplate = $('#photo-card-template');
-
-    function createImageCard(photoSpecs, num) {
-        const card = cardTemplate.contents().clone();
-        const imageContainer = card.find('.photo-image-container');
-        const labelContainer = card.find('.photo-label');
-
-        $('<img>', {
-            src: `/public/media/photo/${photoSpecs.filename}`,
-            alt: photoSpecs.alt,
-            title: photoSpecs.title,
-        }).appendTo(imageContainer);
-
-        $('<p>').text(photoSpecs.label).appendTo(labelContainer);
-
-        card.data('num', String(num));
-        return card;
-    }
-
-    const photoContainer = $('.photo-container');
+    const photoCards = $('.photo-container').children();
     for (let i = 0; i < photos.length; i += 1) {
-        photoContainer.append(createImageCard(photos[i], i));
+        photoCards.eq(i).data('num', String(i));
     }
 
     const fullscreenDiv = $('#fullscreen-photo');

@@ -1189,7 +1189,7 @@ footer {
 
 @font-face {
     font-family: "Lenov-SP";
-    src: url("/fonts/Leonov SP/LeonovSP.otf") format("opentype");
+    src: url("/public/fonts/Leonov SP/LeonovSP.otf") format("opentype");
     font-style: normal;
     font-weight: normal;
 }

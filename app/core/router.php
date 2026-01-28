@@ -2,128 +2,213 @@
 
 namespace App\Core;
 
-/**
- * @return array<string>
- */
-function split_path(string $path): array {
-    $sp = \explode('/', $path);
-    return array(
-        'controller' => $sp[1],
-        'action'     => $sp[2],
-        ...\array_slice($sp, 3),
-    );
+final class URL {
+    public string $path;
+    /** @var array<string, string> $query */
+    public array $query;
+
+    public function __construct(string $url) {
+        $parsed = parse_url($url);
+        $this->path = $parsed["path"] ? $parsed["path"] : '/';
+        $this->query = $this->parse_query($parsed["query"] ?? "");
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function split_path(): array {
+        return array_slice(explode('/', $this->path), 1);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function  parse_query(?string $query_str): array {
+        if ($query_str == "") return [];
+        $kvs = explode('&', $query_str);
+        $query = array();
+        foreach ($kvs as $kv) {
+            [0 => $key, 1 => $value] = explode('=', $kv);
+            $query[$key] = $value;
+        }
+        return $query;
+    }
 }
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
-
 enum HTTPMethod : string {
-    case GET = 'GET';
-    case POST = 'POST';
-    case PUT = 'PUT';
-    case PATCH = 'PATCH';
+    case NONE   = '';
+    case GET    = 'GET';
+    case POST   = 'POST';
+    case PUT    = 'PUT';
+    case PATCH  = 'PATCH';
     case DELETE = 'DELETE';
 }
 
-final class RouteRule {
-
-    public string $path;
-    /**
-     * @var array{class-stirng, string} $handler
-     */
-    public array $handler;
+final class Request {
+    public URL $url;
     public HTTPMethod $method;
 
-    /**
-     * @param array{class-stirng, string} $handler
-     */
-    public function __construct(string $path, array $handler, HTTPMethod $method) {
-        $this->path = $path;
-        $this->handler = $handler;
+    public function __construct(string $url, HTTPMethod $method) {
+        $this->url = new URL($url);
         $this->method = $method;
     }
 
+    public static function current(): self {
+        return new Request(
+            $_SERVER['REQUEST_URI'],
+            HTTPMethod::tryFrom($_SERVER['REQUEST_METHOD']) ?? HTTPMethod::NONE,
+        );
+    }
+
+    public function match(string $path, HTTPMethod $method): bool {
+        return $this->url->path == $path && $this->method == $method;
+    }
+}
+
+function validate_path(string $p): bool {
+    if ($p == '/') return true;
+    return $p[0] == '/' && $p[-1] != '/';
 }
 
 final class Router {
 
-    /*
-     * @var array<RouteRule> $controllers
-     */
-    public array $rules;
+    private Request $request;
+    private bool $handled = false;
+    /** @var Closure(Request): void $handler */
+    private \Closure $handler;
 
-    /**
-     * @param array{class-string, string} $handler
-     */
-    public function add(string $path, array $handler, HTTPMethod $method): void {
-        \assert(\class_exists($handler[0]), 'дэбил');
-        \assert(\method_exists($handler[0], $handler[1]), 'дэбил');
-        $this->rules[] = new RouteRule($path, $handler, $method);
+    public function __construct() {
+        $this->request = Request::current();
     }
 
     /**
-     * @param array{class-string, string} $handler
+     * @param Closure(Request): void $handler
      */
-    public function GET(string $path, array $handler): void {
-        $this->add($path, $handler, HTTPMethod::GET);
-    }
-
-    /**
-     * @param array{class-string, string} $handler
-     */
-    public function POST(string $path, array $handler): void {
-        $this->add($path, $handler, HTTPMethod::POST);
-    }
-
-    /**
-     * @param array{class-string, string} $handler
-     */
-    public function PUT(string $path, array $handler): void {
-        $this->add($path, $handler, HTTPMethod::PUT);
-    }
-
-    /**
-     * @param array{class-string, string} $handler
-     */
-    public function PATCH(string $path, array $handler): void {
-        $this->add($path, $handler, HTTPMethod::PATCH);
-    }
-
-    /**
-     * @param array{class-string, string} $handler
-     */
-    public function DELETE(string $path, array $handler): void {
-        $this->add($path, $handler, HTTPMethod::DELETE);
-    }
-
-    public function route(string $path): void {
-        $request_method = HTTPMethod::tryFrom($_SERVER['REQUEST_METHOD']);
-        if ($request_method == null) {
-            http_response_code(405);
-            echo '<p>405 Method not allowed</p>';
-            die();
+    public function handle_rule(string $path, \Closure $handler, HTTPMethod $method): bool {
+        assert(validate_path($path), 'дэбил');
+        if (!$this->handled && $this->request->match($path, $method)) {
+            $this->handler = $handler;
+            $this->handled = true;
         }
+        return $this->handled;
+    }
 
-        $path = explode('?', $path)[0];
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function GET(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::GET);
+    }
 
-        $rule = null;
-        foreach ($this->rules as $r) {
-            if ($r->method == $request_method && $r->path == $path) {
-                $rule = $r;
-                break;
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function POST(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::POST);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function PUT(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::PUT);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function PATCH(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::PATCH);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function DELETE(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::DELETE);
+    }
+
+    public function group(string $group_path): RouteGroup {
+        return new RouteGroup($group_path, $this);
+    }
+
+    public function dispatch(): bool {
+        if (!$this->handled) {
+            if ($this->request->method == HTTPMethod::NONE) {
+                http_response_code(405);
+                echo '<h1>405 Method Not Allowed</h1>';
+                echo '<a href="/">Home</a>';
+            } else {
+                $path = $this->request->url->path;
+                http_response_code(404);
+                echo '<h1>404 Not Found</h1>';
+                echo "<p>$path не найден</p>";
+                echo '<a href="/">Home</a>';
             }
+            return false;
         }
 
-        if ($rule == null) {
-            http_response_code(307);
-            header('Location: /');
-            die();
-        }
+        $handler = $this->handler;
+        $handler($this->request);
 
-        $handler_class = new $rule->handler[0]();
-        $handler_method = $rule->handler[1];
-        $handler_class->$handler_method();
+        return true;
     }
 
 }
 
+final class RouteGroup {
+
+    private Router $router;
+    private string $group_path;
+
+    public function __construct(string $group_path, Router $router) {
+        assert(validate_path($group_path), 'дэбил');
+        $this->group_path = $group_path == '/' ? '' : $group_path;
+        $this->router = $router;
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function handle_rule(string $path, \Closure $handler, HTTPMethod $method): bool {
+        assert(validate_path($path), 'дэбил');
+        $full_path = $this->group_path . ($path == '/' ? '' : $path);
+        $full_path = $full_path == '' ? '/' : $full_path;
+        return $this->router->handle_rule($full_path, $handler, $method);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function GET(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::GET);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function POST(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::POST);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function PUT(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::PUT);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function PATCH(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::PATCH);
+    }
+
+    /**
+     * @param Closure(Request): void $handler
+     */
+    public function DELETE(string $path, \Closure $handler): bool {
+        return $this->handle_rule($path, $handler, HTTPMethod::DELETE);
+    }
+}

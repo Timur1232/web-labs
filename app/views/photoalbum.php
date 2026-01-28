@@ -1,12 +1,20 @@
+<?php
+use App\Models\Photoalbum;
+/** @var Photoalbum $photos */ ?>
 <section class="content-container" id="photoalbum">
     <h1 class="content-title">Мои любимые фотокарточки</h1>
-    <template id="photo-card-template">
+    <ul class="photo-container">
+        <?php foreach ($photos->photos as $photo): ?>
         <li class="photo-card shadow">
-            <div class="photo-image-container"></div>
-            <div class="photo-label"></div>
+            <div class="photo-image-container">
+                <img src="/public/media/photo/<?= $photo->filename ?>" alt="<?= $photo->alt ?>" title="<?= $photo->title ?>" />
+            </div>
+            <div class="photo-label">
+                <p><?= $photo->label ?></p>
+            </div>
         </li>
-    </template>
-    <ul class="photo-container"></ul>
+        <?php endforeach; ?>
+    </ul>
     <div id="fullscreen-photo">
         <p id="photo-label"></p>
         <div id="controls">

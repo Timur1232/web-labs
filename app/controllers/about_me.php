@@ -1,15 +1,9 @@
 <?php
 
-namespace App\Controllers;
-use App\Core\{Controller, View};
+namespace App\Controllers\AboutMe;
+use App\Core\{Request, View};
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
-
-
-class AboutMeController extends Controller {
-    public function __construct() {
-        global $model;
-        parent::__construct(new View('about_me', 'Обо мне'), $model);
-    }
+function index(Request $req): void {
+    $view = new View('about_me', 'Обо мне');
+    $view->render_layout();
 }

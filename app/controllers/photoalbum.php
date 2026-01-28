@@ -1,19 +1,15 @@
 <?php
 
-namespace App\Controllers;
-use App\Core\{Controller, View, JSScript};
+namespace App\Controllers\Photoalbum;
 
-require_once 'app/core/controller.php';
-require_once 'app/core/model.php';
+require_once 'app/models/photoalbum.php';
 
-class PhotoalbumController extends Controller {
-    public function __construct() {
-        global $model;
-        parent::__construct(new View('photoalbum', 'Фотоальбом'), $model);
+use App\Core\{Request, View};
+use App\Models\Photoalbum;
 
-        $this->view->scripts = array (
-            new JSScript('/public/js/jquery/photoalbum.js'),
-        );
-    }
+function index(Request $req): void {
+    $view = new View('photoalbum', 'Фотоальбом');
+    $view->data('photos', new Photoalbum());
+    $view->script('/public/js/jquery/photoalbum.js');
+    $view->render_layout();
 }
-
