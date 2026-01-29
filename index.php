@@ -1,15 +1,7 @@
 <?php
 
-require_once 'app/core/router.php';
-require_once 'app/core/view.php';
-
-require_once 'app/controllers/index.php';
-require_once 'app/controllers/about_me.php';
-require_once 'app/controllers/interests.php';
-require_once 'app/controllers/study.php';
-require_once 'app/controllers/photoalbum.php';
-require_once 'app/controllers/callback.php';
-require_once 'app/controllers/history.php';
+require_once 'app/core/core.php';
+require_once 'app/controllers/controllers.php';
 
 use App\Core\Router;
 use App\Controllers\{
@@ -22,7 +14,7 @@ use App\Controllers\{
     History,
 };
 
-$router = new Router();
+$router = Router::default();
 
 $router->GET('/',             Index::index(...));
 $router->GET('/about_me',     AboutMe::index(...));

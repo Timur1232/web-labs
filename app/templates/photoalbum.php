@@ -1,5 +1,6 @@
 <?php
 use App\Views\PhotoalbumView;
+require_once 'app/views/photoalbum.php';
 /*
 * @var PhotoalbumView $view
 * @var PhotoalbumModel $model

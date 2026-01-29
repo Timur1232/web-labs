@@ -1,14 +1,24 @@
 <?php
 
 namespace App\Core;
+require_once 'app/core/view.php';
 
 final class LayoutData {
-    public function __construct(
+    private function __construct(
         public string $title,
         public string $page,
         public string $template_page,
         public View $content,
     ) { }
+
+    public static function new(
+        string $title,
+        string $page,
+        string $template_page,
+        View $content,
+    ): self {
+        return new self($title, $page, $template_page, $content);
+    }
 }
 
 function layout(LayoutData $data): void { ?>

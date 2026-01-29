@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Models\Instances;
-
 require_once 'app/models/interests.php';
+require_once 'app/core/helpers.php';
 
-use App\Models\{ InterestsModel, function article, function section };
+use App\Models\InterestsModel;
 use function App\Core\Helpers\img;
+use function App\Models\{ section, article };
 
 // single image default classes
 const sc = ['interest-image-single', 'rounded', 'shadow'];
 // multiple image default classes (for music)
 const mc = ['interest-image', 'rounded', 'shadow'];
 
-$model = new InterestsModel([
+return InterestsModel::new([
     section('hobbies', 'Мои хобби', [
         article('Программирование', 'Люблю программировать программы.', [
             img(
@@ -168,4 +169,3 @@ $model = new InterestsModel([
         ]),
     ]),
 ]);
-return $model;

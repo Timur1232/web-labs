@@ -2,10 +2,10 @@
 
 namespace App\Core\Helpers;
 
-class Tag {
+abstract class Tag {
 
     /** @param string[] $classes */
-    public function __construct(
+    protected function __construct(
         public string $id = '',
         public array $classes = [],
     ) { }
@@ -31,7 +31,7 @@ class Tag {
 
 final class ImgTag extends Tag {
 
-    public function __construct(
+    private function __construct(
         public string $src,
         public string $alt,
         public string $title,
@@ -40,6 +40,16 @@ final class ImgTag extends Tag {
         array $classes = [],
     ) {
         parent::__construct($id, $classes);
+    }
+
+    /**
+    * @param stirng[] $classes
+    */
+    public static function new(
+        string $src = '', string $alt = '', string $title = '',
+        string $id = '', array $classes = []
+    ): self {
+        return new self($src, $alt, $title, $id, $classes);
     }
 
     public function render(): string {
@@ -59,5 +69,5 @@ function img(
     string $src = '', string $alt = '', string $title = '',
     string $id = '', array $classes = []): ImgTag
 {
-    return new ImgTag($src, $alt, $title, $id, $classes);
+    return ImgTag::new($src, $alt, $title, $id, $classes);
 }

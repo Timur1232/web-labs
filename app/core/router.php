@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Core;
-
 require_once 'app/core/request.php';
 
 function validate_path(string $p): bool {
@@ -11,13 +10,19 @@ function validate_path(string $p): bool {
 
 final class Router {
 
-    private Request $request;
-    private bool $handled = false;
-    /** @var Closure(Request): void $handler */
-    private \Closure $handler;
+    /** @param ?Closure(Request): void $handler */
+    private function __construct(
+        private Request $request,
+        private bool $handled = false,
+        private ?\Closure $handler,
+    ) { }
 
-    public function __construct() {
-        $this->request = Request::current();
+    public static function default(): self {
+        return new self(
+            Request::current(),
+            false,
+            null,
+        );
     }
 
     /**
@@ -33,7 +38,7 @@ final class Router {
     }
 
     public function group(string $group_path): RouteGroup {
-        return new RouteGroup($group_path, $this);
+        return RouteGroup::new($group_path, $this);
     }
 
     /**
@@ -88,6 +93,7 @@ final class Router {
         }
 
         $handler = $this->handler;
+        assert(isset($handler), 'дэбил');
         $handler($this->request);
 
         return true;
@@ -97,13 +103,17 @@ final class Router {
 
 final class RouteGroup {
 
-    private Router $router;
-    private string $group_path;
+    private function __construct(
+        private Router $router,
+        private string $group_path,
+    ) { }
 
-    public function __construct(string $group_path, Router $router) {
+    public static function new(string $group_path, Router $router): self {
         assert(validate_path($group_path), 'дэбил');
-        $this->group_path = $group_path == '/' ? '' : $group_path;
-        $this->router = $router;
+        return new self(
+            $router,
+            $group_path == '/' ? '' : $group_path,
+        );
     }
 
     /**

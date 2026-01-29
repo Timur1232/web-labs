@@ -1,13 +1,17 @@
 <?php
 
 namespace App\Controllers;
-use App\Core\{View, Request};
+require_once 'app/core/view.php';
+require_once 'app/core/request.php';
+require_once 'app/models/interests.php';
 
+use App\Core\{View, Request};
+use App\Models\InterestsModel;
 
 final class Interests {
     public static function index(Request $req): void {
-        $view = new View();
-        $model = require 'app/models/instances/interests.php';
+        $view = View::default();
+        $model = InterestsModel::default();
         $view->data('model', $model);
         $view->script('/public/js/lists.js');
         echo $view->render_layout(template_page: 'interests', title: 'Мои интересы');
