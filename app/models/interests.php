@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 require_once 'app/core/helpers.php';
 
 use App\Core\Helpers\ImgTag;

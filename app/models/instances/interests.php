@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Instances;
+
 require_once 'app/models/interests.php';
 require_once 'app/core/helpers.php';
 

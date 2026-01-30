@@ -1,7 +1,12 @@
 <?php
 
 namespace App\Core;
+
 require_once 'app/core/request.php';
+require_once 'app/core/helpers.php';
+
+use App\Core\Helpers\Error;
+
 
 enum JSScriptType : string {
     case Text   = 'text/javascript';
@@ -60,10 +65,7 @@ class View {
     public final function render(string $template_page): string {
         $page_file = 'app/templates/'.$template_page.'.php';
         if (!file_exists($page_file)) {
-            http_response_code(500);
-            echo '<h1>500 Internal Server Error</h1>';
-            echo '<a href="/">Home</a>';
-            die();
+            Error::internal_error();
         }
         $view = $this;
         extract($this->data);

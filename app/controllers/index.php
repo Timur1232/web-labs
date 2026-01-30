@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+
 require_once 'app/core/view.php';
 require_once 'app/core/request.php';
 

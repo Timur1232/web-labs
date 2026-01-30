@@ -1,7 +1,11 @@
 <?php
 
 namespace App\Core;
+
 require_once 'app/core/request.php';
+require_once 'app/core/helpers.php';
+
+use App\Core\Helpers\Error;
 
 function validate_path(string $p): bool {
     if ($p == '/') return true;
@@ -25,11 +29,11 @@ final class Router {
         );
     }
 
-    /**
+    /*
      * @param Closure(Request): void $handler
      */
     public function handle_rule(string $path, \Closure $handler, HTTPMethod $method): bool {
-        assert(validate_path($path), 'дэбил');
+        Error::assert(validate_path($path), "invalid path {$path} - дэбил");
         if (!$this->handled && $this->request->match($path, $method)) {
             $this->handler = $handler;
             $this->handled = true;
@@ -79,26 +83,19 @@ final class Router {
     public function dispatch(): bool {
         if (!$this->handled) {
             if ($this->request->method == HTTPMethod::NONE) {
-                http_response_code(405);
-                echo '<h1>405 Method Not Allowed</h1>';
-                echo '<a href="/">Home</a>';
+                Error::method_not_allowed();
             } else {
-                $path = $this->request->url->path;
-                http_response_code(404);
-                echo '<h1>404 Not Found</h1>';
-                echo "<p>$path не найден</p>";
-                echo '<a href="/">Home</a>';
+                Error::not_found($this->request->url->path);
             }
             return false;
         }
 
         $handler = $this->handler;
-        assert(isset($handler), 'дэбил');
+        Error::assert(isset($handler), 'no handler function - дэбил');
         $handler($this->request);
 
         return true;
     }
-
 }
 
 final class RouteGroup {
@@ -109,7 +106,7 @@ final class RouteGroup {
     ) { }
 
     public static function new(string $group_path, Router $router): self {
-        assert(validate_path($group_path), 'дэбил');
+        Error::assert(validate_path($group_path), "invalid group path {$group_path} - дэбил");
         return new self(
             $router,
             $group_path == '/' ? '' : $group_path,
@@ -120,7 +117,7 @@ final class RouteGroup {
      * @param Closure(Request): void $handler
      */
     public function handle_rule(string $path, \Closure $handler, HTTPMethod $method): bool {
-        assert(validate_path($path), 'дэбил');
+        Error::assert(validate_path($path), "invalid path {$path} - дэбил");
         $full_path = $this->group_path . ($path == '/' ? '' : $path);
         $full_path = $full_path == '' ? '/' : $full_path;
         return $this->router->handle_rule($full_path, $handler, $method);

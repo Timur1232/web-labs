@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core;
+
 require_once 'app/core/view.php';
 
 final class LayoutData {
@@ -35,7 +36,12 @@ function layout(LayoutData $data): void { ?>
         <script type="text/javascript" src="/public/js/menu_reveal_on_hover.js"></script>
         <script type="text/javascript" src="/public/js/clock.js"></script>
         <script type="text/javascript" src="/public/js/history.js"></script>
-        <script>trackPage(document.title, getEndpoint())</script>
+        <script>
+            trackPage(document.title, getEndpoint());
+            htmx.on("htmx:beforeSwap", function(evt) {
+                evt.detail.shouldSwap = true;
+            });
+        </script>
         <?php
             foreach ($data->content->scripts as $script) {
                 echo $script->render_script();

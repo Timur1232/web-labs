@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+
 require_once 'app/core/request.php';
 require_once 'app/models/photoalbum.php';
 require_once 'app/views/photoalbum.php';
