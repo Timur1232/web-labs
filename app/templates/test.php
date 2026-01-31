@@ -16,11 +16,11 @@
         <article class="test-question content-block">
             <h2>2. Выберите верное утверждение о сходимости ряда:</h2>
             <div class="question-form">
-                <input class="input-radio" type="radio" name="series" value="answ1" required />
-                <label for="series">Ряд <img src="/public/media/sum1.png" alt="sum_{n=1}^{\infinity} 1/n" />
+                <input id="series1" class="input-radio" type="radio" name="series" value="answ1" required />
+                <label for="series1">Ряд <img src="/public/media/sum1.png" alt="sum_{n=1}^{\infinity} 1/n" />
                     является сходящимся.</label><br>
-                <input class="input-radio" type="radio" name="series" value="answ2" required />
-                <label for="series">Ряд <img src="/public/media/sum2.png" alt="sum_{n=1}^{\infinity} 1/(n^2)" />
+                <input id="series2" class="input-radio" type="radio" name="series" value="answ2" required />
+                <label for="series2">Ряд <img src="/public/media/sum2.png" alt="sum_{n=1}^{\infinity} 1/(n^2)" />
                     является сходящимся.</label><br>
             </div>
         </article>

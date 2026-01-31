@@ -11,10 +11,10 @@ use App\Models\InterestsModel;
 
 final class Interests {
     public static function index(Request $req): void {
-        $view = View::default();
         $model = InterestsModel::default();
-        $view->data('model', $model);
-        $view->script('/public/js/lists.js');
+        $view = View::default()
+            ->data('model', $model)
+            ->script('/public/js/lists.js');
         echo $view->render_layout(template_page: 'interests', title: 'Мои интересы');
     }
 }

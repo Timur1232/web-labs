@@ -12,10 +12,10 @@ use App\Views\PhotoalbumView;
 
 final class Photoalbum {
     public static function index(Request $req): void {
-        $view = PhotoalbumView::default();
         $model = PhotoalbumModel::default();
-        $view->data('model', $model);
-        $view->script('/public/js/photoalbum.js');
+        $view = PhotoalbumView::default()
+            ->data('model', $model)
+            ->script('/public/js/photoalbum.js');
         echo $view->render_layout(template_page: 'photoalbum', title: 'Фотофльбом');
     }
 }

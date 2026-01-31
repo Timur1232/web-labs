@@ -1,19 +1,36 @@
 <section class="form-container">
     <form id="callback-form" class="callback-form shadow rounded" method="post"
-        action="mailto:timur.univercity@gmail.com" enctype="text/plain">
+        action="mailto:timur.univercity@gmail.com" enctype="text/plain"
+        hx-post=
+    >
         <label for="full-name">ФИО:</label><br>
-        <input id="full-name" class="input-text" type="text" name="full-name" autofocus /><br>
+        <input id="full-name" class="input-text" type="text" name="full-name" autofocus
+            hx-post="/api/callback/fio"
+            hx-target="#fio_error"
+            hx-swap="outerHTML"
+            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+        />
+        <span id="fio_error"></span>
+        <br>
 
-        <label for="gender">Пол:</label><br>
+        <label for="gender-radios">Пол:</label><br>
         <div id="gender-radios">
             <input class="input-radio" type="radio" name="gender" id="male" value="male" />
             <label for="male">Мужской</label>
             <input class="input-radio" type="radio" name="gender" id="female" value="female" />
             <label for="female">Женский</label>
+            <span id="gender_error"></span>
         </div>
 
-        <label for="burthday">Дата рождения:</label><br>
-        <input class="input-text" type="text" name="birthday" id="birthday-date-input"></input><br>
+        <label for="birthday-date-input">Дата рождения:</label><br>
+        <input class="input-text" type="text" name="birthday" id="birthday-date-input"
+            hx-post="/api/callback/birthday"
+            hx-target="#birthday_error"
+            hx-swap="outerHTML"
+            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+        />
+        <span id="birthday_error"></span>
+        <br>
         <div id="calendar" class="calendar shadow rounded">
             <div class="calendar-controls">
                 <select id="month-select" class="month-select">
@@ -44,14 +61,34 @@
             <div id="calendar-body" class="calendar-body"></div>
         </div>
 
-        <label for="sender-email">Email:</label><br>
-        <input id="email" class="input-text" type="email" name="sender-email" /><br>
+        <label for="email">Email:</label><br>
+        <input id="email" class="input-text" type="email" name="sender-email"
+            hx-post="/api/callback/email"
+            hx-target="#email_error"
+            hx-swap="outerHTML"
+            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+        />
+        <span id="email_error"></span>
+        <br>
 
         <label for="phone">Телефон:</label><br>
-        <input id="phone" class="input-text" type="tel" name="phone" /><br>
+        <input id="phone" class="input-text" type="tel" name="phone"
+            hx-post="/api/callback/phone"
+            hx-target="#phone_error"
+            hx-swap="outerHTML"
+            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+        />
+        <span id="phone_error"></span>
+        <br>
 
-        <label for="callback-text">Текст письма:</label><br>
-        <textarea id="text" name="callback-text" rows="5"></textarea>
+        <label for="text">Текст письма:</label><br>
+        <textarea id="text" name="callback-text" rows="5"
+            hx-post="/api/callback/text"
+            hx-target="#text_error"
+            hx-swap="outerHTML"
+            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+        ></textarea>
+        <span id="text_error"></span>
 
         <div class="buttons">
             <input class="button-submit" type="submit" value="Отправить" />
