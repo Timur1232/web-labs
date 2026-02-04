@@ -13,13 +13,14 @@ function default_is_empty(mixed $data): bool {
     Error::assert(false, 'DataValidator - invalid data type');
 }
 
+
 /*
  * WARNING: By default assumes that data is of type string.
  * Will assert on other data types: to prevent that, provide other predicate with method 'with_empty_fn'.
  */
 final class DataValidator {
     /*
-     * @param array<Closure(mixed): bool> $rules
+     * @param array<string, Closure(mixed): bool> $rules
      * @param ?array<string, string[]> $dependences
      * @param string[] $errors
      * @param string[] $dependency_errors
@@ -39,6 +40,15 @@ final class DataValidator {
         return new self($data, [], null, [], [], default_is_empty(...), 'is_empty');
     }
 
+    public static function default(): self {
+        return self::for(null);
+    }
+
+    public function with_data(mixed $data): self {
+        $this->data = $data;
+        return $this;
+    }
+
     /*
      * @param Closure(mixed): bool $is_empty_fn
      */
@@ -54,7 +64,7 @@ final class DataValidator {
     }
 
     /*
-     * @param array<Closure(mixed): bool> $rules
+     * @param array<string, Closure(mixed): bool> $rules
      */
     public function with_rules(array $rules): self {
         $this->rules = $rules;
@@ -84,6 +94,7 @@ final class DataValidator {
             $this->dependency_errors = array_keys($this->rules);
             return $this;
         }
+        $this->data = trim($this->data);
         if (isset($this->dependences) && count($this->dependences) != 0) {
             $this->resolve_dendences();
             return $this;
@@ -107,6 +118,14 @@ final class DataValidator {
                 yield $mappings[$err];
             }
         }
+    }
+
+    public static function is_integer(mixed $data): bool {
+        return filter_var(trim($data), FILTER_VALIDATE_INT) !== false;
+    }
+
+    public static function is_email(mixed $data): bool {
+        return filter_var($data, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /*

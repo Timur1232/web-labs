@@ -220,7 +220,7 @@ function checkPhoneNumber(phoneNumber) {
     let otherCount = 0;
     for (let i = 1; i < phoneNumber.length; i += 1) {
         const ch = phoneNumber.charAt(i);
-        if (ch >= '0' && ch <= 9) {
+        if (ch >= '0' && ch <= '9') {
             digitCount += 1;
         } else if (ch === ' ' || ch === '\n' || ch === '\t' || ch === '\r') {
             hasWhiteSpace = true;

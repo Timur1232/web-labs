@@ -1,11 +1,11 @@
 <section class="form-container">
     <form id="callback-form" class="callback-form shadow rounded" method="post"
         action="mailto:timur.univercity@gmail.com" enctype="text/plain"
-        hx-post=
+        hx-post="/api/callback"
     >
         <label for="full-name">ФИО:</label><br>
         <input id="full-name" class="input-text" type="text" name="full-name" autofocus
-            hx-post="/api/callback/fio"
+            hx-post="/api/callback_check?f=fio"
             hx-target="#fio_error"
             hx-swap="outerHTML"
             hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
@@ -24,7 +24,7 @@
 
         <label for="birthday-date-input">Дата рождения:</label><br>
         <input class="input-text" type="text" name="birthday" id="birthday-date-input"
-            hx-post="/api/callback/birthday"
+            hx-post="/api/callback_check?f=birthday"
             hx-target="#birthday_error"
             hx-swap="outerHTML"
             hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
@@ -63,7 +63,7 @@
 
         <label for="email">Email:</label><br>
         <input id="email" class="input-text" type="email" name="sender-email"
-            hx-post="/api/callback/email"
+            hx-post="/api/callback_check?f=email"
             hx-target="#email_error"
             hx-swap="outerHTML"
             hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
@@ -73,7 +73,7 @@
 
         <label for="phone">Телефон:</label><br>
         <input id="phone" class="input-text" type="tel" name="phone"
-            hx-post="/api/callback/phone"
+            hx-post="/api/callback_check?f=phone"
             hx-target="#phone_error"
             hx-swap="outerHTML"
             hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
@@ -83,7 +83,7 @@
 
         <label for="text">Текст письма:</label><br>
         <textarea id="text" name="callback-text" rows="5"
-            hx-post="/api/callback/text"
+            hx-post="/api/callback_check?f=text"
             hx-target="#text_error"
             hx-swap="outerHTML"
             hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"

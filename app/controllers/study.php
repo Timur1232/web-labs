@@ -32,7 +32,3 @@ final class Study {
     }
 }
 
-function is_integer(mixed $data): bool {
-    return filter_var(trim($data), FILTER_VALIDATE_INT) !== false;
-}
-

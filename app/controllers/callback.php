@@ -17,12 +17,7 @@ final class Callback {
         echo $view->render_layout(template_page: 'callback', title: 'Обратная связь');
     }
 
-    public static function check_fio(Request $req): void {
+    public static function check(Request $req): void {
         $view = CallbackView::default();
-        
     }
-}
-
-function is_email(mixed $data): bool {
-    return filter_var($data, FILTER_VALIDATE_EMAIL) !== false;
 }

@@ -27,23 +27,26 @@ final class TestModel {
     * @param string[] $answers
     */
     public function check_test(array $answers): void {
-        $this->lim_errs = DataValidator::for($answers['lim'])
+        $this->lim_errs =
+            DataValidator::for($answers['lim'])
             ->with_rules([
-                'is_int'   => is_integer(...),
-                'solution' => fn($d) => (int)$d == 5,
-            ])->with_dependences([
-                'solution' => ['is_int'],
-            ])->collect_errors();
+                'is_int'   => DataValidator::is_integer(...),
+                'solution' => fn($d) => (int)$d == 5])
+            ->with_dependences([
+                'solution' => ['is_int']])
+            ->collect_errors();
 
-        $this->series_errs = DataValidator::for($answers['series'])
+        $this->series_errs =
+            DataValidator::for($answers['series'])
             ->with_rules([
-                'solution' => fn($d) => $d === 'answ2'
-            ])->collect_errors();
+                'solution' => fn($d) => $d === 'answ2'])
+            ->collect_errors();
 
-        $this->hard_errs = DataValidator::for($answers['hard_one'])
+        $this->hard_errs =
+            DataValidator::for($answers['hard_one'])
             ->with_rules([
-                'solution' => fn($d) => $d !== '4'
-            ])->collect_errors();
+                'solution' => fn($d) => $d !== '4'])
+            ->collect_errors();
     }
 
     public function has_errors(): bool {
