@@ -1053,6 +1053,7 @@ footer {
 .calendar {
     background: white;
     padding: 15px;
+    display: none;
     width: 280px;
     margin: auto;
 }
@@ -1062,8 +1063,7 @@ footer {
 }
 
 .calendar-header {
-    display: flex;
-    flex-direction: row;
+    display: flex row;
     justify-content: space-between;
     align-content: center;
     margin-bottom: 10px;
@@ -1072,8 +1072,7 @@ footer {
 
 .calendar-controls {
     padding: 5px 10px;
-    display: flex;
-    flex-direction: row;
+    display: flex row;
     align-content: center;
 }
 

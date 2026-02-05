@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 require_once 'app/core/core.php';
 require_once 'app/controllers/controllers.php';
 
@@ -28,6 +30,11 @@ $study->POST('/test',         Study::check_test(...));
 $router->GET('/photoalbum',   Photoalbum::index(...));
 $router->GET('/callback',     Callback::index(...));
 $router->GET('/history',      History::index(...));
+
+$api = $router->group('/api');
+$api->POST('/callback_check', Callback::check(...));
+// TODO: No logic for correct data
+$api->POST('/callback',       Callback::check(...));
 
 $router->dispatch();
 

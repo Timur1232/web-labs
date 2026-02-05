@@ -122,6 +122,4 @@ $(document).ready(function() {
         const year = Number(yearSelect.val());
         renderCalendar(year, month);
     });
-
 });
-

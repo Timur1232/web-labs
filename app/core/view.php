@@ -35,12 +35,12 @@ class View {
     * @param array<string, mixed> $data
     */
     protected function __construct(
-        public array $scripts,
-        public array $data,
+        public array $scripts = [],
+        public array $data = [],
     ) { }
 
     public static function default(): self {
-        return self::new([], []);
+        return new self();
     }
 
     /*

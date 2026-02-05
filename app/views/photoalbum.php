@@ -11,7 +11,7 @@ use App\Models\PhotoalbumModel;
 class PhotoalbumView extends View {
 
     private function __construct() {
-        parent::__construct([], []);
+        parent::__construct();
     }
 
     public static function default(): self {

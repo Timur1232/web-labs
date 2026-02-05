@@ -70,27 +70,27 @@ final class Log {
     }
 
     public static function trace(string $msg): void {
-        fprintf(STDOUT, "\e[37m [TRACE] %s:%d: {$msg}\e[0m\n", __FILE__, __LINE__);
+        fprintf(STDOUT, "\e[37m [TRACE] {$msg}\e[0m\n");
     }
 
     public static function info(string $msg): void {
-        fprintf(STDOUT, "\e[32m [INFO] %s:%d: {$msg}\e[0m\n", __FILE__, __LINE__);
+        fprintf(STDOUT, "\e[32m [INFO] {$msg}\e[0m\n");
     }
 
     public static function warning(string $msg): void {
-        fprintf(STDOUT, "\e[33m [WARNING] %s:%d: {$msg}\e[0m\n", __FILE__, __LINE__);
+        fprintf(STDOUT, "\e[33m [WARNING] {$msg}\e[0m\n");
     }
 
     public static function error(string $msg): void {
-        fprintf(STDERR, "\e[91m [ERROR] %s:%d: {$msg}\e[0m\n", __FILE__, __LINE__);
+        fprintf(STDERR, "\e[91m [ERROR] {$msg}\e[0m\n");
     }
 
     public static function assert(string $msg): void {
-        fprintf(STDERR, "\e[31m [ASSERT] %s:%d: {$msg}\e[0m\n", __FILE__, __LINE__);
+        fprintf(STDERR, "\e[31m [ASSERT] {$msg}\e[0m\n");
     }
 
     public static function log(string $msg): void {
-        fprintf(STDOUT, " [LOG] %s:%d: {$msg}\n", __FILE__, __LINE__);
+        fprintf(STDOUT, " [LOG] {$msg}\n");
     }
 }
 

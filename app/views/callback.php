@@ -8,14 +8,17 @@ use App\Core\View;
 
 final class CallbackView extends View {
 
+    private function __construct() {
+        parent::__construct();
+    }
+
     public static function default(): self {
         return new self();
     }
 
-    public static function render_error(string $id, string $msg, bool $hx_swap = false): string {
-        $swap = $hx_swap ? "hx-swap=\"{$id}\"" : '';
+    public static function error_tag(string $msg): string {
         return <<<HTML
-            <span id="{$id}" class="error" {$swap}>{$msg}</span>
+            <span class="error">{$msg}<br></span>
         HTML;
     }
 

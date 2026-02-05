@@ -17,6 +17,8 @@ function default_is_empty(mixed $data): bool {
 /*
  * WARNING: By default assumes that data is of type string.
  * Will assert on other data types: to prevent that, provide other predicate with method 'with_empty_fn'.
+ *
+ * TODO: make lazy evaluation
  */
 final class DataValidator {
     /*
@@ -88,23 +90,22 @@ final class DataValidator {
         return $this->errors;
     }
 
-    public function run(): self {
+    public function run(): void {
         if ($this->is_empty()) {
             $this->errors = [$this->is_empty_name];
             $this->dependency_errors = array_keys($this->rules);
-            return $this;
+            return;
         }
         $this->data = trim($this->data);
         if (isset($this->dependences) && count($this->dependences) != 0) {
             $this->resolve_dendences();
-            return $this;
+            return;
         }
         foreach ($this->rules as $name => $pred) {
             if (!$pred($this->data)) {
                 $this->errors[] = $name;
             }
         }
-        return $this;
     }
 
     /*
@@ -121,7 +122,7 @@ final class DataValidator {
     }
 
     public static function is_integer(mixed $data): bool {
-        return filter_var(trim($data), FILTER_VALIDATE_INT) !== false;
+        return filter_var(trim($data, '0'), FILTER_VALIDATE_INT) !== false;
     }
 
     public static function is_email(mixed $data): bool {
@@ -144,6 +145,7 @@ final class DataValidator {
                 if (!array_key_exists($dep, $this->rules)) {
                     $invalid[] = DependencyError::new($dep, 'not in rules set');
                 }
+                // TODO: make detecting deep circular dependences
                 if ($dep === $rule) {
                     $invalid[] = DependencyError::new($rule, "dependency on self");
                 } else if (array_key_exists($dep, $this->dependences) && in_array($rule, $this->dependences[$dep])) {
@@ -170,14 +172,17 @@ final class DataValidator {
                     $this->errors[] = $name;
                 }
                 $visited[] = $name;
+                Log::trace("nodep visited: {$name}");
             }
         }
 
         $stack = [array_key_first($this->dependences)];
 
-        while (count($stack) != 0) {
+        $i = 0;
+        while (count($stack) !== 0) {
             $cur = array_last($stack);
             $visited[] = $cur;
+            Log::trace("1. cur: {$cur}");
 
             $breaked = false;
             foreach ($this->dependences[$cur] as $dep) {
@@ -194,13 +199,25 @@ final class DataValidator {
                 }
             }
             if ($breaked) continue;
+            Log::trace("2. cur: {$cur}");
 
             $pred = $this->rules[$cur];
             if (!$pred($this->data)) {
                 $this->errors[] = $cur;
             }
             array_pop($stack);
+            $i += 1;
+
+            if (count($stack) === 0 && $i < count($this->dependences)) {
+                foreach (array_keys($this->dependences) as $left) {
+                    if (!in_array($left, $visited)) {
+                        $stack[] = $left;
+                        break;
+                    }
+                }
+            }
         }
+        Log::trace('end');
     }
 }
 
