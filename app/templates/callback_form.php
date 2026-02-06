@@ -8,15 +8,18 @@ use App\Models\CallbackValidator;
 * @var CallbackView $view
 */?>
 <section id="callback_form_cantainer" class="form-container">
-    <form id="callback-form" class="callback-form shadow rounded" method="post"
-        action="/api/callback" enctype="text/plain"
+    <form id="callback-form" class="callback-form shadow rounded"
+        method="post" action="/api/callback" enctype="text/plain"
+        hx-post="/api/callback"
+        hx-target="#callback_form_cantainer"
+        hx-swap="outerHTML"
     >
         <label for="full-name">ФИО:</label><br>
         <input id="full-name" class="input-text" type="text" name="fio" autofocus
-            hx-post="/api/callback_check?f=fio"
+            hx-post="/api/callback?f=fio"
             hx-target="#fio_error"
             hx-swap="innerHTML"
-            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+            hx-trigger="input changed delay:300ms, keyup[key=='Enter'], focusout"
         />
         <div id="fio_error">
         <?php if (isset($model) && $model->has_fio_errors()) {
@@ -25,7 +28,6 @@ use App\Models\CallbackValidator;
             }
         } ?>
         </div>
-        <br>
 
         <label for="gender-radios">Пол:</label><br>
         <div id="gender-radios">
@@ -44,10 +46,10 @@ use App\Models\CallbackValidator;
 
         <label for="birthday-date-input">Дата рождения:</label><br>
         <input class="input-text" type="date" name="birthday" id="birthday-date-input"
-            hx-post="/api/callback_check?f=birthday"
+            hx-post="/api/callback?f=birthday"
             hx-target="#birthday_error"
             hx-swap="innerHTML"
-            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+            hx-trigger="input changed delay:300ms, keyup[key=='Enter'], focusout"
         />
         <div id="birthday_error">
         <?php if (isset($model) && $model->has_birthday_errors()) {
@@ -89,10 +91,10 @@ use App\Models\CallbackValidator;
 
         <label for="email">Email:</label><br>
         <input id="email" class="input-text" type="email" name="email"
-            hx-post="/api/callback_check?f=email"
+            hx-post="/api/callback?f=email"
             hx-target="#email_error"
             hx-swap="innerHTML"
-            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+            hx-trigger="input changed delay:300ms, keyup[key=='Enter'], focusout"
         />
         <div id="email_error">
         <?php if (isset($model) && $model->has_email_errors()) {
@@ -105,10 +107,10 @@ use App\Models\CallbackValidator;
 
         <label for="phone">Телефон:</label><br>
         <input id="phone" class="input-text" type="tel" name="phone"
-            hx-post="/api/callback_check?f=phone"
+            hx-post="/api/callback?f=phone"
             hx-target="#phone_error"
             hx-swap="innerHTML"
-            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+            hx-trigger="input changed delay:300ms, keyup[key=='Enter'], focusout"
         />
         <div id="phone_error">
         <?php if (isset($model) && $model->has_phone_errors()) {
@@ -121,10 +123,10 @@ use App\Models\CallbackValidator;
 
         <label for="text">Текст письма:</label><br>
         <textarea id="text" name="text" rows="5"
-            hx-post="/api/callback_check?f=text"
+            hx-post="/api/callback?f=text"
             hx-target="#text_error"
             hx-swap="innerHTML"
-            hx-trigger="input changed delay:500ms, keyup[key=='Enter'], focusout"
+            hx-trigger="input changed delay:300ms, keyup[key=='Enter'], focusout"
         ></textarea>
         <div id="text_error">
         <?php if (isset($model) && $model->has_text_errors()) {

@@ -7,13 +7,7 @@ require_once 'app/controllers/controllers.php';
 
 use App\Core\Router;
 use App\Controllers\{
-    Index,
-    AboutMe,
-    Interests,
-    Study,
-    Photoalbum,
-    Callback,
-    History,
+    Index, AboutMe, Interests, Study, Photoalbum, Callback, History,
 };
 
 $router = Router::default();
@@ -32,21 +26,7 @@ $router->GET('/callback',     Callback::index(...));
 $router->GET('/history',      History::index(...));
 
 $api = $router->group('/api');
-$api->POST('/callback_check', Callback::check(...));
-// TODO: No logic for correct data
+// TODO: maybe separate data validating and accepting
 $api->POST('/callback',       Callback::check(...));
 
 $router->dispatch();
-
-
-
-
-
-
-
-
-
-
-
-
-

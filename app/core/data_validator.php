@@ -13,7 +13,6 @@ function default_is_empty(mixed $data): bool {
     Error::assert(false, 'DataValidator - invalid data type');
 }
 
-
 /*
  * WARNING: By default assumes that data is of type string.
  * Will assert on other data types: to prevent that, provide other predicate with method 'with_empty_fn'.
@@ -172,7 +171,7 @@ final class DataValidator {
                     $this->errors[] = $name;
                 }
                 $visited[] = $name;
-                Log::trace("nodep visited: {$name}");
+                // Log::trace("nodep visited: {$name}");
             }
         }
 
@@ -182,7 +181,7 @@ final class DataValidator {
         while (count($stack) !== 0) {
             $cur = array_last($stack);
             $visited[] = $cur;
-            Log::trace("1. cur: {$cur}");
+            // Log::trace("1. cur: {$cur}");
 
             $breaked = false;
             foreach ($this->dependences[$cur] as $dep) {
@@ -199,7 +198,7 @@ final class DataValidator {
                 }
             }
             if ($breaked) continue;
-            Log::trace("2. cur: {$cur}");
+            // Log::trace("2. cur: {$cur}");
 
             $pred = $this->rules[$cur];
             if (!$pred($this->data)) {
@@ -217,7 +216,7 @@ final class DataValidator {
                 }
             }
         }
-        Log::trace('end');
+        // Log::trace('end');
     }
 }
 

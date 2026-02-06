@@ -878,7 +878,7 @@ footer {
     border-radius: 5px;
     padding: 20px;
     margin: 40px 0;
-    background-image: url(../../media/sticky-note.jpg);
+    background-image: url(/public/media/sticky-note.jpg);
     background-size: contain;
     background-repeat: repeat-y;
 }
@@ -1182,6 +1182,52 @@ footer {
     display: flex;
     flex-direction: row;
     justify-items: center;
+}
+
+/*====================================[error_page]===================================*/
+
+.error-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
+    margin-top: 150px;
+}
+
+.error-page a:visited,
+.error-page a {
+    color: white;
+    font-size: 1.3em;
+    margin: auto;
+    justify-self: center;
+    align-self: center;
+}
+
+.error-page-box {
+    width: auto;
+    height: auto;
+    background-color: var(--main-second-color);
+    justify-items: center;
+    align-content: center;
+    padding: 30px 70px;
+    border: 0;
+    border-radius: 90px;
+    margin-bottom: 50px;
+}
+
+.error-page-title {
+    color: whitesmoke;
+    font-weight: 300;
+    font-size: 4em;
+}
+
+.error-page-sorry {
+    color: white;
+    font-weight: 300;
+    font-size: 2em;
+    margin-top: 20px;
 }
 
 /*====================================[fonts]===================================*/

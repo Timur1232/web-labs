@@ -18,14 +18,14 @@ final class Study {
     }
 
     public static function test(Request $req): void {
-        $test_view = View::default()
-            ->script('/public/js/test_form_validation.js');
+        $test_view = View::default();
+            // ->script('/public/js/test_form_validation.js');
         echo $test_view->render_layout(template_page: 'test', title: 'Тест');
     }
 
     public static function check_test(Request $req): void {
-        $model = TestModel::default();
-        $model->check_test($req->form);
+        $model = TestModel::from($req->form);
+        $model->check_test();
         $view = View::default()
             ->data('model', $model);
         echo $view->render_hx($req, template_page: 'test_result');

@@ -18,7 +18,7 @@ final class Router {
     private function __construct(
         private Request $request,
         private bool $handled = false,
-        private ?\Closure $handler,
+        private ?\Closure $handler = null,
     ) { }
 
     public static function default(): self {

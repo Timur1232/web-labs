@@ -93,7 +93,7 @@ function layout(LayoutData $data): void { ?>
                     </li>
                     <li>
                         <a
-                            class="nav-link <?= $data->page == 'callback' ? ' page-active' : '' ?>"
+                            class="nav-link <?= $data->page == 'callback_form' ? ' page-active' : '' ?>"
                             href="/callback"
                         >Контакт</a>
                     </li>

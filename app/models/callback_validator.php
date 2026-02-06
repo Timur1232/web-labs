@@ -1,17 +1,15 @@
 <?php
 
 namespace App\Models;
+require_once 'app/core/data_validator.php';
 
 use App\Core\DataValidator;
-use App\Core\Helpers\Log;
-use App\Core\Request;
-use IntlChar;
 
-require_once 'app/core/data_validator.php';
 
 final class CallbackValidator {
 
     /**
+     * @param string[] $form
      * @param string[] $fio_errors
      * @param string[] $gender_errors
      * @param string[] $birthday_errors
@@ -20,47 +18,72 @@ final class CallbackValidator {
      * @param string[] $text_errors
     */
     private function __construct(
+        private array $form = [],
         private array $fio_errors = [],
         private array $gender_errors = [],
         private array $birthday_errors = [],
         private array $email_errors = [],
         private array $phone_errors = [],
         private array $text_errors = [],
+        private bool $has_any_errors = false,
     ) {}
 
-    public static function default(): self {
-        return new self();
+    /**
+     * @param string[] $form
+    */
+    public static function from(array $form): self {
+        return new self($form);
+    }
+
+    public function validate_all(): self {
+        return $this
+            ->validate_fio()
+            ->validate_gender()
+            ->validate_birthday()
+            ->validate_email()
+            ->validate_phone()
+            ->validate_text();
+    }
+
+    public function has_any_error(): bool {
+        return $this->has_fio_errors()
+            || $this->has_gender_errors()
+            || $this->has_birthday_errors()
+            || $this->has_email_errors()
+            || $this->has_phone_errors()
+            || $this->has_text_errors();
+    }
+
+    public function validate_by_query(?string $query_f): bool {
+        switch ($query_f) {
+            case null       : return false;
+            case 'fio'      : $this->validate_fio();
+            case 'gender'   : $this->validate_gender();
+            case 'birthday' : $this->validate_birthday();
+            case 'email'    : $this->validate_email();
+            case 'phone'    : $this->validate_phone();
+            case 'text'     : $this->validate_text();
+        };
+        return true;
     }
 
     /**
-    * @param stirng[] $form
-    */
-    public function validate_all(array $form): self {
-        return $this
-            ->validate_fio($form['fio'])
-            ->validate_gender($form['gender'])
-            ->validate_birthday($form['birthday'])
-            ->validate_email($form['email'])
-            ->validate_phone($form['phone'])
-            ->validate_text($form['text']);
-    }
-
-    public function validate_by_query(Request $req): ?iterable {
-        // Log::trace("query: {$req->url->query['f']}");
-        return match ($req->url->query['f']) {
-            null       => null,
-            'fio'      => $this->validate_fio($req->form['fio'])->get_fio_errors(),
-            'gender'   => $this->validate_gender($req->form['gender'])->get_gender_errors(),
-            'birthday' => $this->validate_birthday($req->form['birthday'])->get_birthday_errors(),
-            'email'    => $this->validate_email($req->form['email'])->get_email_errors(),
-            'phone'    => $this->validate_phone($req->form['phone'])->get_phone_errors(),
-            'text'     => $this->validate_text($req->form['text'])->get_text_errors(),
+     * @return iterable<string>
+     */
+    public function get_errors_by_query(string $query_f): iterable {
+        return match ($query_f) {
+            'fio'      => $this->get_fio_errors(),
+            'gender'   => $this->get_gender_errors(),
+            'birthday' => $this->get_birthday_errors(),
+            'email'    => $this->get_email_errors(),
+            'phone'    => $this->get_phone_errors(),
+            'text'     => $this->get_text_errors(),
         };
     }
 
-    public function validate_fio(?string $fio): self {
+    public function validate_fio(): self {
         $this->fio_errors =
-            DataValidator::for($fio)
+            DataValidator::for($this->form['fio'])
             ->with_rules(
                 [ 'has_3_words' => fn($d) => count(explode(' ', $d)) === 3 ])
             ->collect_errors();
@@ -81,9 +104,9 @@ final class CallbackValidator {
         ]);
     }
 
-    public function validate_gender(?string $gender): self {
+    public function validate_gender(): self {
         $this->gender_errors =
-            DataValidator::for($gender)
+            DataValidator::for($this->form['gender'])
             ->with_rules(
                 [ 'valid' => fn($d) => $d === 'male' || $d === 'female' ])
             ->collect_errors();
@@ -104,10 +127,9 @@ final class CallbackValidator {
         ]);
     }
 
-    public function validate_birthday(?string $birthday): self {
-        Log::trace('validate_birthday');
+    public function validate_birthday(): self {
         $this->birthday_errors =
-            DataValidator::for($birthday)
+            DataValidator::for($this->form['birthday'])
             ->with_rules([
                 'format' => self::check_date_format(...),
                 'future' => self::check_date_future(...),
@@ -120,7 +142,6 @@ final class CallbackValidator {
     }
 
     public function has_birthday_errors(): bool {
-        Log::trace('has_birthday_errors');
         return count($this->birthday_errors) !== 0;
     }
 
@@ -128,7 +149,6 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_birthday_errors(): iterable {
-        Log::trace('get_birthday_errors');
         return DataValidator::map_error_messeges($this->birthday_errors, [
             'is_empty' => 'Выберите дату.',
             'format'   => 'Некорректный формат.',
@@ -138,7 +158,6 @@ final class CallbackValidator {
     }
 
     private static function check_date_format(mixed $date): bool {
-        Log::trace('check_date_format');
         $splited = explode('-', $date);
         if (count($splited) != 3) return false;
         foreach ($splited as $num) {
@@ -149,7 +168,6 @@ final class CallbackValidator {
     }
 
     private static function check_date_future(mixed $date): bool {
-        Log::trace('check_date_future');
         [$year, $month, $day] = explode('-', $date);
         $now = strtotime('now');
         $date_str = sprintf('%04d-%02d-%02d', (int)$year, (int)$month, (int)$day);
@@ -158,7 +176,6 @@ final class CallbackValidator {
     }
 
     private static function check_date_valid(mixed $date): bool {
-        Log::trace('check_date_valid');
         [$year, $month, $day] = explode('-', $date);
         $now = strtotime('now');
         $chosen = strtotime(sprintf('%04d-%02d-%02d', (int)$year, (int)$month, (int)$day));
@@ -166,9 +183,9 @@ final class CallbackValidator {
     }
 
 
-    public function validate_email(?string $email): self {
+    public function validate_email(): self {
         $this->email_errors =
-            DataValidator::for($email)
+            DataValidator::for($this->form['email'])
             ->with_rules(
                 [ 'is_email' => DataValidator::is_email(...) ])
             ->collect_errors();
@@ -189,16 +206,16 @@ final class CallbackValidator {
         ]);
     }
 
-    public function validate_phone(?string $phone): self {
+    public function validate_phone(): self {
         $this->phone_errors =
-            DataValidator::for($phone)
+            DataValidator::for($this->form['phone'])
             ->with_rules([
                 'start'          => self::check_phone_start(...),
-                'no_whitespace' => self::check_phone_whitespace(...),
+                'no_whitespace'  => self::check_phone_whitespace(...),
                 'no_forbid_char' => self::check_phone_forbid_chars(...),
                 'nine_eleven'    => self::check_phone_nine_eleven(...)])
             ->with_dependences([
-                'nine_eleven' => [ 'no_whitespace', 'no_forbid_char' ]])
+                'nine_eleven' => [ 'start', 'no_whitespace', 'no_forbid_char' ]])
             ->collect_errors();
         return $this;
     }
@@ -214,7 +231,7 @@ final class CallbackValidator {
         return DataValidator::map_error_messeges($this->phone_errors, [
             'is_empty'       => 'Введите номер.',
             'start'          => 'Номер телефона должен начинать с +7 или +3.',
-            'no_white_space' => 'Номер телефона не должен иметь пробелов.',
+            'no_whitespace'  => 'Номер телефона не должен иметь пробелов.',
             'no_forbid_char' => 'Номер телефона может иметь только цифры и символ \'+\'.',
             'nine_eleven'    => 'Номер телефона должен иметь от 9 до 11 цифр.',
         ]);
@@ -246,9 +263,9 @@ final class CallbackValidator {
         return 9 <= $len && $len <= 11;
     }
 
-    public function validate_text(?string $text): self {
+    public function validate_text(): self {
         $this->text_errors =
-            DataValidator::for($text)
+            DataValidator::for($this->form['text'])
             ->collect_errors();
         return $this;
     }
