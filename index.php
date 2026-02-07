@@ -54,7 +54,15 @@ use Pdo\Sqlite;
 
 DB::init_connection(new Sqlite(DB::sqlite_dns('./test.db')));
 
+// $rec = new Test();
+// $rec->a = 101010101;
+// $rec->b = 'new rect';
+// var_dump(DB::update_by_id($rec));
+
 // var_dump(DB::find_by_id(Test::class, 69));
+// echo '<br>';
+// echo '<br>';
+// var_dump(DB::find_all(Test::class));
 // die();
 
 $router = Router::default();
