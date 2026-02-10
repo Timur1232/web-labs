@@ -34,36 +34,41 @@
 
 require_once 'app/core/core.php';
 require_once 'app/core/active_record.php';
+require_once 'app/core/db_driver.php';
 require_once 'app/controllers/controllers.php';
 
-// use App\Core\ARField;
-// use App\Core\ARFieldId;
-// use App\Core\ActiveRecord;
+use App\Core\ARField;
+use App\Core\ARFieldId;
+use App\Core\ActiveRecord;
 use App\Core\DB;
+use App\Core\FileSCSVDriver;
 use App\Core\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History,
 };
-use Pdo\Sqlite;
+// use Pdo\Sqlite;
 
-// #[ActiveRecord('test')]
-// class Test {
-//     #[ARFieldId('a')] public int $a;
-//     #[ARField('b')]   public string $b;
-// }
+#[ActiveRecord('test')]
+class Test {
+    #[ARFieldId('a')] public int $a;
+    #[ARField('b')]   public string $b;
+}
 
-DB::init_connection(new Sqlite(DB::sqlite_dns('./test.db')));
+$driver = FileSCSVDriver::from('test.inc');
+$driver->read_all();
+
+// DB::init_connection(new Sqlite(DB::sqlite_dns('./test.db')));
 
 // $rec = new Test();
 // $rec->a = 101010101;
 // $rec->b = 'new rect';
 // var_dump(DB::update_by_id($rec));
 
-// var_dump(DB::find_by_id(Test::class, 69));
-// echo '<br>';
-// echo '<br>';
-// var_dump(DB::find_all(Test::class));
-// die();
+var_dump(DB::find_by_id($driver, Test::class, 69));
+echo '<br>';
+echo '<br>';
+var_dump(DB::find_all($driver, Test::class));
+die();
 
 $router = Router::default();
 

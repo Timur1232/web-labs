@@ -55,6 +55,10 @@ final class Error {
             self::internal_error();
         }
     }
+
+    public static function todo(string $msg): void {
+        Log::println_err('[TODO]: '.$msg);
+    }
 }
 
 final class Log {
