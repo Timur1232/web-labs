@@ -37,7 +37,7 @@ require_once 'app/core/active_record.php';
 require_once 'app/models/scsv_ar_model.php';
 require_once 'app/controllers/controllers.php';
 
-use App\Core\ARAtributes;
+use App\Core\ARAttributes;
 use App\Core\ARField;
 use App\Core\ActiveRecord;
 use App\Core\Router;
@@ -62,17 +62,11 @@ $model->read_all();
 
 $rec = new Test();
 $rec->a_field = 101010101;
-$rec->b_field = '!haey lleh';
-var_dump_preln($model->delete_by_id(Test::class, $rec->a_field));
+// $rec->b_field = '!haey lleh';
+// var_dump_preln($model->delete_by_id(Test::class, $rec->a_field));
 
-$a = ARAtributes::from(Test::class);
-echo '<pre>';
-var_dump($model->find_by_id(Test::class, 420));
-echo '</pre>';
-echo '<br>';
-echo '<pre>';
-var_dump($model->find_all(Test::class));
-echo '</pre>';
+// var_dump_preln($model->find_by_id(Test::class, 420));
+var_dump_preln($model->find_all(Test::class));
 die();
 
 $router = Router::default();

@@ -55,14 +55,14 @@ interface ARConnection {
 }
 
 interface ARQueryBuilder {
-    function select(string $table_name, ARAtributes $props, int $limit = 0): string;
-    function select_by_id(string $table_name, ARAtributes $props, mixed $id_bind, int $limit = 0): string;
-    function insert(string $table_name, ARAtributes $props, mixed $data): string;
-    function delete_by_id(string $table_name, ARAtributes $props, mixed $id_bind): string;
-    function update_by_id(string $table_name, ARAtributes $props, mixed $data): string;
+    function select(string $table_name, ARAttributes $props, int $limit = 0): string;
+    function select_by_id(string $table_name, ARAttributes $props, mixed $id_bind, int $limit = 0): string;
+    function insert(string $table_name, ARAttributes $props, mixed $data): string;
+    function delete_by_id(string $table_name, ARAttributes $props, mixed $id_bind): string;
+    function update_by_id(string $table_name, ARAttributes $props, mixed $data): string;
 }
 
-final class ARAtributes {
+final class ARAttributes {
     /*
      * @template T
      * @param array<string, ARField> $attrs
@@ -76,10 +76,16 @@ final class ARAtributes {
     ) {}
 
     /*
+     * @var array<string, ARAttributes> $reflection_cache
+     */
+    public static array $reflection_cache = [];
+
+    /*
      * @template T
      * @param class-string<\T> $class_name
      */
     public static function from(string $class_name): ?self {
+        if (array_key_exists($class_name, self::$reflection_cache)) return self::$reflection_cache[$class_name];
         /** @var ReflectionClass<T> $r */
         $r = new ReflectionClass($class_name);
         $ar_attr = self::get_ar_attribute($r);
@@ -96,6 +102,7 @@ final class ARAtributes {
                 }
             }
         }
+        self::$reflection_cache[$class_name] = $self;
         return $self;
     }
 

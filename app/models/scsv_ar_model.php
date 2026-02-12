@@ -3,12 +3,11 @@
 namespace App\Models;
 require_once 'app/core/active_record.php';
 require_once 'app/core/helpers.php';
-use App\Core\ARAtributes;
+use App\Core\ARAttributes;
 use App\Core\ARModel;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 use Generator;
-use function App\Core\Helpers\var_dump_preln;
 
 final class FileSCSVModel implements ARModel {
 
@@ -65,7 +64,7 @@ final class FileSCSVModel implements ARModel {
      * @return T[]
      */
     public function find_all(string $class_name): array {
-        $props = ARAtributes::from($class_name);
+        $props = ARAttributes::from($class_name);
         Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
         $objs = [];
         foreach ($this->combine_norm() as $data) {
@@ -80,7 +79,7 @@ final class FileSCSVModel implements ARModel {
      * @return ?T
      */
     public function find_by_id(string $class_name, $id): mixed {
-        $props = ARAtributes::from($class_name);
+        $props = ARAttributes::from($class_name);
         Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
         Error::assert($props->has_id(), __METHOD__.": ID property must be set to find by id in {$class_name}", __FILE__, __LINE__);
         [$id_field_name, $id_column_name] = $props->get_id_attr_norm();
@@ -95,7 +94,7 @@ final class FileSCSVModel implements ARModel {
 
     public function insert(mixed $class_obj): bool {
         $class_name = $class_obj::class;
-        $props = ARAtributes::from($class_name);
+        $props = ARAttributes::from($class_name);
         Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
         $line = $this->serialize($class_obj, $props);
         $handle = fopen($this->file_path, 'a');
@@ -108,7 +107,7 @@ final class FileSCSVModel implements ARModel {
 
     public function update_by_id(mixed $class_obj): bool {
         $class_name = $class_obj::class;
-        $props = ARAtributes::from($class_name);
+        $props = ARAttributes::from($class_name);
         Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
         Error::assert($props->has_id(), __METHOD__.": ID property must be set to find by id in {$class_name}", __FILE__, __LINE__);
         [$id_field_name, $id_column_name] = $props->get_id_attr_norm();
@@ -139,7 +138,7 @@ final class FileSCSVModel implements ARModel {
      * @param class-string<\T> $class_name
      */
     public function delete_by_id(string $class_name, $id): int {
-        $props = ARAtributes::from($class_name);
+        $props = ARAttributes::from($class_name);
         Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
         Error::assert($props->has_id(), __METHOD__.": ID property must be set to find by id in {$class_name}", __FILE__, __LINE__);
         [$id_field_name, $id_column_name] = $props->get_id_attr_norm();
@@ -175,7 +174,7 @@ final class FileSCSVModel implements ARModel {
         return $splited;
     }
 
-    private function serialize(mixed $class_obj, ARAtributes $props): string {
+    private function serialize(mixed $class_obj, ARAttributes $props): string {
         $props_norm = array_flip($props->get_attrs_norm());
         $line = '';
         $i = 0;
@@ -191,5 +190,4 @@ final class FileSCSVModel implements ARModel {
         }
         return $line . "\n";
     }
-
 }
