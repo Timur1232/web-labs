@@ -5,20 +5,6 @@ namespace App\Core;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 
-interface DBDriver {
-    /*
-    * @return array<array<string,string>>
-    */
-    function select(string $table_name, Properties $props, int $limit = 0): array;
-    /*
-    * @return ?array<array<string,string>>
-    */
-    function select_by_id(string $table_name, Properties $props, mixed $id_bind, int $limit = 0): array;
-    function insert(string $table_name, Properties $props, mixed $data): bool;
-    function delete_by_id(string $table_name, Properties $props, mixed $id_bind): int;
-    function update_by_id(string $table_name, Properties $props, mixed $data): bool;
-}
-
 final class FileSCSVDriver implements DBDriver {
     /**
      * @param array<array<string,string>> $file_contents_cache

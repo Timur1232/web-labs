@@ -15,7 +15,7 @@ function validate_path(string $p): bool {
 final class Router {
 
     /** @param ?Closure(Request): void $handler */
-    private function __construct(
+    public function __construct(
         private Request $request,
         private bool $handled = false,
         private ?\Closure $handler = null,

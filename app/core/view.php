@@ -34,7 +34,7 @@ class View {
     * @param JSScipt[] $scripts
     * @param array<string, mixed> $data
     */
-    protected function __construct(
+    public function __construct(
         public array $scripts = [],
         public array $data = [],
     ) { }

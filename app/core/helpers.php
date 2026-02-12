@@ -16,6 +16,12 @@ function var_dump_str(mixed $val): string {
     return ob_get_clean();
 }
 
+function var_dump_preln(mixed $val): void {
+    echo '<pre>';
+    var_dump($val);
+    echo '</pre><br>';
+}
+
 final class Error {
     public static function send_error_msg_and_die(int $code, string $msg): void {
         while (ob_end_clean());
