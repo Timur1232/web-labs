@@ -38,39 +38,42 @@ require_once './app/models/scsv_ar_model.php';
 require_once './app/models/db_ar_model.php';
 require_once './app/controllers/controllers.php';
 
-use App\Core\{Router, ARField, ActiveRecord};
+use App\Core\Router;
+// use App\Core\{ARField, ActiveRecord};
 use App\Controllers\{
-    Index, AboutMe, Interests, Study, Photoalbum, Callback, History,
+    Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib,
 };
-use App\Models\DBModel;
-use function App\Core\Helpers\var_dump_preln;
+// use App\Models\DBModel;
+// use function App\Core\Helpers\var_dump_preln;
+// 
+// #[ActiveRecord('test')]
+// class Test {
+//     #[ARField('a', ARField::ID_FIELD)]
+//     public int $a_field;
+//     #[ARField('b')]
+//     public string $b_field;
+// }
 
-#[ActiveRecord('test')]
-class Test {
-    #[ARField('a', ARField::ID_FIELD)]
-    public int $a_field;
-    #[ARField('b')]
-    public string $b_field;
-}
+// $model = DBModel::sqlite('./test.db');
 
-$model = DBModel::sqlite('./test.db');
-
-$rec = new Test();
-$rec->a_field = 123;
-$rec->b_field = 'try this';
-var_dump_preln($model->update_by_id($rec));
+// $rec = new Test();
+// $rec->a_field = 123;
+// $rec->b_field = 'try this';
+// var_dump_preln($model->update_by_id($rec));
 // var_dump_preln($model->delete_by_id(Test::class, 420));
 
 // $rec->a_field = 123;
 // $rec->b_field = 'insert';
 // var_dump_preln($model->insert($rec));
 
-var_dump_preln($model->find_by_id(Test::class, 1337));
+// var_dump_preln($model->find_by_id(Test::class, 1337));
 // var_dump_preln($model->find_all(Test::class));
 
-die();
+// die();
 
 $router = Router::default();
+
+$router->GET('/raylib', Raylib::raylib(...));
 
 $router->GET('/',             Index::index(...));
 $router->GET('/about_me',     AboutMe::index(...));
