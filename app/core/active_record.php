@@ -36,7 +36,7 @@ interface ARModel {
      */
     function find_by_id(string $class_name, mixed $id): mixed;
     function insert(mixed $class_obj): bool;
-    function update_by_id(mixed $class_obj): bool;
+    function update_by_id(mixed $class_obj): int;
     /*
      * @template T
      * @param class-string<\T> $class_name
@@ -44,22 +44,24 @@ interface ARModel {
     function delete_by_id(string $class_name, mixed $id): int;
 }
 
-interface ARConnection {
-    function close(): void;
-    function execute(string $query): void;
-    function fetch(): mixed;
-    /*
-     * @return mixed[]
-     */
-    function fetch_all(): array;
-}
-
 interface ARQueryBuilder {
-    function select(string $table_name, ARAttributes $props, int $limit = 0): string;
-    function select_by_id(string $table_name, ARAttributes $props, mixed $id_bind, int $limit = 0): string;
-    function insert(string $table_name, ARAttributes $props, mixed $data): string;
-    function delete_by_id(string $table_name, ARAttributes $props, mixed $id_bind): string;
-    function update_by_id(string $table_name, ARAttributes $props, mixed $data): string;
+    function select(ARAttributes $props, int $limit = 0): string;
+    /*
+     * @param array<string,string> $bindings
+     */
+    function select_by_id(ARAttributes $props, int $limit = 0): string;
+    /*
+     * @param array<string,string> $bindings
+     */
+    function insert(ARAttributes $props): string;
+    /*
+     * @param array<string,string> $bindings
+     */
+    function delete_by_id(ARAttributes $props): string;
+    /*
+     * @param array<string,string> $bindings
+     */
+    function update_by_id(ARAttributes $props): string;
 }
 
 final class ARAttributes {
@@ -135,6 +137,10 @@ final class ARAttributes {
         return [$this->id_index, $this->attrs[$this->id_index]->column_name];
     }
 
+    public function get_id_column_name(): string {
+        return $this->attrs[$this->id_index]->column_name;
+    }
+
     /*
      * @return array<string, string>
      */
@@ -171,219 +177,3 @@ final class ARAttributes {
         return $ar;
     }
 }
-
-// final class DB {
-//     // public static ?PDO $pdo = null;
-// 
-//     // public const string SQLITE_DNS_PREFIX = 'sqlite:';
-//     // public const string MYSQL_DNS_PREFIX = 'mysql:';
-// 
-//     // public static function init_connection(PDO $pdo): void {
-//     //     if (!isset(self::$pdo)) {
-//     //         try {
-//     //             self::$pdo = $pdo;
-//     //             self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-//     //         } catch (PDOException $e) {
-//     //             Log::error(__METHOD__.": Unable to connect to DB: {$e->getMessage()}", __FILE__, __LINE__);
-//     //             Error::internal_error();
-//     //         }
-//     //     } else {
-//     //         Log::warning(__METHOD__.': PDO connection already initialized', __FILE__, __LINE__);
-//     //     }
-//     // }
-// 
-//     // public static function sqlite_dns(string $db_file_path): string {
-//     //     return self::SQLITE_DNS_PREFIX . $db_file_path;
-//     // }
-// 
-//     // public static function mysql_dns(string $db_name, string $host): string {
-//     //     return self::MYSQL_DNS_PREFIX . 'dbname=' . $db_name . '; host=' . $host . '; char-set=utf8';
-//     // }
-// 
-//     /**
-//     * @template T
-//     * @param class-string<\T> $class_name
-//     * @return ?T
-//     */
-//     public static function find_by_id(DBDriver $driver, string $class_name, mixed $id): mixed {
-//         /** @var ReflectionClass<T> $r */
-//         $r = new ReflectionClass($class_name);
-//         $ar_attr = self::get_ar_attribute($r);
-//         Error::assert(isset($ar_attr), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
-// 
-//         $properties = self::get_all_properties($r);
-//         Error::assert(isset($properties->id_attr), __METHOD__.": ID property must be set to find by id in {$class_name}", __FILE__, __LINE__);
-// 
-//         // $cols = self::prepare_columns_wo_id($properties);
-//         // $cols = $properties->id_attr->column_name . $cols;
-// 
-//         /** @var PDOStatement $stmt */
-//         // $stmt = self::$pdo?->prepare("select {$cols} from {$ar_attr->table_name} where {$properties->id_attr->column_name} = :id limit 1");
-//         // $stmt->bindValue(':id', $id);
-//         // if (!$stmt->execute()) {
-//         //     Log::error(self::$pdo->errorInfo());
-//         //     return null;
-//         // }
-//         // $row = $stmt->fetch();
-//         $result = $driver->select_by_id($ar_attr->table_name, $properties, $id, 1);
-//         if ($result === null) return null;
-//         return self::map_columns($properties, $class_name, $result[0]);
-//     }
-// 
-//     /**
-//     * @template T
-//     * @param class-string<\T> $class_name
-//     * @return T[]
-//     */
-//     public static function find_all(DBDriver $driver, string $class_name): array {
-//         /** @var ReflectionClass<T> $r */
-//         $r = new ReflectionClass($class_name);
-//         $ar_attr = self::get_ar_attribute($r);
-//         Error::assert(isset($ar_attr), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
-// 
-//         $properties = self::get_all_properties($r);
-//         // $cols = self::prepare_columns_wo_id($properties);
-//         // $cols = $properties->id_attr->column_name . $cols;
-// 
-//         /** @var PDOStatement $stmt */
-//         // $stmt = self::$pdo?->prepare("select {$cols} from {$ar_attr->table_name}");
-//         // if (!$stmt->execute()) {
-//         //     Log::error(self::$pdo->errorInfo());
-//         //     return [];
-//         // }
-//         // $rows = $stmt->fetchAll();
-// 
-//         $result = $driver->select($ar_attr->table_name, $properties);
-// 
-//         $records = [];
-//         foreach ($result as $row) {
-//             $records[] = self::map_columns($properties, $class_name, $row);
-//         }
-// 
-//         return $records;
-//     }
-// 
-//     /**
-//     * @template T
-//     * @param class-string<\T> $class_name
-//     */
-//     public static function delete_by_id(DBDriver $driver, string $class_name, mixed $id): int {
-//         /** @var ReflectionClass<T> $r */
-//         $r = new ReflectionClass($class_name);
-//         $ar_attr = self::get_ar_attribute($r);
-//         Error::assert(isset($ar_attr), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
-// 
-//         $properties = self::get_all_properties($r);
-//         Error::assert(isset($properties->id_attr), __METHOD__.": ID property must be set to delete by id in {$class_name}", __FILE__, __LINE__);
-// 
-//         /** @var PDOStatement $stmt */
-//         // $stmt = self::$pdo?->prepare("delete from {$ar_attr->table_name} where {$properties->id_attr->column_name} = :id");
-//         // $stmt->bindValue(':id', $id);
-//         // if (!$stmt->execute()) {
-//         //     Log::error(self::$pdo->errorInfo());
-//         // }
-//         return $driver->delete_by_id($ar_attr, $properties, $id);
-//     }
-// 
-//     /**
-//     * @template T
-//     * @param T $class_obj
-//     */
-//     public static function insert(DBDriver $driver, mixed $class_obj): bool {
-//         /** @var ReflectionClass<T> $r */
-//         $r = new ReflectionClass($class_obj);
-//         $ar_attr = self::get_ar_attribute($r);
-//         $class_name = $class_obj::class;
-//         Error::assert(isset($ar_attr), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
-// 
-//         $properties = self::get_all_properties($r);
-// 
-//         // $cols = self::prepare_columns_wo_id($properties);
-//         // $value_bindings = ':' . str_replace(', ', ', :', $cols);
-// 
-//         /** @var PDOStatement $stmt */
-//         // $stmt = self::$pdo?->prepare("insert into {$ar_attr->table_name} ({$cols}) values ({$value_bindings})");
-// 
-//         // if (isset($properties->id_attr)) {
-//         //     $id_field_name = $properties->id_field_name;
-//         //     $stmt->bindValue(':'.$properties->id_attr->column_name, $class_obj->$id_field_name);
-//         // }
-//         // foreach ($properties->prop_attrs as $field_name => $attr) {
-//         //     $stmt->bindValue(':'.$attr->column_name, $class_obj->$field_name);
-//         // }
-// 
-//         // if (!$stmt->execute()) {
-//         //     Log::error(self::$pdo->errorInfo());
-//         //     return false;
-//         // }
-//         return $driver->insert($ar_attr->table_name, $properties, $class_obj);
-//     }
-// 
-//     /**
-//     * @template T
-//     * @param T $class_obj
-//     */
-//     public static function update_by_id(DBDriver $driver, mixed $class_obj): bool {
-//         /** @var ReflectionClass<T> $r */
-//         $r = new ReflectionClass($class_obj);
-//         $ar_attr = self::get_ar_attribute($r);
-//         $class_name = $class_obj::class;
-//         Error::assert(isset($ar_attr), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
-// 
-//         $properties = self::get_all_properties($r);
-//         Error::assert(isset($properties->id_attr), __METHOD__.": ID property must be set to update by id in {$class_name}", __FILE__, __LINE__);
-// 
-//         // $cols_bindings = '';
-//         // $comma = false;
-//         // foreach ($properties->prop_attrs as $prop_attr) {
-//         //     if ($comma) $cols_bindings = $cols_bindings . ', ';
-//         //     else $comma = true;
-//         //     $cols_bindings = $cols_bindings . $prop_attr->column_name . '= :' . $prop_attr->column_name;
-//         // }
-// 
-//         /** @var PDOStatement $stmt */
-//         // $stmt = self::$pdo?->prepare("update {$ar_attr->table_name} set {$cols_bindings} where {$properties->id_attr->column_name} = :id");
-//         // $id_field_name = $properties->id_field_name;
-//         // $stmt->bindValue(':id', $class_obj->$id_field_name);
-// 
-//         // foreach ($properties->prop_attrs as $field_name => $attr) {
-//         //     $stmt->bindValue(':'.$attr->column_name, $class_obj->$field_name);
-//         // }
-// 
-//         // if (!$stmt->execute()) {
-//         //     Log::error(self::$pdo->errorInfo());
-//         //     return false;
-//         // }
-//         return $driver->update_by_id($ar_attr->table_name, $properties, $class_obj);
-//     }
-// 
-//     private static function prepare_columns_wo_id(Properties $props): string {
-//         $columns = '';
-//         $first = true;
-//         foreach ($props->prop_attrs as $prop_attr) {
-//             if (!$first) $columns = $columns . ', ';
-//             else $first = false;
-//             $columns = $columns . $prop_attr->column_name;
-//         }
-//         return $columns;
-//     }
-// 
-//     /**
-//     * @template T
-//     * @param class-string<T> $class_name
-//     * @param array<string,string> $row
-//     * @return T
-//     */
-//     private static function map_columns(Properties $properties, string $class_name, array $row): mixed {
-//         $record = new $class_name;
-//         $id_name = $properties->id_field_name;
-//         if (isset($id_name)) {
-//             $record->$id_name = $row[$properties->id_attr->column_name];
-//         }
-//         foreach ($properties->prop_attrs as $field_name => $field_attr) {
-//             $record->$field_name = $row[$field_attr->column_name];
-//         }
-//         return $record;
-//     }
-// }
-

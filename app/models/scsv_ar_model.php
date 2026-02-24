@@ -105,7 +105,7 @@ final class FileSCSVModel implements ARModel {
         return true;
     }
 
-    public function update_by_id(mixed $class_obj): bool {
+    public function update_by_id(mixed $class_obj): int {
         $class_name = $class_obj::class;
         $props = ARAttributes::from($class_name);
         Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
@@ -114,15 +114,17 @@ final class FileSCSVModel implements ARModel {
 
         $line = $this->serialize($class_obj, $props);
         $handle = fopen($this->file_path, 'w');
-        if ($handle === false) return false;
+        if ($handle === false) return -1;
         fputs($handle, implode(';', $this->head)."\n");
 
         $i = 0;
+        $count = 0;
         foreach ($this->combine_norm() as $data) {
             // WARNING: loosy-goosy-ass compare
             if ($data[$id_column_name] == $class_obj->$id_field_name) {
                 fputs($handle, $line);
                 $this->contents[$i] = $this->parse_line($line);
+                $count++;
             } else {
                 fputs($handle, implode(';', $data)."\n");
             }
@@ -130,7 +132,7 @@ final class FileSCSVModel implements ARModel {
         }
 
         fclose($handle);
-        return true;
+        return $count;
     }
 
     /*

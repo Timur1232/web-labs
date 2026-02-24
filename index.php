@@ -32,19 +32,17 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-require_once 'app/core/core.php';
-require_once 'app/core/active_record.php';
-require_once 'app/models/scsv_ar_model.php';
-require_once 'app/controllers/controllers.php';
+require_once './app/core/core.php';
+require_once './app/core/active_record.php';
+require_once './app/models/scsv_ar_model.php';
+require_once './app/models/db_ar_model.php';
+require_once './app/controllers/controllers.php';
 
-use App\Core\ARAttributes;
-use App\Core\ARField;
-use App\Core\ActiveRecord;
-use App\Core\Router;
+use App\Core\{Router, ARField, ActiveRecord};
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History,
 };
-use App\Models\FileSCSVModel;
+use App\Models\DBModel;
 use function App\Core\Helpers\var_dump_preln;
 
 #[ActiveRecord('test')]
@@ -55,18 +53,21 @@ class Test {
     public string $b_field;
 }
 
-$model = FileSCSVModel::open('test_test.inc');
-$model->read_all();
-
-// DB::init_connection(new Sqlite(DB::sqlite_dns('./test.db')));
+$model = DBModel::sqlite('./test.db');
 
 $rec = new Test();
-$rec->a_field = 101010101;
-// $rec->b_field = '!haey lleh';
-// var_dump_preln($model->delete_by_id(Test::class, $rec->a_field));
+$rec->a_field = 123;
+$rec->b_field = 'try this';
+var_dump_preln($model->update_by_id($rec));
+// var_dump_preln($model->delete_by_id(Test::class, 420));
 
-// var_dump_preln($model->find_by_id(Test::class, 420));
-var_dump_preln($model->find_all(Test::class));
+// $rec->a_field = 123;
+// $rec->b_field = 'insert';
+// var_dump_preln($model->insert($rec));
+
+var_dump_preln($model->find_by_id(Test::class, 1337));
+// var_dump_preln($model->find_all(Test::class));
+
 die();
 
 $router = Router::default();
