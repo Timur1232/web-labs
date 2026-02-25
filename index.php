@@ -32,13 +32,15 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-// require_once './app/core/active_record.php';
-// require_once './app/core/models/scsv_ar_model.php';
-// require_once './app/core/models/db_ar_model.php';
-require_once './app/controllers/controllers.php';
-require_once './app/core/router.php';
+spl_autoload_register(function ($class_name) {
+    require_once str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
+});
 
-use App\Core\Router;
+if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
+if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
+if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+
+use App\Core\Route\Router;
 // use App\Core\{ARField, ActiveRecord};
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib,
