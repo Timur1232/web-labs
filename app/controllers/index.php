@@ -2,10 +2,11 @@
 
 namespace App\Controllers;
 
-require_once 'app/core/view.php';
+require_once 'app/core/view/view.php';
 require_once 'app/core/request.php';
 
-use App\Core\{View, Request};
+use App\Core\Request;
+use App\Core\View\View;
 
 final class Index {
     public static function index(Request $req): void {

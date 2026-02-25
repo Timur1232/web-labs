@@ -3,7 +3,7 @@
 namespace App\Core;
 
 require_once 'app/core/request.php';
-require_once 'app/core/helpers.php';
+require_once 'app/core/helpers/helpers.php';
 
 use App\Core\Helpers\Error;
 

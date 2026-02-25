@@ -2,14 +2,14 @@
 
 namespace App\Controllers;
 
-require_once 'app/core/view.php';
+require_once 'app/core/view/view.php';
 require_once 'app/core/request.php';
 require_once 'app/views/callback.php';
 require_once 'app/models/callback_validator.php';
 
 use App\Core\{Request};
-use App\Core\Helpers\Error;
-use App\Core\Helpers\Log;
+use App\Core\Helpers\{Error, Log};
+use App\Core\View\View;
 use App\Models\CallbackValidator;
 use App\Views\CallbackView;
 
@@ -19,7 +19,7 @@ final class Callback {
     const CALLBACK_GOOD_TEMPLATE = 'callback_good';
 
     public static function index(Request $req): void {
-        $view = CallbackView::default();
+        $view = View::default();
         echo $view->render_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
     }
 
@@ -36,7 +36,7 @@ final class Callback {
             }
         } else if (count($req->url->query) === 0) {
             $model->validate_all($req->form);
-            $view = CallbackView::default();
+            $view = View::default();
             if ($model->has_any_error()) {
                 echo $view
                     ->data('model', $model)

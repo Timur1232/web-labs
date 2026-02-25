@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Models;
-require_once 'app/core/active_record.php';
+namespace App\Core\Model;
 
-use App\Core\{ARModel, ARAttributes, ARQueryBuilder};
+require_once 'app/core/model/active_record.php';
+require_once 'app/core/model/ar_attributes.php';
+
+use App\Core\Model\{ARModel, ARAttributes, ARQueryBuilder};
 use App\Core\Helpers\{Error, Log};
 use PDO;
 use Pdo\Sqlite;

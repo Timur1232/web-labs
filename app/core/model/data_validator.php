@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core;
+namespace App\Core\Model;
 
-require_once 'app/core/helpers.php';
+require_once 'app/core/helpers/helpers.php';
 
 use App\Core\Helpers\Log;
 use App\Core\Helpers\Error;
@@ -27,7 +27,7 @@ final class DataValidator {
      * @param string[] $dependency_errors
      * @param Closure(mixed): bool $is_empty_fn
      */
-    private function __construct(
+    public function __construct(
         public mixed $data,
         public array $rules,
         public ?array $dependences,

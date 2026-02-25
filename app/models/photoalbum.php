@@ -3,7 +3,7 @@
 namespace App\Models;
 
 final class PhotoItem {
-    private function __construct(
+    public function __construct(
         public string $filename,
         public string $alt,
         public string $title,
@@ -17,7 +17,7 @@ final class PhotoItem {
 
 final class PhotoalbumModel {
     /** @param array<PhotoItem> $photos */
-    private function __construct(
+    public function __construct(
         public array $photos,
     ) { }
 

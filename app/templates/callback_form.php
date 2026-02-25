@@ -5,7 +5,6 @@ use App\Views\CallbackView;
 use App\Models\CallbackValidator;
 /**
 * @var CallbackValidator $model
-* @var CallbackView $view
 */?>
 <section id="callback_form_cantainer" class="form-container">
     <form id="callback-form" class="callback-form shadow rounded"
@@ -24,7 +23,7 @@ use App\Models\CallbackValidator;
         <div id="fio_error">
         <?php if (isset($model) && $model->has_fio_errors()) {
             foreach ($model->get_fio_errors() as $err) {
-                echo $view->error_tag($err);
+                echo CallbackView::error_tag($err);
             }
         } ?>
         </div>
@@ -38,7 +37,7 @@ use App\Models\CallbackValidator;
             <div id="gender_error">
             <?php if (isset($model) && $model->has_gender_errors()) {
                 foreach ($model->get_gender_errors() as $err) {
-                    echo $view->error_tag($err);
+                    echo CallbackView::error_tag($err);
                 }
             } ?>
             </div>
@@ -54,7 +53,7 @@ use App\Models\CallbackValidator;
         <div id="birthday_error">
         <?php if (isset($model) && $model->has_birthday_errors()) {
             foreach ($model->get_birthday_errors() as $err) {
-                echo $view->error_tag($err);
+                echo CallbackView::error_tag($err);
             }
         } ?>
         </div>
@@ -99,7 +98,7 @@ use App\Models\CallbackValidator;
         <div id="email_error">
         <?php if (isset($model) && $model->has_email_errors()) {
             foreach ($model->get_email_errors() as $err) {
-                echo $view->error_tag($err);
+                echo CallbackView::error_tag($err);
             }
         } ?>
         </div>
@@ -115,7 +114,7 @@ use App\Models\CallbackValidator;
         <div id="phone_error">
         <?php if (isset($model) && $model->has_phone_errors()) {
             foreach ($model->get_phone_errors() as $err) {
-                echo $view->error_tag($err);
+                echo CallbackView::error_tag($err);
             }
         } ?>
         </div>
@@ -131,7 +130,7 @@ use App\Models\CallbackValidator;
         <div id="text_error">
         <?php if (isset($model) && $model->has_text_errors()) {
             foreach ($model->get_text_errors() as $err) {
-                echo $view->error_tag($err);
+                echo CallbackView::error_tag($err);
             }
         } ?>
         </div>

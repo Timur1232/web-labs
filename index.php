@@ -32,11 +32,11 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-require_once './app/core/core.php';
-require_once './app/core/active_record.php';
-require_once './app/models/scsv_ar_model.php';
-require_once './app/models/db_ar_model.php';
+// require_once './app/core/active_record.php';
+// require_once './app/core/models/scsv_ar_model.php';
+// require_once './app/core/models/db_ar_model.php';
 require_once './app/controllers/controllers.php';
+require_once './app/core/router.php';
 
 use App\Core\Router;
 // use App\Core\{ARField, ActiveRecord};
@@ -45,7 +45,7 @@ use App\Controllers\{
 };
 // use App\Models\DBModel;
 // use function App\Core\Helpers\var_dump_preln;
-// 
+
 // #[ActiveRecord('test')]
 // class Test {
 //     #[ARField('a', ARField::ID_FIELD)]
@@ -53,27 +53,26 @@ use App\Controllers\{
 //     #[ARField('b')]
 //     public string $b_field;
 // }
-
+// 
 // $model = DBModel::sqlite('./test.db');
-
+// 
 // $rec = new Test();
-// $rec->a_field = 123;
-// $rec->b_field = 'try this';
-// var_dump_preln($model->update_by_id($rec));
-// var_dump_preln($model->delete_by_id(Test::class, 420));
-
+// 
 // $rec->a_field = 123;
 // $rec->b_field = 'insert';
 // var_dump_preln($model->insert($rec));
-
+// 
+// $rec->b_field = 'try this';
+// var_dump_preln($model->update_by_id($rec));
+// 
+// var_dump_preln($model->delete_by_id(Test::class, 420));
+// 
 // var_dump_preln($model->find_by_id(Test::class, 1337));
 // var_dump_preln($model->find_all(Test::class));
-
+// 
 // die();
 
 $router = Router::default();
-
-$router->GET('/raylib', Raylib::raylib(...));
 
 $router->GET('/',             Index::index(...));
 $router->GET('/about_me',     AboutMe::index(...));
@@ -91,5 +90,7 @@ $router->GET('/history',      History::index(...));
 $api = $router->group('/api');
 // TODO: maybe separate data validating and accepting
 $api->POST('/callback',       Callback::check(...));
+
+$router->GET('/raylib', Raylib::raylib(...));
 
 $router->dispatch();

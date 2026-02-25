@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-require_once 'app/core/helpers.php';
+require_once 'app/core/helpers/helpers.php';
 
 use App\Core\Helpers\ImgTag;
 
 final class InterestsArticle {
     /** @param ImgTag[] $images */
-    private function __construct(
+    public function __construct(
         public string $title,
         public string $caption,
         public array $images,
@@ -31,7 +31,7 @@ function article(
 
 final class InterestsSection {
     /** @param InterestsArticle[] $articles */
-    private function __construct(
+    public function __construct(
         public string $id,
         public string $title,
         public array $articles,
@@ -53,7 +53,7 @@ function section(
 
 final class InterestsModel {
     /** @param InterestsSection[] $sections */
-    private function __construct(
+    public function __construct(
         public array $sections,
     ) { }
 

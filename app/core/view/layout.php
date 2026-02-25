@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Core;
+namespace App\Core\View;
 
-require_once 'app/core/view.php';
+require_once 'app/core/view/view.php';
 
 final class LayoutData {
-    private function __construct(
+    public function __construct(
         public string $title,
         public string $page,
         public string $template_page,

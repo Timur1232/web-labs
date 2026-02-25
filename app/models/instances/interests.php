@@ -3,7 +3,7 @@
 namespace App\Models\Instances;
 
 require_once 'app/models/interests.php';
-require_once 'app/core/helpers.php';
+require_once 'app/core/helpers/helpers.php';
 
 use App\Models\InterestsModel;
 use function App\Core\Helpers\img;

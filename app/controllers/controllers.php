@@ -6,3 +6,4 @@ require_once 'app/controllers/study.php';
 require_once 'app/controllers/photoalbum.php';
 require_once 'app/controllers/callback.php';
 require_once 'app/controllers/history.php';
+require_once 'app/controllers/raylib.php';

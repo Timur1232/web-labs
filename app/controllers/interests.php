@@ -2,11 +2,12 @@
 
 namespace App\Controllers;
 
-require_once 'app/core/view.php';
+require_once 'app/core/view/view.php';
 require_once 'app/core/request.php';
 require_once 'app/models/interests.php';
 
-use App\Core\{View, Request};
+use App\Core\Request;
+use App\Core\View\View;
 use App\Models\InterestsModel;
 
 final class Interests {

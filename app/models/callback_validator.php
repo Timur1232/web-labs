@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Models;
-require_once 'app/core/data_validator.php';
+require_once 'app/core/model/data_validator.php';
 
-use App\Core\DataValidator;
+use App\Core\Model\DataValidator;
 
 
 final class CallbackValidator {

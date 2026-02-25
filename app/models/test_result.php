@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-require_once 'app/core/data_validator.php';
+require_once 'app/core/model/data_validator.php';
 
-use App\Core\DataValidator;
+use App\Core\Model\DataValidator;
 
 final class TestModel {
 
@@ -14,7 +14,7 @@ final class TestModel {
      * @param string[] $series_errs
      * @param string[] $hard_errs
      */
-    private function __construct(
+    public function __construct(
         public array $user_answers = [],
         public array $lim_errs    = [],
         public array $series_errs = [],

@@ -4,7 +4,7 @@ namespace App\Core;
 
 final class URL {
     /** @param array<string, string> $query */
-    private function __construct(
+    public function __construct(
         public string $path,
         public array $query,
     ) { }

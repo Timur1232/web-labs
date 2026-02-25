@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 require_once './app/core/request.php';
-require_once './app/core/helpers.php';
+require_once './app/core/helpers/helpers.php';
 
 use App\Core\Helpers\Error;
 use FFI;
@@ -10,6 +10,7 @@ use App\Core\Request;
 
 final class Raylib {
     public static function raylib(Request $r): void {
+        /** @var mixed $ffi */
         $ffi = FFI::load("./raylib_php.h");
         Error::assert(isset($ffi), "Cannot load raylib.so");
         $ffi->InitWindow(800, 600, "Hello from php");

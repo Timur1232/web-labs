@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Core;
+namespace App\Core\View;
 
 require_once 'app/core/request.php';
-require_once 'app/core/helpers.php';
+require_once 'app/core/helpers/helpers.php';
+require_once 'app/core/view/layout.php';
 
 use App\Core\Helpers\Error;
-
+use App\Core\Request;
+// use function App\Core\View\layout;
 
 enum JSScriptType : string {
     case Text   = 'text/javascript';
     case Module = 'module';
 }
 
-final class JSScript {
-    private function __construct(
+final class JsScript {
+    public function __construct(
         public string $src,
         public JSScriptType $type,
     ) { }
@@ -28,7 +30,7 @@ final class JSScript {
     }
 }
 
-class View {
+final class View {
 
     /*
     * @param JSScipt[] $scripts
@@ -67,7 +69,6 @@ class View {
         if (!file_exists($page_file)) {
             Error::internal_error();
         }
-        $view = $this;
         extract($this->data);
         ob_start();
         include $page_file;
@@ -82,7 +83,7 @@ class View {
     }
 
     public final function script(string $src, JSScriptType $type = JSScriptType::Text): self {
-        $this->scripts[] = JSScript::from($src, $type);
+        $this->scripts[] = JsScript::from($src, $type);
         return $this;
     }
 

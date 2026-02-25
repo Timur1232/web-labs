@@ -2,21 +2,11 @@
 
 namespace App\Views;
 
-require_once 'app/core/view.php';
 require_once 'app/models/photoalbum.php';
 
-use App\Core\View;
 use App\Models\PhotoalbumModel;
 
-class PhotoalbumView extends View {
-
-    private function __construct() {
-        parent::__construct();
-    }
-
-    public static function default(): self {
-        return new self();
-    }
+final class PhotoalbumView {
 
     /**
     * @param PhotoItem[] $photos

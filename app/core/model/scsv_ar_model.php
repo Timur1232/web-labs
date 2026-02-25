@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Models;
-require_once 'app/core/active_record.php';
-require_once 'app/core/helpers.php';
-use App\Core\ARAttributes;
-use App\Core\ARModel;
+require_once 'app/core/model/active_record.php';
+require_once 'app/core/model/ar_attributes.php';
+require_once 'app/core/helpers/helpers.php';
+use App\Core\Model\ARAttributes;
+use App\Core\Model\ARModel;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 use Generator;
