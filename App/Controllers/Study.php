@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Route\Request;
 use App\Core\View\View;
-use App\Models\TestModel;
+use App\Models\Test\TestModel;
 
 final class Study {
     public static function index(Request $req): void {

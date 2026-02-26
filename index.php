@@ -55,23 +55,23 @@ use App\Controllers\{
 //     #[ARField('b')]
 //     public string $b_field;
 // }
-// 
+//
 // $model = DBModel::sqlite('./test.db');
-// 
+//
 // $rec = new Test();
-// 
+//
 // $rec->a_field = 123;
 // $rec->b_field = 'insert';
 // var_dump_preln($model->insert($rec));
-// 
+//
 // $rec->b_field = 'try this';
 // var_dump_preln($model->update_by_id($rec));
-// 
+//
 // var_dump_preln($model->delete_by_id(Test::class, 420));
-// 
+//
 // var_dump_preln($model->find_by_id(Test::class, 1337));
 // var_dump_preln($model->find_all(Test::class));
-// 
+//
 // die();
 
 $router = Router::default();
