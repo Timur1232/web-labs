@@ -9,7 +9,7 @@ use App\Core\Route\Request;
 final class Raylib {
     public static function raylib(Request $r): void {
         /** @var mixed $ffi */
-        $ffi = FFI::load("./raylib_php.h");
+        $ffi = FFI::load("./probe/raylib_ffi/raylib_php.h");
         Error::assert(isset($ffi), "Cannot load raylib.so");
         $ffi->InitWindow(800, 600, "Hello from php");
         $msg = '';
@@ -62,5 +62,6 @@ final class Raylib {
         }
         $ffi->CloseWindow();
         echo $msg;
+        echo '<br/><a href="/">Home</a>';
     }
 }

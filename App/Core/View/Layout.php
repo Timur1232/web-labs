@@ -40,11 +40,9 @@ function layout(LayoutData $data): void { ?>
                 evt.detail.shouldSwap = true;
             });
         </script>
-        <?php
-            foreach ($data->content->scripts as $script) {
-                echo $script->render_script();
-            }
-        ?>
+        <?php foreach ($data->content->scripts as $script): ?>
+            <?= $script->render_script() ?>
+        <?php endforeach ?>
     </head>
 
     <body class="flex-container">

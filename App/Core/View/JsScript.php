@@ -4,8 +4,8 @@ namespace App\Core\View;
 
 final class JsScript {
     public function __construct(
-        public string $src,
-        public JsScriptType $type,
+        public string $src = '',
+        public JsScriptType $type = JsScriptType::Text,
     ) { }
 
     public static function from(string $src, JsScriptType $type = JsScriptType::Text): self {

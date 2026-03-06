@@ -7,10 +7,30 @@ use DateTime;
 
 #[ActiveRecord('guest_book')]
 final class Messege {
-    #[ARField('date')] public DateTime $date;
-    #[ARField('sname')] public string $sname;
-    #[ARField('fname')] public string $fname;
-    #[ARField('surname')] public string $surname;
-    #[ARField('email')] public string $email;
-    #[ARField('text')] public string $text;
+    public function __construct(
+        #[ARField('datestr', ARField::ID_FIELD)]
+                              public ?string $datestr = null,
+        #[ARField('sname')]   public ?string $sname   = null,
+        #[ARField('fname')]   public ?string $fname   = null,
+        #[ARField('surname')] public ?string $surname = null,
+        #[ARField('email')]   public ?string $email   = null,
+        #[ARField('text')]    public ?string $text    = null,
+    ) {}
+
+    public const DATE_TIME_FORMAT = 'Ymd-His';
+
+    public function get_date(): ?DateTime {
+        return DateTime::createFromFormat(self::DATE_TIME_FORMAT, $this->datestr);
+    }
+
+    public function with_date(DateTime $date): self {
+        $this->datestr = $date->format(self::DATE_TIME_FORMAT);
+        return $this;
+    }
+
+    public function with_current_date(): self {
+        $date = new DateTime('now');
+        $this->with_date($date);
+        return $this;
+    }
 }

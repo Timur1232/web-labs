@@ -41,58 +41,29 @@ if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Core\Route\Router;
-// use App\Core\{ARField, ActiveRecord};
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib,
 };
-// use App\Models\DBModel;
-// use function App\Core\Helpers\var_dump_preln;
-
-// #[ActiveRecord('test')]
-// class Test {
-//     #[ARField('a', ARField::ID_FIELD)]
-//     public int $a_field;
-//     #[ARField('b')]
-//     public string $b_field;
-// }
-//
-// $model = DBModel::sqlite('./test.db');
-//
-// $rec = new Test();
-//
-// $rec->a_field = 123;
-// $rec->b_field = 'insert';
-// var_dump_preln($model->insert($rec));
-//
-// $rec->b_field = 'try this';
-// var_dump_preln($model->update_by_id($rec));
-//
-// var_dump_preln($model->delete_by_id(Test::class, 420));
-//
-// var_dump_preln($model->find_by_id(Test::class, 1337));
-// var_dump_preln($model->find_all(Test::class));
-//
-// die();
 
 $router = Router::default();
 
-$router->GET('/',             Index::index(...));
-$router->GET('/about_me',     AboutMe::index(...));
-$router->GET('/interests',    Interests::index(...));
+$router->GET('/',           Index::index(...));
+$router->GET('/about_me',   AboutMe::index(...));
+$router->GET('/interests',  Interests::index(...));
 
 $study = $router->group('/study');
-$study->GET('/',              Study::index(...));
-$study->GET('/test',          Study::test(...));
-$study->POST('/test',         Study::check_test(...));
+$study->GET('/',            Study::index(...));
+$study->GET('/test',        Study::test(...));
+$study->POST('/test',       Study::check_test(...));
 
-$router->GET('/photoalbum',   Photoalbum::index(...));
-$router->GET('/callback',     Callback::index(...));
-$router->GET('/history',      History::index(...));
+$router->GET('/photoalbum', Photoalbum::index(...));
+$router->GET('/callback',   Callback::index(...));
+$router->GET('/history',    History::index(...));
 
 $api = $router->group('/api');
 // TODO: maybe separate data validating and accepting
-$api->POST('/callback',       Callback::check(...));
+$api->POST('/callback',     Callback::check(...));
 
-$router->GET('/raylib', Raylib::raylib(...));
+$router->GET('/raylib',     Raylib::raylib(...));
 
 $router->dispatch();

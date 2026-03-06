@@ -4,6 +4,7 @@ namespace App\Core\Model;
 
 use App\Core\Helpers\Log;
 use App\Core\Helpers\Error;
+use Closure;
 
 /*
  * WARNING: By default assumes that data is of type string.
@@ -20,21 +21,23 @@ final class DataValidator {
      * @param Closure(mixed): bool $is_empty_fn
      */
     public function __construct(
-        public mixed $data,
-        public array $rules,
-        public ?array $dependences,
-        public array $errors,
-        public array $dependency_errors,
-        public \Closure $is_empty_fn,
-        public string $is_empty_name,
+        public mixed $data = null,
+        public array $rules = [],
+        public ?array $dependences = null,
+        public array $errors = [],
+        public array $dependency_errors = [],
+        public \Closure $is_empty_fn = self::default_is_empty(...),
+        public string $is_empty_name = self::DEFAULT_IS_EMPTY_NAME,
     ) { }
 
+    public const DEFAULT_IS_EMPTY_NAME = 'is_empty';
+
     public static function for(mixed $data): self {
-        return new self($data, [], null, [], [], self::default_is_empty(...), 'is_empty');
+        return new self(data: $data);
     }
 
     public static function default(): self {
-        return self::for(null);
+        return new self();
     }
 
     public static function default_is_empty(mixed $data): bool {
@@ -64,9 +67,11 @@ final class DataValidator {
 
     /*
      * @param array<string, Closure(mixed): bool> $rules
+     * @param array<string, string[]> $dependences
      */
-    public function with_rules(array $rules): self {
+    public function with_rules(array $rules, ?array $dependences = null): self {
         $this->rules = $rules;
+        if (isset($dependences)) $this->dependences = $dependences;
         return $this;
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Core\Model;
 
 use App\Core\Model\ARAttributes;
 use App\Core\Model\ARModel;
@@ -8,7 +8,7 @@ use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 use Generator;
 
-final class FileSCSVModel implements ARModel {
+final class FileCSVModel implements ARModel {
 
     /*
      * @param string[] $head
@@ -17,37 +17,85 @@ final class FileSCSVModel implements ARModel {
     public function __construct(
         public string $file_path,
         public array $head = [],
-        private array $contents = [],
+        public string $sep = ';',
+        public array $contents = [],
     ) {}
 
-    public static function open(string $file_path): ?self {
-        if (!file_exists($file_path)) return null;
-        return new self($file_path);
+    /*
+     * @template T
+     * @param class-string<\T> $class_name
+     */
+    public static function create_db(string $class_name, string $file_path, string $sep = ';'): ?self {
+        if (file_exists($file_path)) {
+            Log::warning(__METHOD__.": db file {$file_path} already exists. Opening it.");
+            return self::open($file_path, $sep);
+        }
+        $props = ARAttributes::from($class_name);
+        Error::assert(isset($props), __METHOD__.": No ActiveRecord attribute on class {$class_name}", __FILE__, __LINE__);
+        $self = new self($file_path, sep: $sep);
+        $self->head = array_keys($props->get_attrs_norm());
+
+        $handle = fopen($self->file_path, 'w');
+        if ($handle === false) return null;
+        if (fputs($handle, implode($self->sep, $self->head)."\n") === false) return null;
+        if (!fclose($handle)) return null;
+
+        return $self;
     }
 
-    public function read_all(): void {
-        $handle = fopen($this->file_path, 'r');
-        Error::assert($handle !== false, __METHOD__.": error opening file {$this->file_path}");
+    public static function open(string $file_path, string $sep = ';'): ?self {
+        $handle = fopen($file_path, 'r');
+        if ($handle === false) {
+            Log::error(__METHOD__.": file not exist {$file_path}");
+            return null;
+        }
+        $self = new self(file_path: $file_path, sep: $sep);
+        $self->head = $self->read_head($handle);
+        if (!isset($self->head)) {
+            fclose($handle);
+            return null;
+        }
+        $self->read_content($handle);
+        fclose($handle);
+        return $self;
+    }
+    /**
+     * @param recource $handle
+     * @return ?string[]
+     */
+    private function read_head($handle): ?array {
         $line = fgets($handle);
         if ($line === false) {
-            fclose($handle);
-            Error::assert(false, __METHOD__.": file {$this->file_path} must have head");
+            Log::error(__METHOD__.": file {$this->file_path} must have head");
+            return null;
         }
-        $this->head = explode(';', trim($line));
-        // TODO: error handling
-        // if ($this->head === false) return null;
+        $head = explode($this->sep, trim($line));
+        if ($head === false) {
+            Log::error(__METHOD__.": unable to read file head in {$this->file_path}");
+            return null;
+        }
+        return $head;
+    }
+    /**
+     * @param recource $handle
+     */
+    private function read_content($handle): bool {
+        if (!isset($this->head)) {
+            return false;
+        }
         $line_n = 1;
         while (($line = fgets($handle)) !== false) {
             $line_n++;
             $row = $this->parse_line($line);
             if ($row === null) {
-                Log::error(__METHOD__.": in file {$this->file_path}: incorrect format on line {$line_n}. Skipping.");
+                Log::error(__METHOD__.": {$this->file_path}:{$line_n}: incorrect format. Skipping.");
                 continue;
             }
             $this->contents[] = $row;
         }
-        fclose($handle);
+        return true;
     }
+
     /**
      * @return Generator<array<string, string>>
      */
@@ -114,7 +162,7 @@ final class FileSCSVModel implements ARModel {
         $line = $this->serialize($class_obj, $props);
         $handle = fopen($this->file_path, 'w');
         if ($handle === false) return -1;
-        fputs($handle, implode(';', $this->head)."\n");
+        fputs($handle, implode($this->sep, $this->head)."\n");
 
         $i = 0;
         $count = 0;
@@ -125,7 +173,7 @@ final class FileSCSVModel implements ARModel {
                 $this->contents[$i] = $this->parse_line($line);
                 $count++;
             } else {
-                fputs($handle, implode(';', $data)."\n");
+                fputs($handle, implode($this->sep, str_replace($this->sep, "\\{$this->sep}", $data))."\n");
             }
             $i++;
         }
@@ -146,14 +194,14 @@ final class FileSCSVModel implements ARModel {
 
         $handle = fopen($this->file_path, 'w');
         if ($handle === false) return -1;
-        fputs($handle, implode(';', $this->head)."\n");
+        fputs($handle, implode($this->sep, $this->head)."\n");
 
         $i = 0;
         $count = 0;
         foreach ($this->combine_norm() as $data) {
             // WARNING: loosy-goosy-ass compare
             if ($data[$id_column_name] != $id) {
-                fputs($handle, implode(';', $data)."\n");
+                fputs($handle, implode($this->sep, str_replace($this->sep, "\\{$this->sep}", $data))."\n");
             } else {
                 array_splice($this->contents, $i, 1);
                 $count++;
@@ -164,13 +212,33 @@ final class FileSCSVModel implements ARModel {
         fclose($handle);
         return $count;
     }
+    /**
+     * @return string[]
+     */
+    private function split_escaped(string $str): array {
+        $acc = '';
+        $res = [];
+        $escape = false;
+        foreach (mb_str_split($str, encoding: 'UTF-8') as $ch) {
+            if ($ch === '\\') {
+                $escape = true;
+            } else if ((!$escape && $ch !== $this->sep) || ($escape && $ch === $this->sep)) {
+                $acc .= $ch;
+                $escape = false;
+            } else {
+                $res[] = $acc;
+                $acc = '';
+            }
+        }
+        $res[] = $acc;
+        return $res;
+    }
 
     /*
     * @return ?string[]
     */
     private function parse_line(string $line): ?array {
-        $splited = explode(';', trim($line));
-        if ($splited === false) return null;
+        $splited = $this->split_escaped(trim($line));
         if (count($splited) !== count($this->head)) return null;
         return $splited;
     }
@@ -182,13 +250,14 @@ final class FileSCSVModel implements ARModel {
         foreach ($this->head as $col) {
             if (array_key_exists($col, $props_norm)) {
                 $field_name = $props_norm[$col];
-                $line .= strval($class_obj->$field_name);
+                $line .= str_replace($this->sep, "\\{$this->sep}", strval($class_obj->$field_name));
             }
             if ($i < count($this->head) - 1) {
-                $line .= ';';
+                $line .= $this->sep;
             }
             $i++;
         }
         return $line . "\n";
     }
+
 }
