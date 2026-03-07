@@ -5,7 +5,6 @@ namespace App\Views;
 use App\Models\Photoalbum\PhotoalbumModel;
 
 final class PhotoalbumView {
-
     /**
     * @param PhotoItem[] $photos
     */

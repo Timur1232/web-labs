@@ -3,26 +3,33 @@
 namespace App\Controllers;
 
 use App\Core\Route\Request;
+use App\Core\View\Component;
 use App\Core\View\View;
 use App\Models\Test\TestModel;
 
 final class Study {
-    public static function index(Request $req): void {
-        $view = View::default();
-        echo $view->render_layout(template_page: 'study', title: 'Учеба');
+    public static function index(Request $req): Component {
+        return View::template_with_layout('study', title: 'Учеба');
     }
 
-    public static function test(Request $req): void {
-        $test_view = View::default();
-        echo $test_view->render_layout(template_page: 'test', title: 'Тест');
+    public static function test(Request $req): Component {
+        return View::template_with_layout('test', title: 'Тест');
     }
 
-    public static function check_test(Request $req): void {
+    public static function check_test(Request $req): Component {
         $model = TestModel::from($req->form);
         $model->check_test();
-        $view = View::default()
-            ->data('model', $model);
-        echo $view->render_hx($req, template_page: 'test_result');
+        $comp = View::template('test_result', data: ['model' => $model]);
+        if ($req->htmx) return $comp;
+        return View::layout($comp, title: 'Тест');
     }
+
+    // public static function check_test(Request $req): View {
+    //     $model = TestModel::from($req->form);
+    //     $model->check_test();
+    //     $view = View::template(template: 'test_result', data: ['model', $model]);
+    //     if ($req->htmx) return $view;
+    //     else return View::layout($view);
+    // }
 }
 

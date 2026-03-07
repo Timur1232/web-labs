@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Core\Route\Request;
 use App\Core\Helpers\{Error, Log};
+use App\Core\View\Component;
+use App\Core\View\ComponentFunc;
 use App\Core\View\View;
 use App\Models\CallbackValidator;
 use App\Views\CallbackView;
@@ -13,33 +15,38 @@ final class Callback {
     const CALLBACK_FORM_TEMPLATE = 'callback_form';
     const CALLBACK_GOOD_TEMPLATE = 'callback_good';
 
-    public static function index(Request $req): void {
-        $view = View::default();
-        echo $view->render_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
+    public static function index(Request $req): Component {
+        return View::template_with_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
     }
 
-    public static function check(Request $req): void {
+    public static function check(Request $req): Component {
         $model = CallbackValidator::from($req->form);
         if ($req->htmx && count($req->url->query) !== 0) {
             $query_f = $req->url->query['f'];
             if (!$model->validate_by_query($query_f)) {
-                return;
+                return View::empty();
             }
             $errors = $model->get_errors_by_query($query_f);
-            foreach ($errors as $err) {
-                echo CallbackView::error_tag($err);
-            }
+            return new ComponentFunc(
+                function () use ($errors) {
+                    foreach ($errors as $err) {
+                        echo CallbackView::error_tag($err);
+                    }
+                    return Error::ok();
+                }
+            );
         } else if (count($req->url->query) === 0) {
             $model->validate_all($req->form);
-            $view = View::default();
             if ($model->has_any_error()) {
-                echo $view
-                    ->data('model', $model)
-                    ->render_hx($req, template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
+                $comp = View::template(template_page: self::CALLBACK_FORM_TEMPLATE, data: ['model' => $model]);
+                if ($req->htmx) return $comp;
+                return View::layout($comp, title: self::TITLE);
             } else {
                 // TODO: saving callback
                 Log::warning('saving not implemented');
-                echo $view->render_hx($req, template_page: self::CALLBACK_GOOD_TEMPLATE, title: self::TITLE);
+                $comp = View::template(template_page: self::CALLBACK_GOOD_TEMPLATE);
+                if ($req->htmx) return $comp;
+                return View::layout($comp, title: self::TITLE);
             }
         } else {
             ob_start();

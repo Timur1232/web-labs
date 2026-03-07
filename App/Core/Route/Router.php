@@ -3,14 +3,15 @@
 namespace App\Core\Route;
 
 use App\Core\Helpers\Error;
+use App\Core\Helpers\Log;
+use Closure;
 
 final class Router {
 
-    /** @param ?Closure(Request): void $handler */
     public function __construct(
         private Request $request,
         private bool $handled = false,
-        private ?\Closure $handler = null,
+        private ?Closure $handler = null,
     ) { }
 
     public static function default(): self {
@@ -27,7 +28,7 @@ final class Router {
     }
 
     /*
-     * @param Closure(Request): void $handler
+     * @param Closure(Request): Component $handler
      */
     public function handle_rule(string $path, \Closure $handler, HTTPMethod $method): bool {
         Error::assert(self::validate_path($path), "invalid path {$path} - дэбил");
@@ -43,35 +44,35 @@ final class Router {
     }
 
     /**
-     * @param Closure(Request): void $handler
+     * @param Closure(Request): Component $handler
      */
     public function GET(string $path, \Closure $handler): bool {
         return $this->handle_rule($path, $handler, HTTPMethod::GET);
     }
 
     /**
-     * @param Closure(Request): void $handler
+     * @param Closure(Request): Component $handler
      */
     public function POST(string $path, \Closure $handler): bool {
         return $this->handle_rule($path, $handler, HTTPMethod::POST);
     }
 
     /**
-     * @param Closure(Request): void $handler
+     * @param Closure(Request): Component $handler
      */
     public function PUT(string $path, \Closure $handler): bool {
         return $this->handle_rule($path, $handler, HTTPMethod::PUT);
     }
 
     /**
-     * @param Closure(Request): void $handler
+     * @param Closure(Request): Component $handler
      */
     public function PATCH(string $path, \Closure $handler): bool {
         return $this->handle_rule($path, $handler, HTTPMethod::PATCH);
     }
 
     /**
-     * @param Closure(Request): void $handler
+     * @param Closure(Request): Component $handler
      */
     public function DELETE(string $path, \Closure $handler): bool {
         return $this->handle_rule($path, $handler, HTTPMethod::DELETE);
@@ -89,7 +90,13 @@ final class Router {
 
         $handler = $this->handler;
         Error::assert(isset($handler), 'no handler function - дэбил');
-        $handler($this->request);
+        $comp = $handler($this->request);
+        $err = $comp->render();
+        if (!$err->ok()) {
+            Log::error("Router: $err->error");
+            Error::internal_error();
+            return false;
+        }
 
         return true;
     }
