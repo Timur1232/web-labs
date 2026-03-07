@@ -92,7 +92,7 @@ final class Router {
         Error::assert(isset($handler), 'no handler function - дэбил');
         $comp = $handler($this->request);
         $err = $comp->render();
-        if (!$err->ok()) {
+        if (!$err->ok) {
             Log::error("Router: $err->error");
             Error::internal_error();
             return false;

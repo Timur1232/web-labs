@@ -25,7 +25,7 @@ final class FileCSVModel implements ARModel {
      * @template T
      * @param class-string<\T> $class_name
      */
-    public static function create_db(string $class_name, string $file_path, string $sep = ';'): ?self {
+    public static function open_or_create(string $class_name, string $file_path, string $sep = ';'): ?self {
         if (file_exists($file_path)) {
             Log::warning(__METHOD__.": db file {$file_path} already exists. Opening it.");
             return self::open($file_path, $sep);
@@ -212,6 +212,7 @@ final class FileCSVModel implements ARModel {
         fclose($handle);
         return $count;
     }
+
     /**
      * @return string[]
      */

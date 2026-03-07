@@ -42,7 +42,7 @@ if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Core\Route\Router;
 use App\Controllers\{
-    Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib,
+    Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
 };
 
 $router = Router::default();
@@ -65,5 +65,9 @@ $api = $router->group('/api');
 $api->POST('/callback',     Callback::check(...));
 
 $router->GET('/raylib',     Raylib::raylib(...));
+
+$gb = $router->group('/guest_book');
+$gb->GET('/',  GuestBook::index(...));
+$gb->POST('/', GuestBook::post_review(...));
 
 $router->dispatch();

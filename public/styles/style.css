@@ -796,10 +796,10 @@ footer {
     margin: 10px 0;
 }
 
-.callback-form textarea {
+textarea {
     width: 100%;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 3px;
     box-sizing: border-box;
     resize: vertical;
     max-height: 200px;
@@ -810,7 +810,7 @@ footer {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
-    border-radius: 17.5px;
+    border-radius: 3px;
     border-color: var(--main-dark-color);
     border-width: 1px;
 }

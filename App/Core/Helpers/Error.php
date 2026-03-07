@@ -5,21 +5,36 @@ namespace App\Core\Helpers;
 use App\Core\Helpers\Log;
 use App\Core\View\View;
 
+/*
+ * @template T
+ */
 final class Error {
-    public function __construct(
-        public bool $ok = true,
-        public ?string $error = null
-    ) {}
+    /**
+     * @param T|null $val
+     */
+    public function __construct(public $val = null, public bool $ok = true, public ?string $error = null) {}
 
-    public static function ok(): self {
-        return new self(ok: true, error: null);
+    /**
+     * @param T|null $val
+     */
+    public static function OK($val = null): self {
+        return new self(ok: true, error: null, val: $val);
     }
 
-    public static function error(string $error_msg): self {
-        return new self(ok: false, error: $error_msg);
+    public static function ERROR(string $error_msg): self {
+        return new self(ok: false, error: $error_msg, val: null);
+    }
+
+    public function log(): void {
+        Log::error($this->error);
+    }
+
+    public static function TODO(string $msg): self {
+        return new self(ok: false, error: "[NOT IMPLEMENTED]: {$msg}");
     }
 
     public static function send_error_msg_and_die(int $code, string $msg): void {
+        // Log::trace("Error: $msg");
         while (ob_end_clean());
         http_response_code($code);
         echo $msg;
@@ -68,9 +83,5 @@ final class Error {
             Log::assert($msg);
             self::internal_error();
         }
-    }
-
-    public static function todo(string $msg): void {
-        Log::println_err('[TODO]: '.$msg);
     }
 }

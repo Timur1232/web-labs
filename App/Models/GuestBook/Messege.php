@@ -9,12 +9,10 @@ use DateTime;
 final class Messege {
     public function __construct(
         #[ARField('datestr', ARField::ID_FIELD)]
-                              public ?string $datestr = null,
-        #[ARField('sname')]   public ?string $sname   = null,
-        #[ARField('fname')]   public ?string $fname   = null,
-        #[ARField('surname')] public ?string $surname = null,
-        #[ARField('email')]   public ?string $email   = null,
-        #[ARField('text')]    public ?string $text    = null,
+                            public ?string $datestr = null,
+        #[ARField('fio')]   public ?string $fio   = null,
+        #[ARField('email')] public ?string $email   = null,
+        #[ARField('text')]  public ?string $text    = null,
     ) {}
 
     public const DATE_TIME_FORMAT = 'Ymd-His';

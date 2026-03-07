@@ -46,4 +46,8 @@ $(document).ready(function() {
     addDropMenuEventLiseners(studesLink, [
         { href: '/study/test', text: 'Тест' },
     ]);
+
+    addDropMenuEventLiseners($('#callback-link'), [
+        { href: '/guest_book', text: 'Гостевая книга' },
+    ]);
 });

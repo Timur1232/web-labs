@@ -3,7 +3,6 @@
 namespace App\Core\View;
 
 use App\Core\Helpers\Error;
-use App\Core\Helpers\Log;
 
 final class LayoutComponent implements Component {
     /**
@@ -83,7 +82,7 @@ final class LayoutComponent implements Component {
                                     href="/photoalbum"
                                 >Фотоальбом</a>
                             </li>
-                            <li>
+                            <li id="callback-link">
                                 <a
                                     class="nav-link <?= $this->page_name == 'callback_form' ? ' page-active' : '' ?>"
                                     href="/callback"
@@ -116,6 +115,6 @@ final class LayoutComponent implements Component {
             </body>
         </html>
         <?php
-        return Error::ok();
+        return Error::OK();
     }
 }

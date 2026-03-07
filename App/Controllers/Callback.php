@@ -32,7 +32,7 @@ final class Callback {
                     foreach ($errors as $err) {
                         echo CallbackView::error_tag($err);
                     }
-                    return Error::ok();
+                    return Error::OK();
                 }
             );
         } else if (count($req->url->query) === 0) {
