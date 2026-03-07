@@ -93,7 +93,7 @@ final class Router {
         $comp = $handler($this->request);
         $err = $comp->render();
         if (!$err->ok) {
-            Log::error("Router: $err->error");
+            $err->log();
             Error::internal_error();
             return false;
         }

@@ -40,6 +40,7 @@ if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
+use App\Controllers\Admin;
 use App\Core\Route\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
@@ -69,5 +70,8 @@ $router->GET('/raylib',     Raylib::raylib(...));
 $gb = $router->group('/guest_book');
 $gb->GET('/',  GuestBook::index(...));
 $gb->POST('/', GuestBook::post_review(...));
+
+$admin = $router->group('/admin');
+$admin->GET('/', Admin::index(...));
 
 $router->dispatch();

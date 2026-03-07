@@ -12,7 +12,11 @@ final class Error {
     /**
      * @param T|null $val
      */
-    public function __construct(public $val = null, public bool $ok = true, public ?string $error = null) {}
+    public function __construct(
+        public $val = null,
+        public bool $ok = true,
+        public ?string $error = null
+    ) {}
 
     /**
      * @param T|null $val

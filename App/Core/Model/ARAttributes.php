@@ -47,15 +47,16 @@ final class ARAttributes {
         return $self;
     }
 
-    public function get_table_name(): string {
-        return $this->ar_attr->table_name;
+    public function combine_columns_values(mixed $class_obj): array {
+        $arr = [];
+        foreach ($this->normalized() as $field => $column) {
+            $arr[$column] = $class_obj->$field;
+        }
+        return $arr;
     }
 
-    /*
-     * @return array<string, string>
-     */
-    public function get_attrs_norm(): array {
-        return array_map(fn($v) => $v->column_name, $this->attrs);
+    public function get_table_name(): string {
+        return $this->ar_attr->table_name;
     }
 
     public function has_id(): bool {

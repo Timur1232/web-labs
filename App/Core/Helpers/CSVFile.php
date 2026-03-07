@@ -16,10 +16,10 @@ final class CSVFile {
     ) {}
 
     /*
+     * @param string[]|null $expected_head -- head for validating, pass null for no validation
      * @return Error<self>
-     * @param string[]|null $valid_head -- head for validating, pass null for no validation
      */
-    public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, array $valid_head = null): Error {
+    public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, array $expected_head = null): Error {
         $handle = fopen($file_path, 'r');
         if ($handle === false) {
             return Error::ERROR(__METHOD__.": unable to open file {$file_path}");
@@ -31,10 +31,10 @@ final class CSVFile {
         if (!$err->ok) {
             return $err;
         }
-        if (isset($valid_head)) {
-            foreach ($valid_head as $vk) {
+        if (isset($expected_head)) {
+            foreach ($expected_head as $vk) {
                 if (!in_array($vk, $self->head)) {
-                    return Error::ERROR(__METHOD__.": invalid head in file {$file_path}; needed {$valid_head}, but read {$self->head}");
+                    return Error::ERROR(__METHOD__.": invalid head in file {$file_path}; needed {$expected_head}, but read {$self->head}");
                 }
             }
         }
@@ -55,7 +55,7 @@ final class CSVFile {
         }
         if (file_exists($file_path)) {
             Log::info(__METHOD__.": file {$file_path} exists - openinig instead");
-            return self::open($file_path, sep: $sep, valid_head: $head);
+            return self::open($file_path, sep: $sep, expected_head: $head);
         }
 
         $self = new self($file_path, head: $head, sep: $sep);
@@ -68,20 +68,41 @@ final class CSVFile {
     }
 
     /**
-     * @param array<string,mixed>[] $rows
-     * -- row is array of pairs (name-in-head => string-value)
+     * @return Generator<array<string, string>>
+     *
+     * array of key-value pairs (name-in-head => value-in-row)
      */
-    public function append(mixed $rows): Error {
-        $acc = '';
-        foreach ($rows as $row) {
-            $new_row = [];
-            foreach ($this->head as $k) {
-                if (array_key_exists($k, $row)) {
-                    $new_row[] = strval($row[$k]);
-                } else {
-                    $new_row[] = '';
-                }
+    public function combine_key_value(): iterable {
+        foreach ($this->rows as $row) {
+            yield array_combine($this->head, $row);
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $row_data
+     * -- row is array of pairs (name-in-head => value)
+     * @return string[]
+     */
+    private function create_row(array $row_data): array {
+        $new_row = [];
+        foreach ($this->head as $k) {
+            if (array_key_exists($k, $row_data)) {
+                $new_row[] = strval($row_data[$k]);
+            } else {
+                $new_row[] = '';
             }
+        }
+        return $new_row;
+    }
+
+    /**
+     * @param array<string,mixed>[] $rows_data
+     * -- row is array of pairs (name-in-head => value)
+     */
+    public function append(mixed $rows_data): Error {
+        $acc = '';
+        foreach ($rows_data as $row_data) {
+            $new_row = $this->create_row($row_data);
             $acc .= implode($this->sep, str_replace($this->sep, "\\{$this->sep}", $new_row))."\n";
             $this->rows[] = $new_row;
         }
@@ -116,6 +137,24 @@ final class CSVFile {
             }
         }
         return Error::OK($vals);
+    }
+
+    /**
+     * @param array<string,mixed> $query
+     * -- (name-in-head => string-value)
+     * @return Error<int>
+     */
+    public function update(array $query, mixed $update_to): Error {
+        $new_row = $this->create_row($update_to);
+        $count = 0;
+        foreach ($this->rows as $i => $row) {
+            if ($this->query_cmp($row, $query)) {
+                $this->rows[$i] = $new_row;
+                $count++;
+            }
+        }
+        $this->write_all();
+        return Error::OK($count);
     }
 
     /**

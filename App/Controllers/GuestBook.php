@@ -15,13 +15,13 @@ final class GuestBook {
     public const DB_NAME = 'messeges.inc';
 
     public static function index(Request $req): Component {
-        $model = FileCSVModel::open_or_create(Messege::class, self::DB_NAME);
-        if (!isset($model)) {
+        $res = FileCSVModel::open_or_create(Messege::class, self::DB_NAME);
+        if (!$res->ok) {
             Log::error('GuestBook: unable to open '.self::DB_NAME.' database');
             Error::internal_error();
         }
         return View::template_with_layout(self::TEMPLATE_PAGE, title: self::TITLE, data: [
-            'model' => $model,
+            'model' => $res->val,
         ]);
     }
 
@@ -31,11 +31,12 @@ final class GuestBook {
             email: $req->form['email'],
             text: $req->form['text'],
         )->with_current_date();
-        $model = FileCSVModel::open_or_create($review::class, self::DB_NAME);
-        if (!isset($model)) {
+        $res = FileCSVModel::open_or_create($review::class, self::DB_NAME);
+        if (!$res->ok) {
             Log::error('GuestBook: unable to open '.self::DB_NAME.' database');
             Error::internal_error();
         }
+        $model = $res->val;
         $model->insert($review);
         $comp = View::template(self::TEMPLATE_PAGE, data: [
             'model' => $model,

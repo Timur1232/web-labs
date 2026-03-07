@@ -50,4 +50,9 @@ $(document).ready(function() {
     addDropMenuEventLiseners($('#callback-link'), [
         { href: '/guest_book', text: 'Гостевая книга' },
     ]);
+
+    addDropMenuEventLiseners($('#admin-link'), [
+        { href: '/admin/guest_book', text: 'Загрузить гостевую книгу' },
+        { href: '/admin/blog', text: 'Ребактор блога' },
+    ]);
 });

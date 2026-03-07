@@ -94,6 +94,13 @@ final class LayoutComponent implements Component {
                                     href="/history"
                                 >История</a>
                             </li>
+                            <!-- TODO: add check for admin session to show this tab -->
+                            <li id="admin-link">
+                                <a
+                                    class="nav-link <?= $this->page_name == 'admin' ? ' page-active' : '' ?>"
+                                    href="/admin"
+                                >Админ</a>
+                            </li>
                         </ul>
                     </nav>
                     <div id="clock" class="clock"></div>

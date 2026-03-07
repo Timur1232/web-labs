@@ -37,7 +37,9 @@ use App\Core\Model\FileCSVModel;
             <th style="width:30%;max-width:50%;">Отправитель</th><th>Отзыв</th>
         </tr>
         <?php
-            foreach (array_reverse($model->find_all(Messege::class)) as $r) {
+            $res = $model->find_all(Messege::class);
+            if (!$res->ok) return $res;
+            foreach (array_reverse($res->val) as $r) {
                 if (!isset($r->datestr)) continue;
             ?>
             <tr>
