@@ -5,41 +5,42 @@ namespace App\Core\Helpers;
  * @template T
  */
 final class Paginator {
-    /**
-     * @param T[] $items
-     */
-    public function __construct(
-        public array $items,
-        public int $per_page = 10,
-    ) {}
+    public const DEFAULT_PER_PAGE = 10;
 
     /**
      * @param T[] $items
      * @return iterable<T[]>
      */
-    public static function paginate_from(array $items, int $per_page = 10): iterable {
-        return new self(items: $items, per_page: $per_page)->paginate();
-    }
-
-    /**
-     * @return iterable<T[]>
-     */
-    public function paginate(): iterable {
-        for ($i = 0; $i < $this->page_count()-1; ++$i) {
-            yield array_slice($this->items, $i*$this->per_page, $this->per_page);
+    public static function paginate(array $items, int $per_page = self::DEFAULT_PER_PAGE): iterable {
+        for ($i = 0; $i < self::page_count($items, $per_page)-1; ++$i) {
+            yield array_slice($items, $i*$per_page, $per_page);
         }
-        if ($this->page_rem() === 0) {
-            yield array_slice($this->items, count($this->items) - $this->per_page);
+        if (self::page_rem($items, $per_page) === 0) {
+            yield array_slice($items, count($items) - $per_page);
         } else {
-            yield array_slice($this->items, count($this->items) - $this->page_rem());
+            yield array_slice($items, count($items) - self::page_rem($items, $per_page));
         }
     }
 
-    public function page_count(): int {
-        return (int)(count($this->items) / $this->per_page) + ($this->page_rem() === 0 ? 0 : 1);
+    /**
+     * @param T[] $items
+     * @return T[]
+     */
+    public function nth_page(array $items, int $page, int $per_page = self::DEFAULT_PER_PAGE): array {
+        return array_slice($items, count($items) - $per_page);
     }
 
-    public function page_rem(): int {
-        return count($this->items) % $this->per_page;
+    /**
+     * @param T[] $items
+     */
+    public static function page_count(array $items, int $per_page = self::DEFAULT_PER_PAGE): int {
+        return (int)(count($items) / $per_page) + (self::page_rem($items, $per_page) === 0 ? 0 : 1);
+    }
+
+    /**
+     * @param T[] $items
+     */
+    public static function page_rem(array $items, int $per_page = self::DEFAULT_PER_PAGE): int {
+        return count($items) % $per_page;
     }
 }
