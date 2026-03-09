@@ -14,4 +14,11 @@ final class Helpers {
         var_dump($val);
         echo '</pre><br>';
     }
+    /**
+     * @param array<int,mixed> $arrays
+     * @return array<int,mixed>
+     */
+    public static function zip(array ...$arrays): array {
+        return array_map(null, ...$arrays);
+    }
 }

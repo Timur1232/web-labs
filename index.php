@@ -45,33 +45,49 @@ use App\Core\Route\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
 };
+use App\Core\View\View;
 
 $router = Router::default();
+
+// ====================[/]==================== //
 
 $router->GET('/',           Index::index(...));
 $router->GET('/about_me',   AboutMe::index(...));
 $router->GET('/interests',  Interests::index(...));
+
+$router->GET('/photoalbum', Photoalbum::index(...));
+$router->GET('/callback',   Callback::index(...));
+$router->GET('/history',    History::index(...));
+
+$router->GET('/raylib',     Raylib::raylib(...));
+
+// ====================[/study]==================== //
 
 $study = $router->group('/study');
 $study->GET('/',            Study::index(...));
 $study->GET('/test',        Study::test(...));
 $study->POST('/test',       Study::check_test(...));
 
-$router->GET('/photoalbum', Photoalbum::index(...));
-$router->GET('/callback',   Callback::index(...));
-$router->GET('/history',    History::index(...));
+// ====================[/api]==================== //
 
 $api = $router->group('/api');
-// TODO: maybe separate data validating and accepting
 $api->POST('/callback',     Callback::check(...));
 
-$router->GET('/raylib',     Raylib::raylib(...));
+// ====================[/guest_book]==================== //
 
 $gb = $router->group('/guest_book');
 $gb->GET('/',  GuestBook::index(...));
 $gb->POST('/', GuestBook::post_review(...));
 
+// ====================[/admin]==================== //
+
 $admin = $router->group('/admin');
 $admin->GET('/', Admin::index(...));
+
+// ====================[/admin/guest_book]==================== //
+
+$admin_gb = $admin->group('/guest_book');
+$admin_gb->GET('/', View::template_with_layout('load_guest_book', title: Admin::TITLE));
+$admin_gb->POST('/:action', Admin::load_guest_book(...));
 
 $router->dispatch();

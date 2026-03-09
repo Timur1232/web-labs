@@ -6,6 +6,7 @@ final class Request {
     /*
     * @param array<string, string> $form
     * @param array<string, string> $headers
+    * @param array<string,mixed> $binds
     */
     public function __construct(
         public URL $url,
@@ -13,6 +14,7 @@ final class Request {
         public array $form = [],
         public array $headers = [],
         public bool $htmx = false,
+        public array $binds = [],
     ) { }
 
     public static function current(): self {
@@ -30,7 +32,11 @@ final class Request {
         );
     }
 
-    public function match(string $path, HTTPMethod $method): bool {
-        return $this->url->path == $path && $this->method == $method;
+    public function match(string $template_path, HTTPMethod $method): bool {
+        return $this->url->match($template_path) && $this->method == $method;
+    }
+
+    public function bind_values(string $template_path): void {
+        $this->binds = $this->url->bind_values($template_path);
     }
 }

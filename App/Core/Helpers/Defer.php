@@ -2,7 +2,7 @@
 
 // LINK: https://github.com/php-defer/php-defer
 //
-// LICENCE:
+// LICENCE: MIT
 //
 // Copyright (c) 2019-2023 Bartłomiej Krukowski
 //

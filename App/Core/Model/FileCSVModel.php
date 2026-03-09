@@ -8,14 +8,16 @@ use App\Core\Model\ARModel;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 
+/*
+ * @template T
+ */
 final class FileCSVModel implements ARModel {
     public function __construct(
         public CSVFile $csv,
     ) {}
 
     /*
-     * @template T
-     * @param class-string<\T> $class_name
+     * @param class-string<T> $class_name
      * @return Error<self>
      */
     public static function open_or_create(string $class_name, string $file_path, string $sep = ';'): Error {
@@ -64,8 +66,7 @@ final class FileCSVModel implements ARModel {
     }
 
     /*
-     * @template T
-     * @param class-string<\T> $class_name
+     * @param class-string<T> $class_name
      * @return Error<?T>
      */
     public function find_by_id(string $class_name, $id): Error {
@@ -85,13 +86,28 @@ final class FileCSVModel implements ARModel {
         return Error::OK(array_map(fn($v) => $props->construct_obj($v), $res->val));
     }
 
+    /*
+     * @param T|T[] $class_obj
+     */
     public function insert(mixed $class_obj): Error {
-        $class_name = $class_obj::class;
+        if (is_array($class_obj) && count($class_obj) <= 0) {
+            return Error::ERROR(__METHOD__.": Array must have at least one item");
+        }
+        $class_name = '';
+        if (is_array($class_obj)) {
+            $class_name = array_first($class_obj)::class;
+        } else {
+            $class_name = $class_obj::class;
+        }
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
             return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         }
-        return $this->csv->append([$props->combine_columns_values($class_obj)]);
+        if (is_array($class_obj)) {
+            return $this->csv->append(array_map(fn($v) => $props->combine_columns_values($v), $class_obj));
+        } else {
+            return $this->csv->append([$props->combine_columns_values($class_obj)]);
+        }
     }
 
     /*
