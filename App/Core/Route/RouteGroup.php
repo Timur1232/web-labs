@@ -7,7 +7,7 @@ use Closure;
 
 final class RouteGroup {
 
-    private function __construct(
+    public function __construct(
         private Router $router,
         private string $group_path,
     ) { }

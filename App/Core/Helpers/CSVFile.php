@@ -17,7 +17,7 @@ final class CSVFile {
 
     /*
      * @param string[]|null $expected_head -- head for validating, pass null for no validation
-     * @return Error<self>
+     * @return Error<self, string>
      */
     public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, array $expected_head = null): Error {
         $handle = fopen($file_path, 'r');
@@ -47,7 +47,7 @@ final class CSVFile {
 
     /*
      * @param string[] $head
-     * @return Error<self>
+     * @return Error<self, string>
      */
     public static function open_or_create(string $file_path, array $head, string $sep = self::DEFAULT_SEPARATOR): Error {
         if (count($head) === 0) {
@@ -127,7 +127,7 @@ final class CSVFile {
     /**
      * @param array<string,mixed> $query
      * -- (name-in-head => string-value)
-     * @return Error<array<string,string>[]>
+     * @return Error<array<string,string>[], string>
      */
     public function find(array $query): Error {
         $vals = [];
@@ -142,7 +142,7 @@ final class CSVFile {
     /**
      * @param array<string,mixed> $query
      * -- (name-in-head => string-value)
-     * @return Error<int>
+     * @return Error<int, string>
      */
     public function update(array $query, mixed $update_to): Error {
         $new_row = $this->create_row($update_to);
@@ -160,7 +160,7 @@ final class CSVFile {
     /**
      * @param array<string,mixed> $query
      * -- (name-in-head => string-value)
-     * @return Error<int>
+     * @return Error<int, string>
      */
     public function delete(array $query): Error {
         $count = 0;

@@ -15,7 +15,7 @@ final class CallbackValidator {
      * @param string[] $phone_errors
      * @param string[] $text_errors
     */
-    private function __construct(
+    public function __construct(
         private array $form = [],
         private array $fio_errors = [],
         private array $gender_errors = [],

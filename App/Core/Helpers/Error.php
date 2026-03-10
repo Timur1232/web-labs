@@ -7,34 +7,39 @@ use App\Core\View\View;
 
 /*
  * @template T
+ * @template E
  */
 final class Error {
     /**
      * @param T|null $val
+     * @param E|null $err_val
      */
     public function __construct(
         public $val = null,
         public bool $ok = true,
-        public ?string $error = null
+        public $err_val = null
     ) {}
 
     /**
      * @param T|null $val
      */
     public static function OK($val = null): self {
-        return new self(ok: true, error: null, val: $val);
+        return new self(ok: true, err_val: null, val: $val);
     }
 
-    public static function ERROR(string $error_msg): self {
-        return new self(ok: false, error: $error_msg, val: null);
+    /**
+     * @param E|null $error_value
+     */
+    public static function ERROR($error_value): self {
+        return new self(ok: false, err_val: $error_value, val: null);
     }
 
-    public function log(): void {
-        Log::error($this->error);
+    public function log(string $prefix = ''): void {
+        Log::error("{$prefix}: ".strval($this->err_val));
     }
 
     public static function TODO(string $msg): self {
-        return new self(ok: false, error: "[NOT IMPLEMENTED]: {$msg}");
+        return new self(ok: false, err_val: "[NOT IMPLEMENTED]: {$msg}");
     }
 
     public static function send_error_msg_and_die(int $code, string $msg): void {

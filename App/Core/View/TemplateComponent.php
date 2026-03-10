@@ -15,6 +15,11 @@ final class TemplateComponent implements Component {
         public array $data = [],
     ) {}
 
+    public function with(string $name, mixed $value): self {
+        $this->data[$name] = $value;
+        return $this;
+    }
+
     public function render(): Error {
         if (!isset($this->template_page)) {
             return Error::ERROR("View: Cannot render tamplate - it is not set up. Use View::template(...) or set up \$template_page yourself before rendering.");

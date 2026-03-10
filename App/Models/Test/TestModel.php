@@ -2,6 +2,7 @@
 
 namespace App\Models\Test;
 
+use App\Core\Model\DBModel;
 use App\Core\Model\DataValidator;
 
 final class TestModel {
@@ -18,6 +19,11 @@ final class TestModel {
         public array $series_errs = [],
         public array $hard_errs   = [],
     ) { }
+    private DBModel $model;
+
+    public function open_db(): void {
+
+    }
 
     /*
      * @param string[] $user_answers

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\GuestBook;
+use App\Core\Helpers\MyDateTime;
 use App\Core\Model\ARField;
 use App\Core\Model\ActiveRecord;
 use DateTime;
@@ -15,20 +16,19 @@ final class Messege {
         #[ARField('text')]  public ?string $text    = null,
     ) {}
 
-    public const DATE_TIME_FORMAT = 'Ymd-His';
+    public const DB_PATH = 'public/messeges.inc';
 
     public function get_date(): ?DateTime {
-        return DateTime::createFromFormat(self::DATE_TIME_FORMAT, $this->datestr);
+        return MyDateTime::to_date($this->datestr);
     }
 
     public function with_date(DateTime $date): self {
-        $this->datestr = $date->format(self::DATE_TIME_FORMAT);
+        $this->datestr = MyDateTime::from_date($date);
         return $this;
     }
 
     public function with_current_date(): self {
-        $date = new DateTime('now');
-        $this->with_date($date);
+        $this->datestr = MyDateTime::now();
         return $this;
     }
 }

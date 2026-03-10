@@ -10,6 +10,7 @@ use App\Core\Helpers\Log;
 
 /*
  * @template T
+ * @implements ARModel<T>
  */
 final class FileCSVModel implements ARModel {
     public function __construct(
@@ -18,7 +19,7 @@ final class FileCSVModel implements ARModel {
 
     /*
      * @param class-string<T> $class_name
-     * @return Error<self>
+     * @return Error<self, string>
      */
     public static function open_or_create(string $class_name, string $file_path, string $sep = ';'): Error {
         $props = ARAttributes::from($class_name);
@@ -39,19 +40,41 @@ final class FileCSVModel implements ARModel {
     }
 
     /**
-     * @param string[]|null $expected_head -- head for validating, pass null for no validation
-     * @return Error<self>
+     * @param string[]|null|class-string<T> $expected_head -- head for validating, pass null for no validation
+     * @return Error<self, string>
      */
-    public static function open(string $file_path, string $sep = ';', array $expected_head = null): Error {
+    public static function open(string $file_path, string $sep = ';', mixed $expected_head = null): Error {
+        if (is_string($expected_head)) {
+            $props = ARAttributes::from($expected_head);
+            if (!isset($props)) {
+                return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$expected_head}");
+            }
+            $expected_head = array_values($props->normalized());
+        }
         $res = CSVFile::open($file_path, sep: $sep, expected_head: $expected_head);
         if (!$res->ok) return $res;
         return Error::OK(new self($res->val));
     }
 
     /*
-     * @template T
-     * @param class-string<\T> $class_name
-     * @return Error<T[]>
+     * @param class-string<T> $class_name
+     */
+    public function validate(string $class_name): bool {
+        $props = ARAttributes::from($class_name);
+        if (!isset($props)) {
+            return false;
+        }
+        foreach ($props->normalized() as $v) {
+            if (!in_array($v, $this->csv->head)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+     * @param class-string<T> $class_name
+     * @return Error<T[], string>
      */
     public function find_all(string $class_name): Error {
         $props = ARAttributes::from($class_name);
@@ -67,7 +90,7 @@ final class FileCSVModel implements ARModel {
 
     /*
      * @param class-string<T> $class_name
-     * @return Error<?T>
+     * @return Error<?T, string>
      */
     public function find_by_id(string $class_name, $id): Error {
         $props = ARAttributes::from($class_name);
@@ -111,7 +134,7 @@ final class FileCSVModel implements ARModel {
     }
 
     /*
-     * @return Error<int>
+     * @return Error<int, string>
      */
     public function update_by_id(mixed $class_obj): Error {
         $class_name = $class_obj::class;
@@ -130,9 +153,8 @@ final class FileCSVModel implements ARModel {
     }
 
     /*
-     * @template T
-     * @param class-string<\T> $class_name
-     * @return Error<int>
+     * @param class-string<T> $class_name
+     * @return Error<int, string>
      */
     public function delete_by_id(string $class_name, $id): Error {
         $props = ARAttributes::from($class_name);

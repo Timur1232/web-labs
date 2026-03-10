@@ -3,7 +3,7 @@
 namespace App\Core\Model;
 
 final class DependencyError {
-    private function __construct(
+    public function __construct(
         public string $rule,
         public string $reason,
     ) { }

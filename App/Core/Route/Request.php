@@ -5,6 +5,7 @@ namespace App\Core\Route;
 final class Request {
     /*
     * @param array<string, string> $form
+    * @param array<string, string> $form_files
     * @param array<string, string> $headers
     * @param array<string,mixed> $binds
     */
@@ -12,6 +13,7 @@ final class Request {
         public URL $url,
         public HTTPMethod $method = HTTPMethod::NONE,
         public array $form = [],
+        public array $form_files = [],
         public array $headers = [],
         public bool $htmx = false,
         public array $binds = [],
@@ -21,14 +23,15 @@ final class Request {
         $method = HTTPMethod::tryFrom($_SERVER['REQUEST_METHOD']) ?? HTTPMethod::NONE;
         $headers = getallheaders();
         return new self(
-            URL::from($_SERVER['REQUEST_URI']),
-            $method,
-            match ($method) {
+            url: URL::from($_SERVER['REQUEST_URI']),
+            method: $method,
+            form: match ($method) {
                 HTTPMethod::POST => $_POST,
                 HTTPMethod::GET => $_GET,
             },
-            $headers,
-            isset($headers['HX-Request']),
+            form_files: $_FILES,
+            headers: $headers,
+            htmx: isset($headers['HX-Request']),
         );
     }
 

@@ -87,7 +87,8 @@ $admin->GET('/', Admin::index(...));
 // ====================[/admin/guest_book]==================== //
 
 $admin_gb = $admin->group('/guest_book');
-$admin_gb->GET('/', View::template_with_layout('load_guest_book', title: Admin::TITLE));
-$admin_gb->POST('/:action', Admin::load_guest_book(...));
+$admin_gb->GET('/',          Admin::load_guest_book_index(...));
+$admin_gb->POST('/append',   Admin::append_guest_book(...));
+$admin_gb->POST('/override', Admin::override_guest_book(...));
 
 $router->dispatch();

@@ -12,12 +12,11 @@ use App\Models\GuestBook\Messege;
 final class GuestBook {
     public const TITLE = 'Гостевая книга';
     public const TEMPLATE_PAGE = 'guest_book_form';
-    public const DB_NAME = 'messeges.inc';
 
     public static function index(Request $req): Component {
-        $res = FileCSVModel::open_or_create(Messege::class, self::DB_NAME);
+        $res = FileCSVModel::open_or_create(Messege::class, Messege::DB_PATH);
         if (!$res->ok) {
-            Log::error('GuestBook: unable to open '.self::DB_NAME.' database');
+            Log::error('GuestBook: unable to open '.Messege::DB_PATH.' database');
             Error::internal_error();
         }
         return View::template_with_layout(self::TEMPLATE_PAGE, title: self::TITLE, data: [
@@ -31,9 +30,9 @@ final class GuestBook {
             email: $req->form['email'],
             text: $req->form['text'],
         )->with_current_date();
-        $res = FileCSVModel::open_or_create($review::class, self::DB_NAME);
+        $res = FileCSVModel::open_or_create($review::class, Messege::DB_PATH);
         if (!$res->ok) {
-            Log::error('GuestBook: unable to open '.self::DB_NAME.' database');
+            Log::error('GuestBook: unable to open '.Messege::DB_PATH.' database');
             Error::internal_error();
         }
         $model = $res->val;

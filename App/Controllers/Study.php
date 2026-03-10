@@ -23,13 +23,5 @@ final class Study {
         if ($req->htmx) return $comp;
         return View::layout($comp, title: 'Тест');
     }
-
-    // public static function check_test(Request $req): View {
-    //     $model = TestModel::from($req->form);
-    //     $model->check_test();
-    //     $view = View::template(template: 'test_result', data: ['model', $model]);
-    //     if ($req->htmx) return $view;
-    //     else return View::layout($view);
-    // }
 }
 

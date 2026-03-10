@@ -826,7 +826,7 @@ textarea {
 .button-submit,
 .button-reset {
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 5px;
     border-width: 1px;
 }
 

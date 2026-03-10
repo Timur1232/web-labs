@@ -4,7 +4,7 @@ namespace App\Models\Interests;
 
 final class ImgTag extends Tag {
 
-    private function __construct(
+    public function __construct(
         public string $src,
         public string $alt,
         public string $title,

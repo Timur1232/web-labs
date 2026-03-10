@@ -116,11 +116,13 @@ final class DataValidator {
      * @return iterable<string>
      */
     public static function map_error_messeges(array $errors, array $mappings): iterable {
+        $ret = [];
         foreach ($errors as $err) {
             if (array_key_exists($err, $mappings)) {
-                yield $mappings[$err];
+                $ret[] = $mappings[$err];
             }
         }
+        return $ret;
     }
 
     public static function is_integer(mixed $data): bool {
