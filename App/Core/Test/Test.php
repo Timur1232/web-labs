@@ -1,5 +1,6 @@
 <?php
 namespace App\Core\Test;
+use App\Core\Helpers\Result;
 use Attribute;
 use Exception;
 
@@ -16,6 +17,27 @@ final class Test {
         if (!$cond) {
             $msg = isset($msg) ? "\nMessage: {$msg}" : '';
             throw new Exception("assert: \$cond == false.{$msg}");
+        }
+    }
+
+    /**
+     * @param Result<mixed> $res
+     */
+    public static function expect_ok(Result $res, ?string $msg = null): void {
+        if (!$res->ok) {
+            $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+            throw new Exception("expect_ok: Result contain error: {$res->error}.{$msg}");
+        }
+    }
+
+    /**
+     * @param Result<mixed> $res
+     */
+    public static function expect_error(Result $res, ?string $msg = null): void {
+        if ($res->ok) {
+            $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+            $val_str = isset($res->val) ? "\nValue:\n".print_r($res->val) : '';
+            throw new Exception("expect_error: Result is ok.{$val_str}{$msg}");
         }
     }
 
