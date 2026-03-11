@@ -17,12 +17,12 @@ final class CSVFile {
 
     /*
      * @param string[]|null $expected_head -- head for validating, pass null for no validation
-     * @return Error<self, string>
+     * @return Result<self>
      */
-    public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, array $expected_head = null): Error {
+    public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, array $expected_head = null): Result {
         $handle = fopen($file_path, 'r');
         if ($handle === false) {
-            return Error::ERROR(__METHOD__.": unable to open file {$file_path}");
+            return Result::ERROR(__METHOD__.": unable to open file {$file_path}");
         }
         Defer::d($_, fclose(...), $handle);
 
@@ -34,24 +34,24 @@ final class CSVFile {
         if (isset($expected_head)) {
             foreach ($expected_head as $vk) {
                 if (!in_array($vk, $self->head)) {
-                    return Error::ERROR(__METHOD__.": invalid head in file {$file_path}; needed {$expected_head}, but read {$self->head}");
+                    return Result::ERROR(__METHOD__.": invalid head in file {$file_path}; needed {$expected_head}, but read {$self->head}");
                 }
             }
         }
         if (!$self->read_rows($handle)) {
-            return Error::ERROR(__METHOD__.": error during reading rows");
+            return Result::ERROR(__METHOD__.": error during reading rows");
         }
 
-        return Error::OK($self);
+        return Result::OK($self);
     }
 
     /*
      * @param string[] $head
-     * @return Error<self, string>
+     * @return Result<self>
      */
-    public static function open_or_create(string $file_path, array $head, string $sep = self::DEFAULT_SEPARATOR): Error {
+    public static function open_or_create(string $file_path, array $head, string $sep = self::DEFAULT_SEPARATOR): Result {
         if (count($head) === 0) {
-            return Error::ERROR(__METHOD__.": csv head must have at least one item");
+            return Result::ERROR(__METHOD__.": csv head must have at least one item");
         }
         if (file_exists($file_path)) {
             Log::info(__METHOD__.": file {$file_path} exists - openinig instead");
@@ -64,7 +64,7 @@ final class CSVFile {
             return $err;
         }
 
-        return Error::OK($self);
+        return Result::OK($self);
     }
 
     /**
@@ -99,7 +99,7 @@ final class CSVFile {
      * @param array<string,mixed>[] $rows_data
      * -- row is array of pairs (name-in-head => value)
      */
-    public function append(mixed $rows_data): Error {
+    public function append(mixed $rows_data): Result {
         $acc = '';
         foreach ($rows_data as $row_data) {
             $new_row = $this->create_row($row_data);
@@ -127,24 +127,24 @@ final class CSVFile {
     /**
      * @param array<string,mixed> $query
      * -- (name-in-head => string-value)
-     * @return Error<array<string,string>[], string>
+     * @return Result<array<string>
      */
-    public function find(array $query): Error {
+    public function find(array $query): Result {
         $vals = [];
         foreach ($this->rows as $row) {
             if ($this->query_cmp($row, $query)) {
                 $vals[] = array_combine($this->head, $row);
             }
         }
-        return Error::OK($vals);
+        return Result::OK($vals);
     }
 
     /**
      * @param array<string,mixed> $query
      * -- (name-in-head => string-value)
-     * @return Error<int, string>
+     * @return Result<int>
      */
-    public function update(array $query, mixed $update_to): Error {
+    public function update(array $query, mixed $update_to): Result {
         $new_row = $this->create_row($update_to);
         $count = 0;
         foreach ($this->rows as $i => $row) {
@@ -154,15 +154,15 @@ final class CSVFile {
             }
         }
         $this->write_all();
-        return Error::OK($count);
+        return Result::OK($count);
     }
 
     /**
      * @param array<string,mixed> $query
      * -- (name-in-head => string-value)
-     * @return Error<int, string>
+     * @return Result<int>
      */
-    public function delete(array $query): Error {
+    public function delete(array $query): Result {
         $count = 0;
         foreach ($this->rows as $i => $row) {
             if ($this->query_cmp($row, $query)) {
@@ -171,23 +171,23 @@ final class CSVFile {
             }
         }
         $this->write_all();
-        return Error::OK($count);
+        return Result::OK($count);
     }
 
     /**
      * @param resource $handle
      */
-    private function read_head($handle): Error {
+    private function read_head($handle): Result {
         $line = fgets($handle);
         if ($line === false) {
-            return Error::ERROR(__METHOD__.": file {$this->file_path} must have head");
+            return Result::ERROR(__METHOD__.": file {$this->file_path} must have head");
         }
         $head = explode($this->sep, trim($line));
         if ($head === false) {
-            return Error::ERROR(__METHOD__.": unable to read file head in {$this->file_path}");
+            return Result::ERROR(__METHOD__.": unable to read file head in {$this->file_path}");
         }
         $this->head = $head;
-        return Error::OK();
+        return Result::OK();
     }
 
     /**
@@ -242,38 +242,38 @@ final class CSVFile {
     }
 
     // Helper
-    private function write_all(): Error {
+    private function write_all(): Result {
         $handle = fopen($this->file_path, 'w');
         if ($handle === false) {
-            return Error::ERROR(__METHOD__.": unable to open file {$this->file_path}");
+            return Result::ERROR(__METHOD__.": unable to open file {$this->file_path}");
         }
         Defer::d($_, fclose(...), $handle);
 
         if (fputs($handle, implode($this->sep, $this->head)."\n") === false) {
-            return Error::ERROR(__METHOD__.": unable to write head to file {$this->file_path}");
+            return Result::ERROR(__METHOD__.": unable to write head to file {$this->file_path}");
         }
 
         foreach ($this->rows as $row) {
             if (fputs($handle, implode($this->sep, str_replace($this->sep, "\\{$this->sep}", $row))."\n") === false) {
-                return Error::ERROR(__METHOD__.": error during writing rows");
+                return Result::ERROR(__METHOD__.": error during writing rows");
             }
         }
 
-        return Error::OK();
+        return Result::OK();
     }
 
     // Helper
-    private function write_append(string $str): Error {
+    private function write_append(string $str): Result {
         $handle = fopen($this->file_path, 'a');
         if ($handle === false) {
-            return Error::ERROR(__METHOD__.": unable to open file {$this->file_path}");
+            return Result::ERROR(__METHOD__.": unable to open file {$this->file_path}");
         }
         Defer::d($_, fclose(...), $handle);
 
         if (fputs($handle, $str) === false) {
-            return Error::ERROR(__METHOD__.": unable to append row to file {$this->file_path}");
+            return Result::ERROR(__METHOD__.": unable to append row to file {$this->file_path}");
         }
 
-        return Error::OK();
+        return Result::OK();
     }
 }

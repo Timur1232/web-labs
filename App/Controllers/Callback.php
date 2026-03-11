@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Route\Request;
-use App\Core\Helpers\{Error, Log};
+use App\Core\Helpers\{Error, Result, Log};
 use App\Core\View\Component;
 use App\Core\View\ComponentFunc;
 use App\Core\View\View;
@@ -32,7 +32,7 @@ final class Callback {
                     foreach ($errors as $err) {
                         echo CallbackView::error_tag($err);
                     }
-                    return Error::OK();
+                    return Result::OK();
                 }
             );
         } else if (count($req->url->query) === 0) {

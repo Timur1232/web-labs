@@ -2,7 +2,7 @@
 
 namespace App\Core\View;
 
-use App\Core\Helpers\Error;
+use App\Core\Helpers\Result;
 use Closure;
 
 final class View {
@@ -48,10 +48,10 @@ final class View {
     }
 
     public static function empty(): Component {
-        return self::func(fn() => Error::OK());
+        return self::func(fn() => Result::OK());
     }
     /**
-     * @param Closure(): Error $callback
+     * @param Closure(): Result $callback
      */
     public static function func(Closure $callback): Component {
         return new ComponentFunc($callback);
@@ -60,7 +60,7 @@ final class View {
     public static function string(string $str): Component {
         return self::func(function () use ($str) {
             echo $str;
-            return Error::OK();
+            return Result::OK();
         });
     }
 
@@ -69,7 +69,7 @@ final class View {
             echo <<<HTML
             <span id="{$id}">{$msg}</span>
             HTML;
-            return Error::OK();
+            return Result::OK();
         });
     }
 

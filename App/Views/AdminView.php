@@ -1,0 +1,60 @@
+<?php
+namespace App\Views;
+
+use App\Core\Helpers\Result;
+use App\Core\View\Component;
+use App\Core\View\View;
+
+final class AdminView {
+
+    public const TITLE = 'Im in da house';
+    public const HOME_PAGE_NAME = 'home';
+    public const LOAD_GB_PAGE_NAME = 'load_guest_book';
+
+    public static function home(): Component {
+        return View::func(function () {
+            echo <<<HTML
+            <section class="content-container">
+                <ul>
+                    <li><a href="/admin/guest_book">Загрузить гостевую книгу</a></li>
+                    <li><a href="/admin/blog">Редактор Блога</a></li>
+                </ul>
+            </section>
+            HTML;
+            return Result::OK();
+        });
+    }
+
+    public static function guest_book_load_form(?string $msg = null): Component {
+        return View::func(function () use ($msg) {
+            $msg = $msg ?? '';
+            echo <<<HTML
+            <section id="admin_guest_book_form" class="content-container">
+                <h2>Скачать файл с записями</h2>
+                <a href="/public/messeges.inc" download>Скачать</a>
+
+                <h2>Загрузить файл с записями с сервера</h2>
+                <form action="/admin/guest_book/append" method="post"
+                    enctype="multipart/form-data"
+                    class="callback-form"
+                    hx-post="/admin/guest_book/append"
+                    hx-target="#msg"
+                    hx-swap="outerHTML"
+                >
+                    <label for="messege">CSV файл сообщений</label><br/>
+                    <input type="file" id="messege" name="messege" accept=".inc" required /><br/>
+                    <input class="button-submit" type="submit" value="Добавить"
+                        formaction="/admin/guest_book/append"
+                    />
+                    <input class="button-reset" type="submit" value="Перезаписать"
+                        onclick="return confirm('Вы уверены? Это перезапишет существующие данные.')"
+                        formaction="/admin/guest_book/override"
+                    />
+                </form>
+                <span id="msg">{$msg}</span>
+            </section>
+            HTML;
+            return Result::OK();
+        });
+    }
+}

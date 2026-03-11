@@ -2,7 +2,7 @@
 
 namespace App\Core\View;
 
-use App\Core\Helpers\Error;
+use App\Core\Helpers\Result;
 
 final class LayoutComponent implements Component {
     /**
@@ -15,7 +15,7 @@ final class LayoutComponent implements Component {
         public string $page_name = '',
     ) {}
 
-    public function render(): Error { ?>
+    public function render(): Result { ?>
         <!DOCTYPE html>
         <html lang="ru-RU">
             <head>
@@ -122,6 +122,6 @@ final class LayoutComponent implements Component {
             </body>
         </html>
         <?php
-        return Error::OK();
+        return Result::OK();
     }
 }

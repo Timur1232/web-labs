@@ -1,8 +1,8 @@
 <?php
 namespace App\Core\View;
 
-use App\Core\Helpers\Error;
+use App\Core\Helpers\Result;
 
 interface Component {
-    function render(): Error;
+    function render(): Result;
 }

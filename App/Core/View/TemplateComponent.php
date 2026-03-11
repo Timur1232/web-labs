@@ -1,7 +1,7 @@
 <?php
 namespace App\Core\View;
 
-use App\Core\Helpers\Error;
+use App\Core\Helpers\Result;
 
 final class TemplateComponent implements Component {
 
@@ -20,16 +20,16 @@ final class TemplateComponent implements Component {
         return $this;
     }
 
-    public function render(): Error {
+    public function render(): Result {
         if (!isset($this->template_page)) {
-            return Error::ERROR("View: Cannot render tamplate - it is not set up. Use View::template(...) or set up \$template_page yourself before rendering.");
+            return Result::ERROR("View: Cannot render tamplate - it is not set up. Use View::template(...) or set up \$template_page yourself before rendering.");
         }
         $page_file = self::$template_prefix.$this->template_page.'.php';
         if (!file_exists($page_file)) {
-            return Error::ERROR("File {$page_file} not exist");
+            return Result::ERROR("File {$page_file} not exist");
         }
         extract($this->data);
         include $page_file;
-        return Error::OK();
+        return Result::OK();
     }
 }

@@ -45,7 +45,6 @@ use App\Core\Route\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
 };
-use App\Core\View\View;
 
 $router = Router::default();
 

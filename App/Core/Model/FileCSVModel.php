@@ -5,7 +5,7 @@ namespace App\Core\Model;
 use App\Core\Helpers\CSVFile;
 use App\Core\Model\ARAttributes;
 use App\Core\Model\ARModel;
-use App\Core\Helpers\Error;
+use App\Core\Helpers\Result;
 use App\Core\Helpers\Log;
 
 /*
@@ -19,12 +19,12 @@ final class FileCSVModel implements ARModel {
 
     /*
      * @param class-string<T> $class_name
-     * @return Error<self, string>
+     * @return Result<self>
      */
-    public static function open_or_create(string $class_name, string $file_path, string $sep = ';'): Error {
+    public static function open_or_create(string $class_name, string $file_path, string $sep = ';'): Result {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
-            return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         }
 
         $head = array_values($props->normalized());
@@ -36,24 +36,24 @@ final class FileCSVModel implements ARModel {
 
         $res = CSVFile::open_or_create($file_path, head: $head, sep: $sep);
         if (!$res->ok) return $res;
-        return Error::OK(new self($res->val));
+        return Result::OK(new self($res->val));
     }
 
     /**
      * @param string[]|null|class-string<T> $expected_head -- head for validating, pass null for no validation
-     * @return Error<self, string>
+     * @return Result<self>
      */
-    public static function open(string $file_path, string $sep = ';', mixed $expected_head = null): Error {
+    public static function open(string $file_path, string $sep = ';', mixed $expected_head = null): Result {
         if (is_string($expected_head)) {
             $props = ARAttributes::from($expected_head);
             if (!isset($props)) {
-                return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$expected_head}");
+                return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$expected_head}");
             }
             $expected_head = array_values($props->normalized());
         }
         $res = CSVFile::open($file_path, sep: $sep, expected_head: $expected_head);
         if (!$res->ok) return $res;
-        return Error::OK(new self($res->val));
+        return Result::OK(new self($res->val));
     }
 
     /*
@@ -74,30 +74,30 @@ final class FileCSVModel implements ARModel {
 
     /*
      * @param class-string<T> $class_name
-     * @return Error<T[], string>
+     * @return Result<T[]>
      */
-    public function find_all(string $class_name): Error {
+    public function find_all(string $class_name): Result {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
-            return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         }
         $objs = [];
         foreach ($this->csv->combine_key_value() as $row) {
             $objs[] = $props->construct_obj($row);
         }
-        return Error::OK($objs);
+        return Result::OK($objs);
     }
 
     /*
      * @param class-string<T> $class_name
-     * @return Error<?T, string>
+     * @return Result<?T>
      */
-    public function find_by_id(string $class_name, $id): Error {
+    public function find_by_id(string $class_name, $id): Result {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
-            return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         } else if ($props->has_id()) {
-            return Error::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
+            return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 
         [$id_field_name, $id_column_name] = $props->get_id_attr_norm();
@@ -106,15 +106,15 @@ final class FileCSVModel implements ARModel {
         ]);
         if (!$res->ok) return $res;
 
-        return Error::OK(array_map(fn($v) => $props->construct_obj($v), $res->val));
+        return Result::OK(array_map(fn($v) => $props->construct_obj($v), $res->val));
     }
 
     /*
      * @param T|T[] $class_obj
      */
-    public function insert(mixed $class_obj): Error {
+    public function insert(mixed $class_obj): Result {
         if (is_array($class_obj) && count($class_obj) <= 0) {
-            return Error::ERROR(__METHOD__.": Array must have at least one item");
+            return Result::ERROR(__METHOD__.": Array must have at least one item");
         }
         $class_name = '';
         if (is_array($class_obj)) {
@@ -124,7 +124,7 @@ final class FileCSVModel implements ARModel {
         }
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
-            return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         }
         if (is_array($class_obj)) {
             return $this->csv->append(array_map(fn($v) => $props->combine_columns_values($v), $class_obj));
@@ -134,15 +134,15 @@ final class FileCSVModel implements ARModel {
     }
 
     /*
-     * @return Error<int, string>
+     * @return Result<int>
      */
-    public function update_by_id(mixed $class_obj): Error {
+    public function update_by_id(mixed $class_obj): Result {
         $class_name = $class_obj::class;
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
-            return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         } else if ($props->has_id()) {
-            return Error::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
+            return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 
         [$id_field_name, $id_column_name] = $props->get_id_attr_norm();
@@ -154,14 +154,14 @@ final class FileCSVModel implements ARModel {
 
     /*
      * @param class-string<T> $class_name
-     * @return Error<int, string>
+     * @return Result<int>
      */
-    public function delete_by_id(string $class_name, $id): Error {
+    public function delete_by_id(string $class_name, $id): Result {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
-            return Error::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         } else if ($props->has_id()) {
-            return Error::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
+            return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 
         [$id_field_name, $id_column_name] = $props->get_id_attr_norm();

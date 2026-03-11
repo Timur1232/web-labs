@@ -15,7 +15,7 @@ final class MyDateTime {
     }
 
     public static function to_date(string $datestr): ?DateTime {
-        $d = DateTime::createFromFormat(self::FORMAT, $this->datestr);
+        $d = DateTime::createFromFormat(self::FORMAT, $datestr);
         return $d === false ? null : $d;
     }
 }
