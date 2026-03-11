@@ -27,9 +27,9 @@ final class TestDriver {
      * @param string[] $test_classes
      */
     public static function setup(array $test_classes = []): void {
-        if (!defined('STDIN'))  define('STDIN',  fopen('php://stdin', 'rb'));
-        if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
-        if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+        if (!defined('TEST_STDIN'))  define('TEST_STDIN',  fopen('php://stdin', 'rb'));
+        if (!defined('TEST_STDOUT')) define('TEST_STDOUT', fopen('php://stdout', 'wb'));
+        if (!defined('TEST_STDERR')) define('TEST_STDERR', fopen('php://stderr', 'wb'));
         self::$test_classes = $test_classes;
     }
 
@@ -52,7 +52,7 @@ final class TestDriver {
     }
 
     public static function print(string $msg = ''): void {
-        fputs(STDOUT, "{$msg}");
+        fputs(TEST_STDOUT, "{$msg}");
     }
 
     public static function println(string $msg = ''): void {
@@ -60,19 +60,27 @@ final class TestDriver {
     }
 
     public static function print_green(string $msg = ''): void {
-        fputs(STDOUT, "\e[32m{$msg}\e[0m");
+        fputs(TEST_STDOUT, "\e[32m{$msg}\e[0m");
     }
 
     public static function print_err(string $msg = ''): void {
-        fputs(STDERR, "\e[91m{$msg}\e[0m");
+        fputs(TEST_STDOUT, "\e[91m{$msg}\e[0m");
     }
 
     public static function println_green(string $msg = ''): void {
         self::print_green($msg."\n");
     }
 
-    public static function println_err(string $msg = ''): void {
+    public static function println_red(string $msg = ''): void {
         self::print_err($msg."\n");
+    }
+
+    public static function print_yellow(string $msg = ''): void {
+        fputs(TEST_STDOUT, "\e[33m{$msg}\e[0m");
+    }
+
+    public static function println_yellow(string $msg = ''): void {
+        self::print_yellow("{$msg}\n");
     }
 
     const STDOUT_REDIR_CUSTOM = 1<<0;
@@ -89,41 +97,68 @@ final class TestDriver {
      */
     public static function run_tests(?array $cases = null): void {
         self::println();
-        $class_no = 0;
-        $class_count = isset($cases) ? count($cases) : count(self::$test_classes);
-        $fail_count = 0;
-        $success_count = 0;
+        // $class_count = isset($cases) ? count($cases) : count(self::$test_classes);
+        $failed = [];
+        $succeded = [];
+        $skipped = [];
         foreach (self::$test_classes as $class_name) {
             if (!isset($cases) || in_array($class_name, $cases)) {
                 $methods = self::get_test_methods($class_name);
                 self::println_green("RUNING TESTS FOR: {$class_name}");
                 $i = 1;
                 foreach ($methods as [$m, $a]) {
-                    self::println_green("\n> TEST {$i}: {$a->test_name} - {$m}:");
-                    self::println('- - - - - - - - - - - - - - - ');
+                    self::println_green("\n> TEST {$i}: '{$a->test_name}' - {$class_name}::{$m->getName()}:");
 
                     $redir_flags = self::apply_redirect($a);
+
+                    self::println('[[ - - - - - - - - - - - - - - - ');
+                    if (!$m->isStatic()) {
+                        self::println_yellow("Non static methods not supported: {$class_name}::{$m->getName()}. Skipping.");
+                        $skipped[] = ["{$class_name}::{$m->getName()}", $a];
+                        continue;
+                    }
+                    if ($m->isPrivate() || $m->isProtected()) $m->setAccessible(true);
+
                     try {
-                        call_user_func($m);
-                        $success_count++;
+                        $m->invoke(null);
+                        // call_user_func($m);
+                        $succeded[] = ["{$class_name}::{$m->getName()}", $a];
                         self::println_green("[TEST SUCCESSFUL]");
                     } catch (Exception $e) {
-                        self::println_err("[TEST ERROR]");
-                        self::println_err($e->getMessage());
-                        $fail_count++;
+                        self::println_red("[TEST ERROR]");
+                        self::println_red($e->getMessage());
+                        $failed[] = ["{$class_name}::{$m->getName()}", $a];
                     }
-                    self::println('- - - - - - - - - - - - - - - ');
+                    self::println(' - - - - - - - - - - - - - - - ]]');
                     self::restore_redirect($redir_flags);
                     self::close_custom_redirect_files($a);
                     $i++;
                 }
-                if ((++$class_no) < $class_count) self::println("\n==============================");
+                self::println("\n==============================");
             }
         }
         self::close_redirect_files();
-
+        $success_count = count($succeded);
         self::println_green("Tests succeded: {$success_count}");
-        if ($fail_count !== 0) self::println_err("Tests failed: {$fail_count}");
+        // if ($success_count !== 0) {
+        //     foreach ($succeded as $succ) {
+        //         self::println("  - {$succ}");
+        //     }
+        // }
+        $skip_count = count($skipped);
+        if ($skip_count !== 0) {
+            self::println_yellow("Tests skipped: {$skip_count}");
+            foreach ($skipped as $skip) {
+                self::println("  - '{$skip[1]->test_name}'\n      {$skip[0]}");
+            }
+        }
+        $fail_count = count($failed);
+        if ($fail_count !== 0) {
+            self::println_red("Tests failed: {$fail_count}");
+            foreach ($failed as $fail) {
+                self::println("  - '{$fail[1]->test_name}'\n      {$fail[0]}");
+            }
+        }
         else self::println_green("All tests succeded");
     }
 
@@ -143,7 +178,7 @@ final class TestDriver {
                 false => fopen($stdout_path, 'wb'),
             };
             if ($stdout === false) {
-                self::println_err("Unable to open {$stdout_path} for STDOUT redirect.");
+                self::println_red("Unable to open {$stdout_path} for STDOUT redirect.");
                 $flags &= ~(self::STDOUT_REDIR_CUSTOM | self::STDOUT_REDIR_GLOBAL);
             } else {
                 if (!isset(self::$opened_files[$stdout_path])) {
@@ -168,7 +203,7 @@ final class TestDriver {
                 false => fopen($stderr_path, 'wb'),
             };
             if ($stderr === false) {
-                self::println_err("Unable to open {$stderr_path} for STDERR redirect.");
+                self::println_red("Unable to open {$stderr_path} for STDERR redirect.");
                 $flags &= ~(self::STDERR_REDIR_CUSTOM | self::STDERR_REDIR_GLOBAL);
             } else {
                 if (!isset(self::$opened_files[$stderr_path])) {
@@ -193,7 +228,7 @@ final class TestDriver {
                 false => fopen($stdin_path, 'rb'),
             };
             if ($stdin === false) {
-                self::println_err("Unable to open {$stdin_path} for STDIN redirect.");
+                self::println_red("Unable to open {$stdin_path} for STDIN redirect.");
                 $flags &= ~(self::STDIN_REDIR_CUSTOM | self::STDIN_REDIR_GLOBAL);
             } else {
                 if (!isset(self::$opened_files[$stdin_path])) {
@@ -250,7 +285,8 @@ final class TestDriver {
         foreach ($r->getMethods() as $m) {
             foreach ($m->getAttributes() as $attr) {
                 if ($attr->getName() === Test::class) {
-                    $ret[] = ["{$class_name}::".$m->getName(), $attr->newInstance()];
+                    $ret[] = [$m, $attr->newInstance()];
+                    break;
                 }
             }
         }
