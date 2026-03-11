@@ -6,8 +6,9 @@ use App\Core\Helpers\Log;
 use App\Core\Model\FileCSVModel;
 use App\Core\Route\Request;
 use App\Core\View\Component;
-use App\Core\View\View;
 use App\Models\GuestBook\Messege;
+use App\Views\CommonView;
+use App\Views\GuestBookView;
 
 final class GuestBook {
     public const TITLE = 'Гостевая книга';
@@ -19,9 +20,8 @@ final class GuestBook {
             Log::error('GuestBook: unable to open '.Messege::DB_PATH.' database');
             Error::internal_error();
         }
-        return View::template_with_layout(self::TEMPLATE_PAGE, title: self::TITLE, data: [
-            'model' => $res->val,
-        ]);
+        $comp = GuestBookView::form(self::messeges_sorted($res->val));
+        return CommonView::layout($comp, title: self::TITLE, page_name: self::TEMPLATE_PAGE);
     }
 
     public static function post_review(Request $req): Component {
@@ -36,11 +36,33 @@ final class GuestBook {
             Error::internal_error();
         }
         $model = $res->val;
-        $model->insert($review);
-        $comp = View::template(self::TEMPLATE_PAGE, data: [
-            'model' => $model,
-        ]);
+        $res = $model->insert($review);
+        if (!$res->ok) {
+            $res->log();
+            Error::internal_error();
+        }
+        $comp = GuestBookView::form(self::messeges_sorted($model));
         if ($req->htmx) return $comp;
-        return View::layout($comp, title: self::TITLE);
+        return CommonView::layout($comp, title: self::TITLE, page_name: self::TEMPLATE_PAGE);
+    }
+
+    /**
+     * @param FileCSVModel<Messege> $model
+     * @return Messege[]
+     */
+    private static function messeges_sorted(FileCSVModel $model): array {
+        $res = $model->find_all(Messege::class);
+        if (!$res->ok) {
+            Error::internal_error();
+        }
+        $messeges = $res->val;
+        usort($messeges, function(Messege $a, Messege $b) {
+            $da = $a->get_date();
+            $db = $b->get_date();
+            if ($da > $db) return -1;
+            if ($da < $db) return 1;
+            return 0;
+        });
+        return $messeges;
     }
 }

@@ -9,6 +9,7 @@ use App\Core\View\ComponentFunc;
 use App\Core\View\View;
 use App\Models\CallbackValidator;
 use App\Views\CallbackView;
+use App\Views\CommonView;
 
 final class Callback {
     const TITLE = 'Обратная связь';
@@ -16,7 +17,7 @@ final class Callback {
     const CALLBACK_GOOD_TEMPLATE = 'callback_good';
 
     public static function index(Request $req): Component {
-        return View::template_with_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
+        return CommonView::template_with_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
     }
 
     public static function check(Request $req): Component {
@@ -27,26 +28,23 @@ final class Callback {
                 return View::empty();
             }
             $errors = $model->get_errors_by_query($query_f);
-            return new ComponentFunc(
-                function () use ($errors) {
-                    foreach ($errors as $err) {
-                        echo CallbackView::error_tag($err);
-                    }
-                    return Result::OK();
+            return View::func(function () use ($errors) {
+                foreach ($errors as $err) {
+                    echo CallbackView::error_tag($err);
                 }
-            );
+            });
         } else if (count($req->url->query) === 0) {
             $model->validate_all($req->form);
             if ($model->has_any_error()) {
                 $comp = View::template(template_page: self::CALLBACK_FORM_TEMPLATE, data: ['model' => $model]);
                 if ($req->htmx) return $comp;
-                return View::layout($comp, title: self::TITLE);
+                return CommonView::layout($comp, title: self::TITLE);
             } else {
                 // TODO: saving callback
                 Log::warning('saving not implemented');
                 $comp = View::template(template_page: self::CALLBACK_GOOD_TEMPLATE);
                 if ($req->htmx) return $comp;
-                return View::layout($comp, title: self::TITLE);
+                return CommonView::layout($comp, title: self::TITLE);
             }
         } else {
             ob_start();

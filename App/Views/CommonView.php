@@ -9,6 +9,20 @@ final class CommonView {
     /**
      * @param JsScript[] $scripts
      */
+    public static function template_with_layout(
+        string $template_page,
+        string $title,
+        array $data = [],
+        ?string $page_name = null,
+        array $scripts = []
+    ): Component {
+        $comp = View::template($template_page, data: $data);
+        return self::layout($comp, title: $title, page_name: $page_name ?? $template_page, scripts: $scripts);
+    }
+
+    /**
+     * @param JsScript[] $scripts
+     */
     public static function layout(
         Component $comp,
         string $title,

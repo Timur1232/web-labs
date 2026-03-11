@@ -8,7 +8,6 @@ use PDO;
 use Pdo\Sqlite;
 
 /**
- * @template T
  * @implements ARModel<T>
  */
 final class DBModel implements ARModel {
@@ -22,6 +21,7 @@ final class DBModel implements ARModel {
     }
 
     /*
+     * @template T
      * @param class-string<T> $class_name
      * @return Result<T[]>
      */
@@ -44,6 +44,7 @@ final class DBModel implements ARModel {
     }
 
     /*
+     * @template T
      * @param class-string<T> $class_name
      * @return Result<?T>
      */
@@ -69,6 +70,7 @@ final class DBModel implements ARModel {
     }
 
     /*
+     * @template T
      * @param T|T[] $class_obj
      */
     public function insert(mixed $class_obj): Result {
@@ -128,6 +130,7 @@ final class DBModel implements ARModel {
     }
 
     /*
+     * @template T
      * @param class-string<T> $class_name
      * @return Result<int>
      */

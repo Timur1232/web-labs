@@ -14,39 +14,6 @@ final class View {
         return new TemplateComponent($template_page, $data);
     }
 
-    /*
-    * @param JSScipt[] $scripts
-    */
-    public static function layout(Component $comp, string $title = self::DEFAULT_TITLE, string $page_name = '', array $scripts = []): LayoutComponent {
-        // TODO: Add ability to customize layout class component
-        return new LayoutComponent($comp, title: $title, scripts: $scripts, page_name: $page_name);
-    }
-
-    /*
-    * @param array<string, mixed> $data
-    * @param JSScipt[] $scripts
-    */
-    public static function template_with_layout(
-        string $template_page, array $data = [],
-        string $title = self::DEFAULT_TITLE, ?string $page_name = null, array $scripts = [],
-    ): Component {
-        $comp = View::template($template_page, data: $data);
-        return View::layout($comp, title: $title, page_name: $page_name ?? $template_page, scripts: $scripts);
-    }
-
-    /*
-    * @param array<string, mixed> $data
-    * @param JSScipt[] $scripts
-    */
-    public static function htmx_template(
-        bool $htmx,
-        string $template_page, array $data = [],
-        string $title = self::DEFAULT_TITLE, ?string $page_name = null, array $scripts = [],
-    ): Component {
-        if ($htmx) return self::template($template_page, data: $data);
-        return self::template_with_layout($template_page, data: $data, title: $title, page_name: $page_name, scripts: $scripts);
-    }
-
     public static function empty(): Component {
         return self::func(fn() => Result::OK());
     }

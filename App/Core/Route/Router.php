@@ -99,11 +99,11 @@ final class Router {
         } else {
             $comp = $handler($this->request);
             $err = $comp->render();
-            if (!$err->ok) {
-                $err->log();
-                Error::internal_error();
-                return false;
-            }
+            // if (!$err->ok) {
+            //     $err->log();
+            //     Error::internal_error();
+            //     return false;
+            // }
         }
 
         return true;
