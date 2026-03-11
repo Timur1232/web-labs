@@ -95,15 +95,10 @@ final class Router {
         $handler = $this->handler;
         Error::assert(isset($handler), 'no handler function - дэбил');
         if ($handler instanceof Component) {
-            $handler->render();
+            echo $handler->render();
         } else {
             $comp = $handler($this->request);
-            $err = $comp->render();
-            // if (!$err->ok) {
-            //     $err->log();
-            //     Error::internal_error();
-            //     return false;
-            // }
+            echo $comp->render();
         }
 
         return true;

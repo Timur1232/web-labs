@@ -20,11 +20,13 @@ final class TemplateComponent implements Component {
         return $this;
     }
 
-    public function render(): void {
+    public function render(): string {
         Error::assert(isset($this->template_page), "TemplateComponent: \$template_page must be set.");
         $page_file = self::$template_prefix.$this->template_page.'.php';
         Error::assert(file_exists($page_file), "TemplateComponent: File {$page_file} not exist");
         extract($this->data);
+        ob_start();
         include $page_file;
+        return ob_get_clean();
     }
 }

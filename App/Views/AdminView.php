@@ -1,7 +1,6 @@
 <?php
 namespace App\Views;
 
-use App\Core\Helpers\Result;
 use App\Core\View\Component;
 use App\Core\View\View;
 
@@ -13,7 +12,7 @@ final class AdminView {
 
     public static function home(): Component {
         return View::func(function () {
-            echo <<<HTML
+            return <<<HTML
             <section class="content-container">
                 <ul>
                     <li><a href="/admin/guest_book">Загрузить гостевую книгу</a></li>
@@ -21,14 +20,13 @@ final class AdminView {
                 </ul>
             </section>
             HTML;
-            return Result::OK();
         });
     }
 
     public static function guest_book_load_form(?string $msg = null): Component {
         return View::func(function () use ($msg) {
             $msg = $msg ?? '';
-            echo <<<HTML
+            return <<<HTML
             <section id="admin_guest_book_form" class="content-container">
                 <h2>Скачать файл с записями</h2>
                 <a href="/public/messeges.inc" download>Скачать</a>
@@ -54,7 +52,6 @@ final class AdminView {
                 <span id="msg">{$msg}</span>
             </section>
             HTML;
-            return Result::OK();
         });
     }
 }

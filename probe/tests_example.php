@@ -36,7 +36,8 @@ class Test2 {
     }
     #[Test('test4')]
     public static function bb(): void {
-
+        Test::match_files('test.csv', 'test1.csv', 'bad files');
+        Test::match_files('test2.csv', 'test1.csv', 'bad files');
     }
 }
 

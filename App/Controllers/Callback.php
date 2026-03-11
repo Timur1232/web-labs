@@ -3,9 +3,8 @@
 namespace App\Controllers;
 
 use App\Core\Route\Request;
-use App\Core\Helpers\{Error, Result, Log};
+use App\Core\Helpers\{Error, Log};
 use App\Core\View\Component;
-use App\Core\View\ComponentFunc;
 use App\Core\View\View;
 use App\Models\CallbackValidator;
 use App\Views\CallbackView;
@@ -28,11 +27,7 @@ final class Callback {
                 return View::empty();
             }
             $errors = $model->get_errors_by_query($query_f);
-            return View::func(function () use ($errors) {
-                foreach ($errors as $err) {
-                    echo CallbackView::error_tag($err);
-                }
-            });
+            return CallbackView::errors($errors);
         } else if (count($req->url->query) === 0) {
             $model->validate_all($req->form);
             if ($model->has_any_error()) {

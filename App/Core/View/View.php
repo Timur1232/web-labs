@@ -15,7 +15,7 @@ final class View {
     }
 
     public static function empty(): Component {
-        return self::func(fn() => Result::OK());
+        return self::func(fn() => '');
     }
     /**
      * @param Closure(): Result $callback
@@ -25,18 +25,14 @@ final class View {
     }
 
     public static function string(string $str): Component {
-        return self::func(function () use ($str) {
-            echo $str;
-            return Result::OK();
-        });
+        return self::func(fn() => $str);
     }
 
     public static function msg_tag(string $msg, string $id = 'msg'): Component {
         return self::func(function () use ($msg, $id) {
-            echo <<<HTML
+            return <<<HTML
             <span id="{$id}">{$msg}</span>
             HTML;
-            return Result::OK();
         });
     }
 

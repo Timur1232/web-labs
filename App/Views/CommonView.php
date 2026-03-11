@@ -1,13 +1,13 @@
 <?php
 namespace App\Views;
 
-use App\Core\Helpers\Result;
 use App\Core\View\Component;
 use App\Core\View\View;
 
 final class CommonView {
     /**
      * @param JsScript[] $scripts
+     * @param array<string,mixed> $data
      */
     public static function template_with_layout(
         string $template_page,
@@ -121,12 +121,7 @@ final class CommonView {
                         <div id="clock" class="clock"></div>
                     </header>
                     <main>
-                        <?php
-                            $err = $comp->render();
-                            if (!$err->ok) {
-                                return $err;
-                            }
-                        ?>
+                        <?php $comp->render() ?>
                     </main>
                     <footer>
                         <section class="footer-content">
@@ -137,7 +132,6 @@ final class CommonView {
                 </body>
             </html>
             <?php
-            return Result::OK();
         });
     }
 }

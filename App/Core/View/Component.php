@@ -2,5 +2,5 @@
 namespace App\Core\View;
 
 interface Component {
-    function render(): void;
+    function render(): string;
 }
