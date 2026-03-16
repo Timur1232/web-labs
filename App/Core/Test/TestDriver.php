@@ -3,6 +3,7 @@ namespace App\Core\Test;
 use App\Core\Helpers\Log;
 use Exception;
 use ReflectionClass;
+use TypeError;
 
 final class TestDriver {
 
@@ -126,6 +127,10 @@ final class TestDriver {
                         self::println_green("[TEST SUCCESSFUL]");
                     } catch (Exception $e) {
                         self::println_red("[TEST ERROR]");
+                        self::println_red($e->getMessage());
+                        $failed[] = ["{$class_name}::{$m->getName()}", $a];
+                    } catch (TypeError $e) {
+                        self::println_red("[TEST TYPE ERROR]");
                         self::println_red($e->getMessage());
                         $failed[] = ["{$class_name}::{$m->getName()}", $a];
                     }

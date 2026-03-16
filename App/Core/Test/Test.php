@@ -15,7 +15,7 @@ final class Test {
 
     public static function assert(bool $cond, ?string $msg = null): void {
         if (!$cond) {
-            $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+            $msg = self::format_msg($msg);
             throw new Exception("assert: \$cond == false.{$msg}");
         }
     }
@@ -25,7 +25,7 @@ final class Test {
      */
     public static function expect_ok(Result $res, ?string $msg = null): void {
         if (!$res->ok) {
-            $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+            $msg = self::format_msg($msg);
             throw new Exception("expect_ok: Result contain error: {$res->error}.{$msg}");
         }
     }
@@ -35,15 +35,23 @@ final class Test {
      */
     public static function expect_error(Result $res, ?string $msg = null): void {
         if ($res->ok) {
-            $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+            $msg = self::format_msg($msg);
             $val_str = isset($res->val) ? "\nValue:\n".print_r($res->val) : '';
             throw new Exception("expect_error: Result is ok.{$val_str}{$msg}");
         }
     }
 
     public static function crash(?string $msg = null): void {
-        $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+        $msg = self::format_msg($msg);
         throw new Exception("crash: Programm killed.{$msg}");
+    }
+
+    public static function is_array(mixed $obj, ?string $msg = null): void {
+        if (!is_array($obj)) {
+            $msg = self::format_msg($msg);
+            $type = gettype($obj);
+            throw new Exception("is_array: Object is of type {$type} and not array.{$msg}");
+        }
     }
 
     /**
@@ -51,11 +59,15 @@ final class Test {
      * @param array<mixed,mixed> $arr2
      */
     public static function match_arrays(array $arr1, array $arr2, ?string $msg = null): void {
-        $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+        self::is_array($arr1, $msg);
+        self::is_array($arr2, $msg);
+        $msg = self::format_msg($msg);
         $arr1_len = count($arr1);
         $arr2_len = count($arr2);
+        $arr1_str = print_r($arr1, true);
+        $arr2_str = print_r($arr2, true);
         if ($arr1_len !== $arr2_len) {
-            throw new Exception("match_arrays: Sizes of arrays dont match: count(\$arr1) == {$arr1_len}, count(\$arr2) == {$arr2_len}.{$msg}");
+            throw new Exception("match_arrays: Sizes of arrays dont match: count(\$arr1) == {$arr1_len}, count(\$arr2) == {$arr2_len}.{$msg}\nArray1: {$arr1_str}\nArray2: {$arr2_str}");
         }
 
         $diff = [];
@@ -67,8 +79,6 @@ final class Test {
 
         if (count($diff) !== 0) {
             $diff_str = print_r($diff, true);
-            $arr1_str = print_r($arr1, true);
-            $arr2_str = print_r($arr2, true);
             throw new Exception(<<<STR
                 match_arrays: Arrays keys and values dont match.{$msg}
                 Array1: {$arr1_str}
@@ -83,7 +93,7 @@ final class Test {
      * @param array<mixed,mixed> $arr2
      */
     public static function match_arrays_values(array $arr1, array $arr2, ?string $msg = null): void {
-        $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+        $msg = self::format_msg($msg);
         $arr1_len = count($arr1);
         $arr2_len = count($arr2);
         if ($arr1_len !== $arr2_len) {
@@ -104,7 +114,7 @@ final class Test {
     }
 
     public static function match_files(string $file_path1, string $file_path2, ?string $msg = null): void {
-        $msg = isset($msg) ? "\nMessage: {$msg}" : '';
+        $msg = self::format_msg($msg);
         if (!file_exists($file_path1)) {
             throw new Exception("match_files: File {$file_path1} not exists.{$msg}");
         } else if (!file_exists($file_path2)) {
@@ -129,5 +139,9 @@ final class Test {
                 {$contents2}
                 STR);
         }
+    }
+
+    private static function format_msg(?string $msg): string {
+        return isset($msg) ? "\nMessage: {$msg}" : '';
     }
 }

@@ -10,6 +10,7 @@ final class GuestBookView {
      */
     public static function form(array $messeges): Component {
         return View::func(function () use ($messeges) {
+            ob_start();
             ?>
             <section id="guest_book_form_cantainer" class="content-container">
                 <form class="callback-form"
@@ -63,6 +64,7 @@ final class GuestBookView {
                 </table>
             </section>
             <?php
+            return ob_get_clean();
         });
     }
 }

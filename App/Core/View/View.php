@@ -14,21 +14,21 @@ final class View {
         return new TemplateComponent($template_page, $data);
     }
 
-    public static function empty(): Component {
+    public static function empty(): ComponentFunc {
         return self::func(fn() => '');
     }
     /**
      * @param Closure(): Result $callback
      */
-    public static function func(Closure $callback): Component {
+    public static function func(Closure $callback): ComponentFunc {
         return new ComponentFunc($callback);
     }
 
-    public static function string(string $str): Component {
+    public static function string(string $str): ComponentFunc {
         return self::func(fn() => $str);
     }
 
-    public static function msg_tag(string $msg, string $id = 'msg'): Component {
+    public static function msg_tag(string $msg, string $id = 'msg'): ComponentFunc {
         return self::func(function () use ($msg, $id) {
             return <<<HTML
             <span id="{$id}">{$msg}</span>
@@ -36,7 +36,7 @@ final class View {
         });
     }
 
-    public static function error_tag(string $err_msg, string $id = 'error'): Component {
+    public static function error_tag(string $err_msg, string $id = 'error'): ComponentFunc {
         return self::msg_tag($err_msg, $id);
     }
 }

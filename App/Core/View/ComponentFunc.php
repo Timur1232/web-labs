@@ -20,6 +20,6 @@ final class ComponentFunc implements Component {
 
     public function render(): string {
         $comp_fn = $this->comp;
-        $comp_fn();
+        return $comp_fn();
     }
 }

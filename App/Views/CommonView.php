@@ -30,6 +30,7 @@ final class CommonView {
         array $scripts = [],
     ): Component {
         return View::func(function () use ($comp, $title, $scripts, $page_name) {
+            ob_start();
             ?>
             <!DOCTYPE html>
             <html lang="ru-RU">
@@ -121,7 +122,7 @@ final class CommonView {
                         <div id="clock" class="clock"></div>
                     </header>
                     <main>
-                        <?php $comp->render() ?>
+                        <?= $comp->render() ?>
                     </main>
                     <footer>
                         <section class="footer-content">
@@ -132,6 +133,7 @@ final class CommonView {
                 </body>
             </html>
             <?php
+            return ob_get_clean();
         });
     }
 }
