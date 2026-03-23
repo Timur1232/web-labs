@@ -89,14 +89,14 @@ final class URL {
     private static function binding_test(): void {
         $s = self::from('/urmom');
         $res = $s->bind_values('/:obj');
-        Test::match_arrays($res, [
+        Test::match_arrays_kv($res, [
             'obj' => 'urmom'
         ], 'simple bind');
 
         $s = self::from('/test/delete/69');
 
         $res = $s->bind_values('/test/:action/:id');
-        Test::match_arrays($res, [
+        Test::match_arrays_kv($res, [
             'action' => 'delete',
             'id'     => '69'
         ], 'binds one after one');
@@ -104,7 +104,7 @@ final class URL {
         $s = self::from('/test/delete/bar/69');
 
         $res = $s->bind_values('/test/:action/bar/:id');
-        Test::match_arrays($res, [
+        Test::match_arrays_kv($res, [
             'action' => 'delete',
             'id'     => '69'
         ], 'binds with thing in between');
@@ -116,7 +116,7 @@ final class URL {
         Test::assert(isset($parsed['query']), 'should never fail');
 
         $res = self::parse_query($parsed['query']);
-        Test::match_arrays($res, [
+        Test::match_arrays_kv($res, [
             'action' => 'urmom',
             'id'     => '69'
         ], 'simple match');

@@ -7,7 +7,7 @@ use Exception;
 #[Attribute(Attribute::TARGET_METHOD)]
 final class Test {
     public function __construct(
-        public string $test_name = 'no name',
+        public string $test_info  = 'no info',
         public bool $should_throw = false,
     ) {}
 
@@ -55,8 +55,10 @@ final class Test {
     /**
      * @param array<mixed,mixed> $arr1
      * @param array<mixed,mixed> $arr2
+     *
+     * Matches arrays both on keys and values
      */
-    public static function match_arrays(array $arr1, array $arr2, ?string $msg = null): void {
+    public static function match_arrays_kv(array $arr1, array $arr2, ?string $msg = null): void {
         self::is_array($arr1, $msg);
         self::is_array($arr2, $msg);
         $msg = self::format_msg($msg);
@@ -89,6 +91,8 @@ final class Test {
     /**
      * @param array<mixed,mixed> $arr1
      * @param array<mixed,mixed> $arr2
+     *
+     * Matches arrays only on values
      */
     public static function match_arrays_values(array $arr1, array $arr2, ?string $msg = null): void {
         $msg = self::format_msg($msg);

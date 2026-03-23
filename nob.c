@@ -1,13 +1,21 @@
-#include <fcntl.h>
 #include <stdio.h>
 #include <sys/inotify.h>
-#include <unistd.h>
-#include <errno.h>
 
 #define NOB_IMPLEMENTATION
 #include "nob.h"
 
+// =================== [Settings] =================== //
+
+const char* excludes[] = {
+    "./App/Templates",
+    "./App/Models/Instances",
+};
+
+const char* app_dir = "./App";
+
 #define EVENT_BUF_LEN 1024
+
+// =================== [Types] =================== //
 
 typedef struct {
     const char** items;
@@ -15,12 +23,21 @@ typedef struct {
     size_t capacity;
 } DA_String;
 
-const char* excludes[] = {
-    "./App/Templates",
-    "./App/Models/Instances",
-};
+typedef struct {
+    int fd;
+    int wd;
+} Watch;
 
-bool filter_folders_and_chop(String_View* sv) {
+typedef struct {
+    Watch* items;
+    size_t count;
+    size_t capacity;
+} DA_Watch;
+
+// =================== [Functions] =================== //
+
+bool filter_folders_and_chop(String_View* sv)
+{
     if (!sv_ends_with_cstr(*sv, ".php")) return false;
     for (size_t i = 0; i < ARRAY_LEN(excludes); i++) {
         if (sv_starts_with(*sv, sv_from_cstr(excludes[i]))) return false;
@@ -45,18 +62,8 @@ bool on_file_test(Walk_Entry entry)
     return true;
 }
 
-typedef struct {
-    int fd;
-    int wd;
-} Watch;
-
-typedef struct {
-    Watch* items;
-    size_t count;
-    size_t capacity;
-} DA_Watch;
-
-bool on_file_watch(Walk_Entry entry) {
+bool on_file_watch(Walk_Entry entry)
+{
     if (entry.type != NOB_FILE_DIRECTORY) return true;
     DA_Watch* w = entry.data;
     int fd = inotify_init1(IN_NONBLOCK | O_NONBLOCK);
@@ -64,7 +71,7 @@ bool on_file_watch(Walk_Entry entry) {
         nob_log(NOB_ERROR, "Unable to init inotify for %s", entry.path);
         return false;
     }
-    int wd = inotify_add_watch(fd, entry.path, IN_MODIFY | IN_ONLYDIR);
+    int wd = inotify_add_watch(fd, entry.path, IN_MODIFY | IN_CREATE | IN_DELETE | IN_ONLYDIR);
     if (wd == -1) {
         nob_log(NOB_ERROR, "Unable to add watch %s directory", entry.path);
         close(fd);
@@ -80,7 +87,8 @@ bool on_file_watch(Walk_Entry entry) {
 Cmd cmd = {0};
 Procs procs = {0};
 
-bool start_php_server() {
+bool start_php_server()
+{
     cmd_append(&cmd, "php");
     cmd_append(&cmd, "-S", "localhost:6969");
     if (!cmd_run(&cmd, .async = &procs)) {
@@ -91,7 +99,8 @@ bool start_php_server() {
     return true;
 }
 
-bool stop_php_server() {
+bool stop_php_server()
+{
     if (procs.count == 0) return true;
     int p = da_first(&procs);
     if (kill(p, SIGTERM) == -1) {
@@ -106,20 +115,7 @@ bool stop_php_server() {
     return true;
 }
 
-bool handle_event(struct inotify_event *event) {
-    if (event->mask & IN_MODIFY) {
-        nob_log(NOB_INFO, "File modified: %s", event->name);
-    } else if (event->mask & IN_CREATE) {
-        nob_log(NOB_INFO, "File created: %s", event->name);
-    } else if (event->mask & IN_DELETE) {
-        nob_log(NOB_INFO, "File deleted: %s", event->name);
-    } else {
-        nob_log(NOB_INFO, "Something happens: %s", event->name);
-    }
-    if (!stop_php_server()) return false;
-    if (!start_php_server()) return false;
-    return true;
-}
+// =================== [Main] =================== //
 
 int main(int argc, char** argv)
 {
@@ -132,12 +128,12 @@ int main(int argc, char** argv)
         return_defer(1);
     }
 
-    Cmd cmd = {0};
     const char* command = argv[1];
+
     if (strcmp(command, "test") == 0) {
         DA_String paths = {0};
-        if (!walk_dir("./App", on_file_test, .data = &paths)) {
-            nob_log(NOB_ERROR, "Unable to triverse ./App directory for tests");
+        if (!walk_dir(app_dir, on_file_test, .data = &paths)) {
+            nob_log(NOB_ERROR, "Unable to triverse %s directory for tests", app_dir);
             return_defer(1);
         }
 
@@ -147,14 +143,9 @@ int main(int argc, char** argv)
         }
         if (!cmd_run(&cmd)) return 1;
     } else if (strcmp(command, "watch") == 0) {
-        char buf[EVENT_BUF_LEN];
-        ssize_t len, i = 0;
-
-        const char* dir = "./App";
-
         DA_Watch w = {0};
-        if (!walk_dir(dir, on_file_watch, .data = &w)) {
-            nob_log(NOB_ERROR, "Unable to walk directory %s", dir);
+        if (!walk_dir(app_dir, on_file_watch, .data = &w)) {
+            nob_log(NOB_ERROR, "Unable to walk directory %s", app_dir);
             return_defer(1);
         }
 
@@ -162,12 +153,13 @@ int main(int argc, char** argv)
             return_defer(1);
         }
 
-        nob_log(NOB_INFO, "Watching %s", dir);
+        nob_log(NOB_INFO, "Watching %s", app_dir);
 
+        char buf[EVENT_BUF_LEN];
         while (1) {
             da_foreach(Watch, it, &w) {
                 int fd = it->fd;
-                len = read(fd, buf, EVENT_BUF_LEN);
+                ssize_t len = read(fd, buf, EVENT_BUF_LEN);
                 if (len == -1 && errno != EAGAIN) {
                     nob_log(NOB_ERROR, "Unable to read event");
                     return_defer(1);
@@ -176,12 +168,22 @@ int main(int argc, char** argv)
                     continue;
                 }
 
-                i = 0;
+                ssize_t i = 0;
                 while (i < len) {
                     struct inotify_event *event = (struct inotify_event *)&buf[i];
-                    handle_event(event);
+                    if (event->mask & IN_MODIFY) {
+                        nob_log(NOB_INFO, "File modified: %s", event->name);
+                    } else if (event->mask & IN_CREATE) {
+                        nob_log(NOB_INFO, "File created: %s", event->name);
+                    } else if (event->mask & IN_DELETE) {
+                        nob_log(NOB_INFO, "File deleted: %s", event->name);
+                    } else {
+                        nob_log(NOB_INFO, "Something happens: %s", event->name);
+                    }
                     i += sizeof(struct inotify_event) + event->len;
                 }
+                if (!stop_php_server()) return_defer(1);
+                if (!start_php_server()) return_defer(1);
             }
             sleep(1);
         }

@@ -22,6 +22,9 @@ final class TestDriver {
      * @param string[] $test_classes
      */
     public static function setup(array $test_classes = []): void {
+        spl_autoload_register(function ($class_name) {
+            require_once str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
+        });
         if (!defined('TEST_STDIN'))  define('TEST_STDIN',  fopen('php://stdin', 'rb'));
         if (!defined('TEST_STDOUT')) define('TEST_STDOUT', fopen('php://stdout', 'wb'));
         if (!defined('TEST_STDERR')) define('TEST_STDERR', fopen('php://stderr', 'wb'));
@@ -82,9 +85,9 @@ final class TestDriver {
                 self::println("RUNING TESTS FOR: {$class_name}");
                 $i = 1;
                 foreach ($methods as [$m, $a]) {
-                    self::print("  {$i}) '{$a->test_name}' - {$class_name}::{$m->getName()}: ");
+                    self::print("  {$i}) '{$a->test_info}' - {$class_name}::{$m->getName()}: ");
 
-                    Log::$stdin = $dev_null_handler;
+                    Log::$stdin  = $dev_null_handler;
                     Log::$stdout = $dev_null_handler;
                     Log::$stderr = $dev_null_handler;
 
@@ -134,7 +137,7 @@ final class TestDriver {
             foreach ($skipped as $skip) {
                 $throw = '';
                 if ($skip[1]->should_throw) $throw = 'Should throw: ';
-                self::println("  - {$throw}{$skip[0]}: '{$skip[1]->test_name}'");
+                self::println("  - {$throw}{$skip[0]}: '{$skip[1]->test_info}'");
             }
         }
         $fail_count = count($failed);
@@ -143,7 +146,7 @@ final class TestDriver {
             foreach ($failed as $fail) {
                 $throw = '';
                 if ($fail[1]->should_throw) $throw = 'Should throw: ';
-                self::println("  - {$throw}{$fail[0]}: '{$fail[1]->test_name}'");
+                self::println("  - {$throw}{$fail[0]}: '{$fail[1]->test_info}'");
             }
         }
         else self::println_green("All tests succeded");
@@ -152,7 +155,7 @@ final class TestDriver {
     /**
      * @template T
      * @param class-string<T> $class_name
-     * @return array<int,array>
+     * @return array<int,array{0: ReflectionMethod, 1: Test}>
      */
     private static function get_test_methods(string $class_name): array {
         try {
