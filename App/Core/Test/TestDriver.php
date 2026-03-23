@@ -105,14 +105,13 @@ final class TestDriver {
         foreach (self::$test_classes as $class_name) {
             if (!isset($cases) || in_array($class_name, $cases)) {
                 $methods = self::get_test_methods($class_name);
-                self::println_green("RUNING TESTS FOR: {$class_name}");
+                self::println("RUNING TESTS FOR: {$class_name}");
                 $i = 1;
                 foreach ($methods as [$m, $a]) {
-                    self::println_green("\n> TEST {$i}: '{$a->test_name}' - {$class_name}::{$m->getName()}:");
+                    self::print("  {$i}) '{$a->test_name}' - {$class_name}::{$m->getName()}: ");
 
                     $redir_flags = self::apply_redirect($a);
 
-                    self::println('[[ - - - - - - - - - - - - - - - ');
                     if (!$m->isStatic()) {
                         self::println_yellow("Non static methods not supported: {$class_name}::{$m->getName()}. Skipping.");
                         $skipped[] = ["{$class_name}::{$m->getName()}", $a];
@@ -122,46 +121,52 @@ final class TestDriver {
 
                     try {
                         $m->invoke(null);
-                        // call_user_func($m);
-                        $succeded[] = ["{$class_name}::{$m->getName()}", $a];
-                        self::println_green("[TEST SUCCESSFUL]");
+                        if ($a->should_throw) {
+                            self::println_red("SHOULD THROW: ERROR");
+                            $failed[] = ["{$class_name}::{$m->getName()}", $a];
+                        } else {
+                            $succeded[] = ["{$class_name}::{$m->getName()}", $a];
+                            self::println_green("OK");
+                        }
                     } catch (Exception $e) {
-                        self::println_red("[TEST ERROR]");
-                        self::println_red($e->getMessage());
-                        $failed[] = ["{$class_name}::{$m->getName()}", $a];
+                        if ($a->should_throw) {
+                            self::println_green("SHOULD THROW: OK");
+                            $succeded[] = ["{$class_name}::{$m->getName()}", $a];
+                        } else {
+                            self::println_red("ERROR");
+                            self::println_red($e->getMessage());
+                            $failed[] = ["{$class_name}::{$m->getName()}", $a];
+                        }
                     } catch (TypeError $e) {
-                        self::println_red("[TEST TYPE ERROR]");
+                        self::println_red("TYPE ERROR");
                         self::println_red($e->getMessage());
                         $failed[] = ["{$class_name}::{$m->getName()}", $a];
                     }
-                    self::println(' - - - - - - - - - - - - - - - ]]');
                     self::restore_redirect($redir_flags);
                     self::close_custom_redirect_files($a);
                     $i++;
                 }
-                self::println("\n==============================");
             }
         }
         self::close_redirect_files();
         $success_count = count($succeded);
-        self::println_green("Tests succeded: {$success_count}");
-        // if ($success_count !== 0) {
-        //     foreach ($succeded as $succ) {
-        //         self::println("  - {$succ}");
-        //     }
-        // }
+        self::println_green("\nTests succeded: {$success_count}");
         $skip_count = count($skipped);
         if ($skip_count !== 0) {
             self::println_yellow("Tests skipped: {$skip_count}");
             foreach ($skipped as $skip) {
-                self::println("  - '{$skip[1]->test_name}'\n      {$skip[0]}");
+                $throw = '';
+                if ($skip[1]->should_throw) $throw = 'Should throw: ';
+                self::println("  - {$throw}{$skip[0]}: '{$skip[1]->test_name}'");
             }
         }
         $fail_count = count($failed);
         if ($fail_count !== 0) {
             self::println_red("Tests failed: {$fail_count}");
             foreach ($failed as $fail) {
-                self::println("  - '{$fail[1]->test_name}'\n      {$fail[0]}");
+                $throw = '';
+                if ($fail[1]->should_throw) $throw = 'Should throw: ';
+                self::println("  - {$throw}{$fail[0]}: '{$fail[1]->test_name}'");
             }
         }
         else self::println_green("All tests succeded");

@@ -8,6 +8,7 @@ use Exception;
 final class Test {
     public function __construct(
         public string $test_name = 'no name',
+        public bool $should_throw = false,
         public ?string $stdout = null,
         public ?string $stdin = null,
         public ?string $stderr = null,
