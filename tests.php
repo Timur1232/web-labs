@@ -1,13 +1,11 @@
+#!/bin/php
 <?php
 
 spl_autoload_register(function ($class_name) {
     require_once str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
 });
 
-use App\Core\Route\URL;
 use App\Core\Test\TestDriver;
 
-TestDriver::setup([
-    URL::class,
-]);
+TestDriver::setup(array_slice($argv, 1));
 TestDriver::run_tests();

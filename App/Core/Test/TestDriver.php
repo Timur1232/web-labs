@@ -2,6 +2,7 @@
 namespace App\Core\Test;
 use App\Core\Helpers\Log;
 use Exception;
+use ParseError;
 use ReflectionClass;
 use TypeError;
 
@@ -105,6 +106,7 @@ final class TestDriver {
         foreach (self::$test_classes as $class_name) {
             if (!isset($cases) || in_array($class_name, $cases)) {
                 $methods = self::get_test_methods($class_name);
+                if (count($methods) === 0) continue;
                 self::println("RUNING TESTS FOR: {$class_name}");
                 $i = 1;
                 foreach ($methods as [$m, $a]) {
@@ -139,6 +141,10 @@ final class TestDriver {
                         }
                     } catch (TypeError $e) {
                         self::println_red("TYPE ERROR");
+                        self::println_red($e->getMessage());
+                        $failed[] = ["{$class_name}::{$m->getName()}", $a];
+                    } catch (ParseError $e) {
+                        self::println_red("PARSE ERROR");
                         self::println_red($e->getMessage());
                         $failed[] = ["{$class_name}::{$m->getName()}", $a];
                     }
@@ -290,7 +296,21 @@ final class TestDriver {
      * @return array<int,array>
      */
     private static function get_test_methods(string $class_name): array {
-        $r = new ReflectionClass($class_name);
+        try {
+            $r = new ReflectionClass($class_name);
+        } catch(Exception $e) {
+            self::println_red("REFLECTION ERROR: {$class_name}");
+            self::println_red($e->getMessage());
+            return [];
+        } catch (TypeError $e) {
+            self::println_red("REFLECTION ERROR: {$class_name}");
+            self::println_red($e->getMessage());
+            return [];
+        } catch (ParseError $e) {
+            self::println_red("REFLECTION ERROR: {$class_name}");
+            self::println_red($e->getMessage());
+            return [];
+        }
         $ret = [];
         foreach ($r->getMethods() as $m) {
             foreach ($m->getAttributes() as $attr) {

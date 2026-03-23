@@ -25,7 +25,7 @@ final class TestModel {
 
         
 
-        $model->
+        /* $model-> */
     }
 
     /*
