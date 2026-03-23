@@ -44,6 +44,7 @@ final class DataValidator {
         if (!isset($data)) return true;
         if (is_string($data)) return strlen(trim($data)) == 0;
         Error::assert(false, 'DataValidator - invalid data type');
+        return false;
     }
 
     public function with_data(mixed $data): self {

@@ -23,7 +23,7 @@ class FormValidator {
 
     public function not_empty(): self {
         return $this->check(
-            isset($this->data) && count(trim($this->data)) != 0,
+            isset($this->data) && strlen(trim($this->data)) != 0,
             FormValidatorRule::NotEmpty,
         );
     }

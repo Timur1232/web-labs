@@ -6,7 +6,7 @@ namespace App\Core\Helpers;
  */
 final class Result {
     /**
-     * @param T|null $val
+     * @param \T|null $val
      */
     public function __construct(
         public bool $ok,
@@ -15,7 +15,7 @@ final class Result {
     ) {}
 
     /**
-     * @param T|null $val
+     * @param \T|null $val
      */
     public static function OK($val = null): self {
         return new self(ok: true, val: $val);

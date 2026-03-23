@@ -164,7 +164,7 @@ final class FileCSVModel implements ARModel {
             return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 
-        [$id_field_name, $id_column_name] = $props->get_id_attr_norm();
+        [$_, $id_column_name] = $props->get_id_attr_norm();
         return $this->csv->delete(
             [$id_column_name => $id],
         );

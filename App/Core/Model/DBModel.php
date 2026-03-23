@@ -62,7 +62,7 @@ final class DBModel implements ARModel {
         if ($stmt === false) return Result::ERROR(__METHOD__.": Unable to prepare an sql statement");
         $stmt->bindValue(':id', $id);
         if (!$stmt->execute()) {
-            return Result::ERROR($this->conn->errorInfo());
+            return Result::ERROR($this->conn->errorInfo()[2]);
         }
         $row = $stmt->fetch();
         if ($row === false) return Result::ERROR(__METHOD__.": Unable to fetch result");
@@ -97,7 +97,7 @@ final class DBModel implements ARModel {
             $stmt->bindValue(":$col", $class_obj->$field);
         }
         if (!$stmt->execute()) {
-            return Result::ERROR($this->conn->errorInfo());
+            return Result::ERROR($this->conn->errorInfo()[2]);
         }
         return Result::OK();
     }
@@ -124,7 +124,7 @@ final class DBModel implements ARModel {
             $stmt->bindValue(":$col", $class_obj->$field);
         }
         if (!$stmt->execute()) {
-            return Result::ERROR($this->conn->errorInfo());
+            return Result::ERROR($this->conn->errorInfo()[2]);
         }
         return Result::OK($stmt->rowCount());
     }
@@ -148,7 +148,7 @@ final class DBModel implements ARModel {
         if ($stmt === false) return Result::ERROR(__METHOD__.": Unable to prepare an sql statement");
         $stmt->bindValue(':id', $id);
         if (!$stmt->execute()) {
-            return Result::ERROR($this->conn->errorInfo());
+            return Result::ERROR($this->conn->errorInfo()[2]);
         }
         return Result::OK($stmt->rowCount());
     }
