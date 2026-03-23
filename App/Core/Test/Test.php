@@ -101,7 +101,12 @@ final class Test {
         if ($arr1_len !== $arr2_len) {
             throw new Exception("match_arrays_values: Sizes of arrays dont match: count(\$arr1) == {$arr1_len}, count(\$arr2) == {$arr2_len}.{$msg}");
         }
-        $diff = array_diff($arr1, $arr2);
+        $diff = [];
+        foreach ($arr1 as $v) {
+            if (!in_array($v, $arr1)) {
+                $diff[] = $v;
+            }
+        }
         $arr1_str = print_r($arr1, true);
         $arr2_str = print_r($arr2, true);
         $diff_str = print_r($diff, true);
@@ -111,6 +116,24 @@ final class Test {
                 Array1: {$arr1_str}
                 Array2: {$arr2_str}
                 Diff:   {$diff_str}
+                STR);
+        }
+    }
+
+    public static function match_file_contents(string $file_path, string $compare_str, ?string $msg = null): void {
+        $msg = self::format_msg($msg);
+        if (!file_exists($file_path)) {
+            throw new Exception("match_file_contents: File {$file_path} not exists.{$msg}");
+        }
+        $file_contents = file_get_contents($file_path);
+        if ($file_contents === false) {
+            throw new Exception("match_files: Unable to read {$file_path} contents.{$msg}");
+        }
+        if ($file_contents !== $compare_str) {
+            throw new Exception(<<<STR
+                match_file_contents: Contents of {$file_path} not matching with given string.{$msg}
+                {$file_path} contents:
+                {$file_contents}
                 STR);
         }
     }

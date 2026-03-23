@@ -5,6 +5,7 @@ use App\Core\Helpers\Log;
 use Exception;
 use ParseError;
 use ReflectionClass;
+use Throwable;
 use TypeError;
 
 final class TestDriver {
@@ -74,6 +75,7 @@ final class TestDriver {
         $failed = [];
         $succeded = [];
         $skipped = [];
+        $tests_count = 0;
 
         $dev_null_handler = fopen('/dev/null', 'wb');
         Defer::d($_, fclose(...), $dev_null_handler);
@@ -98,6 +100,7 @@ final class TestDriver {
                     }
                     if ($m->isPrivate() || $m->isProtected()) $m->setAccessible(true);
 
+                    $tests_count++;
                     try {
                         $m->invoke(null);
                         if ($a->should_throw) {
@@ -107,7 +110,7 @@ final class TestDriver {
                             $succeded[] = ["{$class_name}::{$m->getName()}", $a];
                             self::println_green("OK");
                         }
-                    } catch (Exception $e) {
+                    } catch (Throwable $e) {
                         if ($a->should_throw) {
                             self::println_green("SHOULD THROW: OK");
                             $succeded[] = ["{$class_name}::{$m->getName()}", $a];
@@ -116,24 +119,17 @@ final class TestDriver {
                             self::println_red($e->getMessage());
                             $failed[] = ["{$class_name}::{$m->getName()}", $a];
                         }
-                    } catch (TypeError $e) {
-                        self::println_red("TYPE ERROR");
-                        self::println_red($e->getMessage());
-                        $failed[] = ["{$class_name}::{$m->getName()}", $a];
-                    } catch (ParseError $e) {
-                        self::println_red("PARSE ERROR");
-                        self::println_red($e->getMessage());
-                        $failed[] = ["{$class_name}::{$m->getName()}", $a];
                     }
                     $i++;
                 }
             }
         }
+        self::println("\nTests amount:   {$tests_count}");
         $success_count = count($succeded);
-        self::println_green("\nTests succeded: {$success_count}");
+        self::println_green("Tests succeded: {$success_count}");
         $skip_count = count($skipped);
         if ($skip_count !== 0) {
-            self::println_yellow("Tests skipped: {$skip_count}");
+            self::println_yellow("Tests skipped:  {$skip_count}");
             foreach ($skipped as $skip) {
                 $throw = '';
                 if ($skip[1]->should_throw) $throw = 'Should throw: ';
@@ -142,7 +138,7 @@ final class TestDriver {
         }
         $fail_count = count($failed);
         if ($fail_count !== 0) {
-            self::println_red("Tests failed: {$fail_count}");
+            self::println_red("Tests failed:   {$fail_count}");
             foreach ($failed as $fail) {
                 $throw = '';
                 if ($fail[1]->should_throw) $throw = 'Should throw: ';
@@ -160,15 +156,7 @@ final class TestDriver {
     private static function get_test_methods(string $class_name): array {
         try {
             $r = new ReflectionClass($class_name);
-        } catch(Exception $e) {
-            self::println_red("REFLECTION ERROR: {$class_name}");
-            self::println_red($e->getMessage());
-            return [];
-        } catch (TypeError $e) {
-            self::println_red("REFLECTION ERROR: {$class_name}");
-            self::println_red($e->getMessage());
-            return [];
-        } catch (ParseError $e) {
+        } catch (Throwable $e) {
             self::println_red("REFLECTION ERROR: {$class_name}");
             self::println_red($e->getMessage());
             return [];

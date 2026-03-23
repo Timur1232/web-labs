@@ -1,22 +1,13 @@
 <?php
 namespace App\Core\Helpers;
 
-/*
- * @template T
- */
 final class Result {
-    /**
-     * @param \T|null $val
-     */
     public function __construct(
         public bool $ok,
         public $val = null,
         public ?string $error = null
     ) {}
 
-    /**
-     * @param \T|null $val
-     */
     public static function OK($val = null): self {
         return new self(ok: true, val: $val);
     }

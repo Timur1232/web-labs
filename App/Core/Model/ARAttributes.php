@@ -3,11 +3,13 @@
 namespace App\Core\Model;
 use ReflectionClass;
 
+/*
+ * @template T of object
+ */
 final class ARAttributes {
     /*
-     * @template T
      * @param array<string, ARField> $attrs
-     * @param class-string<\T> $class_name
+     * @param class-string<T> $class_name
      */
     public function __construct(
         public ActiveRecord $ar_attr,
@@ -22,8 +24,7 @@ final class ARAttributes {
     public static array $reflection_cache = [];
 
     /*
-     * @template T
-     * @param class-string<\T> $class_name
+     * @param class-string<T> $class_name
      */
     public static function from(string $class_name): ?self {
         if (array_key_exists($class_name, self::$reflection_cache)) return self::$reflection_cache[$class_name];
@@ -71,7 +72,7 @@ final class ARAttributes {
     }
 
     /*
-    * @return array[string, string]
+    * @return array{0: string, 1: string}
     */
     public function get_id_attr_norm(): array {
         return [$this->id_index, $this->attrs[$this->id_index]->column_name];
@@ -89,7 +90,6 @@ final class ARAttributes {
     }
 
     /*
-     * @template T
      * @param array<string, mixed> $data
      * @return T
      */
@@ -102,7 +102,6 @@ final class ARAttributes {
     }
 
     /*
-     * @template T
      * @param ReflectionClass<T> $r
      */
     private static function get_ar_attribute(ReflectionClass $r): ?ActiveRecord {
