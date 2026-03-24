@@ -23,6 +23,9 @@ final class Result {
 
     public function log(?string $prefix = null): self {
         $prefix = isset($prefix) ? $prefix.': ' : '';
+        if (!isset($this->error)) {
+            Log::info($prefix . "No error");
+        }
         Log::error($prefix . strval($this->error));
         return $this;
     }

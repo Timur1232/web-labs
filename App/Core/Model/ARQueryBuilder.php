@@ -7,11 +7,11 @@ interface ARQueryBuilder {
     /*
      * @param array<string,string> $bindings
      */
-    function select_by_id(ARAttributes $props, int $limit = 0): string;
+    function select_by_id(ARAttributes $props, int $limit = 1): string;
     /*
      * @param array<string,string> $bindings
      */
-    function insert(ARAttributes $props): string;
+    function insert(ARAttributes $props, int $count = 1): string;
     /*
      * @param array<string,string> $bindings
      */

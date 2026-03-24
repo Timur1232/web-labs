@@ -11,7 +11,8 @@ const char* excludes[] = {
     "./App/Models/Instances",
 };
 
-const char* app_dir = "./App";
+#define APP_DIR "./App"
+#define PORT "6969"
 
 #define EVENT_BUF_LEN 1024
 
@@ -66,7 +67,7 @@ bool on_file_watch(Walk_Entry entry)
 {
     if (entry.type != NOB_FILE_DIRECTORY) return true;
     DA_Watch* w = entry.data;
-    int fd = inotify_init1(IN_NONBLOCK | O_NONBLOCK);
+    int fd = inotify_init1(O_NONBLOCK);
     if (fd == -1) {
         nob_log(NOB_ERROR, "Unable to init inotify for %s", entry.path);
         return false;
@@ -90,12 +91,20 @@ Procs procs = {0};
 bool start_php_server()
 {
     cmd_append(&cmd, "php");
-    cmd_append(&cmd, "-S", "localhost:6969");
+    cmd_append(&cmd, "-S", "localhost:" PORT);
     if (!cmd_run(&cmd, .async = &procs)) {
         nob_log(NOB_ERROR, "Unable to start php server");
         return false;
     }
     nob_log(NOB_INFO, "PHP server started");
+    return true;
+}
+
+bool open_localhost()
+{
+    cmd_append(&cmd, "xdg-open");
+    cmd_append(&cmd, "http://localhost:" PORT);
+    if (!cmd_run(&cmd)) return false;
     return true;
 }
 
@@ -132,8 +141,8 @@ int main(int argc, char** argv)
 
     if (strcmp(command, "test") == 0) {
         DA_String paths = {0};
-        if (!walk_dir(app_dir, on_file_test, .data = &paths)) {
-            nob_log(NOB_ERROR, "Unable to triverse %s directory for tests", app_dir);
+        if (!walk_dir(APP_DIR, on_file_test, .data = &paths)) {
+            nob_log(NOB_ERROR, "Unable to triverse %s directory for tests", APP_DIR);
             return_defer(1);
         }
 
@@ -144,23 +153,25 @@ int main(int argc, char** argv)
         if (!cmd_run(&cmd)) return 1;
     } else if (strcmp(command, "watch") == 0) {
         DA_Watch w = {0};
-        if (!walk_dir(app_dir, on_file_watch, .data = &w)) {
-            nob_log(NOB_ERROR, "Unable to walk directory %s", app_dir);
+        if (!walk_dir(APP_DIR, on_file_watch, .data = &w)) {
+            nob_log(NOB_ERROR, "Unable to walk directory %s", APP_DIR);
             return_defer(1);
         }
 
         if (!start_php_server()) {
             return_defer(1);
         }
+        if (!open_localhost()) return_defer(1);
 
-        nob_log(NOB_INFO, "Watching %s", app_dir);
+        nob_log(NOB_INFO, "Watching %s", APP_DIR);
 
         char buf[EVENT_BUF_LEN];
         while (1) {
+            bool modified = false;
             da_foreach(Watch, it, &w) {
                 int fd = it->fd;
                 ssize_t len = read(fd, buf, EVENT_BUF_LEN);
-                if (len == -1 && errno != EAGAIN) {
+                if (len <= 0 && errno != EAGAIN) {
                     nob_log(NOB_ERROR, "Unable to read event");
                     return_defer(1);
                 }
@@ -182,7 +193,10 @@ int main(int argc, char** argv)
                     }
                     i += sizeof(struct inotify_event) + event->len;
                 }
-                if (!stop_php_server()) return_defer(1);
+                modified = true;
+            }
+            if (modified) {
+                if (!stop_php_server())  return_defer(1);
                 if (!start_php_server()) return_defer(1);
             }
             sleep(1);

@@ -2,8 +2,10 @@
 
 namespace App\Models\Test;
 
+use App\Core\Helpers\Result;
 use App\Core\Model\DBModel;
 use App\Core\Model\DataValidator;
+use Config;
 
 final class TestModel {
 
@@ -20,12 +22,20 @@ final class TestModel {
         public array $hard_errs   = [],
     ) { }
 
-    public function save_results(): void {
-        $model = DBModel::sqlite('public/test_results.db');
-
-        
-
-        /* $model-> */
+    public function save_results(string $fio): Result {
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $record = new TestResult(fio: $fio)
+            ->with_current_date();
+        if (count($this->lim_errs) !== 0) {
+            $record->lim_answ = "Ожидалось: 5. Получено: {$this->user_answers['lim']}.";
+        }
+        if (count($this->series_errs) !== 0) {
+            $record->series_answ = "Ожидалось: 2). Получено: {$this->user_answers['series']}.";
+        }
+        if (count($this->hard_errs) !== 0) {
+            $record->hard_answ = "Ожидалось: ???. Получено: {$this->user_answers['hard_one']}.";
+        }
+        return $model->insert($record);
     }
 
     /*
@@ -48,7 +58,7 @@ final class TestModel {
         $this->series_errs =
             DataValidator::for($this->user_answers['series'])
             ->with_rules([
-                'solution' => fn($d) => $d === 'answ2'])
+                'solution' => fn($d) => $d === '2'])
             ->collect_errors();
 
         $this->hard_errs =

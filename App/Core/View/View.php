@@ -2,7 +2,6 @@
 
 namespace App\Core\View;
 
-use App\Core\Helpers\Result;
 use Closure;
 
 final class View {
@@ -18,7 +17,7 @@ final class View {
         return self::func(fn() => '');
     }
     /**
-     * @param Closure(): Result $callback
+     * @param Closure(): string $callback
      */
     public static function func(Closure $callback): ComponentFunc {
         return new ComponentFunc($callback);

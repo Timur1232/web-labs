@@ -25,13 +25,13 @@ final class DBModel implements ARModel {
      * @param class-string<T> $class_name
      * @return Result<T[]>
      */
-    public function find_all(string $class_name): Result {
+    public function find_all(string $class_name, int $limit = 0): Result {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
             return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         }
 
-        $sql = $this->query->select($props);
+        $sql = $this->query->select($props, limit: $limit);
         /** @var PDOStatement $stmt */
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) return Result::ERROR(__METHOD__.": Unable to prepare an sql statement");
@@ -48,15 +48,15 @@ final class DBModel implements ARModel {
      * @param class-string<T> $class_name
      * @return Result<?T>
      */
-    public function find_by_id(string $class_name, $id): Result {
+    public function find_by_id(string $class_name, $id, int $limit = 1): Result {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
             return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
-        } else if ($props->has_id()) {
+        } else if (!$props->has_id()) {
             return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 
-        $sql = $this->query->select_by_id($props, limit: 1);
+        $sql = $this->query->select_by_id($props, limit: $limit);
         /** @var PDOStatement $stmt */
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) return Result::ERROR(__METHOD__.": Unable to prepare an sql statement");
@@ -79,8 +79,10 @@ final class DBModel implements ARModel {
         }
 
         $class_name = '';
+        $count = 1;
         if (is_array($class_obj)) {
             $class_name = array_first($class_obj)::class;
+            $count = count($class_obj);
         } else {
             $class_name = $class_obj::class;
         }
@@ -89,12 +91,23 @@ final class DBModel implements ARModel {
             return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
         }
 
-        $sql = $this->query->insert($props);
+        $sql = $this->query->insert($props, $count);
+        print_r($sql);
         /** @var PDOStatement $stmt */
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) return Result::ERROR(__METHOD__.": Unable to prepare an sql statement");
-        foreach ($props->normalized() as $field => $col) {
-            $stmt->bindValue(":$col", $class_obj->$field);
+        if (is_array($class_obj)) {
+            $i = 0;
+            foreach ($class_obj as $obj) {
+                foreach ($props->normalized() as $field => $col) {
+                    $stmt->bindValue(":{$col}{$i}", $obj->$field);
+                }
+                $i++;
+            }
+        } else {
+            foreach ($props->normalized() as $field => $col) {
+                $stmt->bindValue(":{$col}0", $class_obj->$field);
+            }
         }
         if (!$stmt->execute()) {
             return Result::ERROR($this->conn->errorInfo()[2]);
@@ -110,7 +123,7 @@ final class DBModel implements ARModel {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
             return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
-        } else if ($props->has_id()) {
+        } else if (!$props->has_id()) {
             return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 
@@ -138,7 +151,7 @@ final class DBModel implements ARModel {
         $props = ARAttributes::from($class_name);
         if (!isset($props)) {
             return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
-        } else if ($props->has_id()) {
+        } else if (!$props->has_id()) {
             return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
 

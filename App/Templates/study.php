@@ -134,4 +134,9 @@
             Пройти тест по высшей математике
         </a>
     </div>
+    <div class="test-link">
+        <a href="/study/test/all_results" class="test-button shadow">
+            Посмотреть глобальные результаты
+        </a>
+    </div>
 </section>

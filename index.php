@@ -41,6 +41,7 @@ if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Controllers\Admin;
+use App\Controllers\Blog;
 use App\Core\Route\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
@@ -60,12 +61,22 @@ $router->GET('/history',    History::index(...));
 
 $router->GET('/raylib',     Raylib::raylib(...));
 
+// ====================[/blog]==================== //
+
+$blog = $router->group('/blog');
+$blog->GET('/all',       Blog::index(...));
+$blog->GET('/all/:page', Blog::index(...));
+$blog->GET('/:id',       Blog::blog(...));
+
 // ====================[/study]==================== //
 
 $study = $router->group('/study');
-$study->GET('/',            Study::index(...));
-$study->GET('/test',        Study::test(...));
-$study->POST('/test',       Study::check_test(...));
+$study->GET('/', Study::index(...));
+
+$test = $study->group('/test');
+$test->GET('/',  Study::test(...));
+$test->POST('/', Study::check_test(...));
+$test->GET('/all_results', Study::show_test_results(...));
 
 // ====================[/api]==================== //
 

@@ -26,12 +26,20 @@ final class MySQLQueryBuilder implements ARQueryBuilder {
 
     /*
      * @param array<string,string> $bindings
+     *
+     * TODO: not tested at all
      */
-    public function insert(ARAttributes $props): string {
+    public function insert(ARAttributes $props, int $count = 1): string {
         Log::warning("mysql insert: not tested");
-        $cols = implode(',', $props->normalized());
-        $bindings = implode(',', array_map(fn ($c) => ":$c", $props->normalized()));
-        $sql = "insert into {$props->ar_attr->table_name} ({$cols}) values ({$bindings})";
+        $norm = $props->normalized();
+        $cols = implode(',', $norm);
+        $values = '';
+        foreach (range(0, $count-1) as $i) {
+            $bindings = implode(',', array_map(fn ($c) => ":{$c}{$i}", $norm));
+            $values .= "({$bindings})";
+            if ($i < $count-1) $values .= ',';
+        }
+        $sql = "insert into {$props->ar_attr->table_name} ({$cols}) values {$values}";
         return $sql;
     }
 

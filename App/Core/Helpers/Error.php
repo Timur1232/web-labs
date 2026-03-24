@@ -4,6 +4,7 @@ namespace App\Core\Helpers;
 
 use App\Core\Helpers\Log;
 use App\Core\View\View;
+use App\Views\CommonView;
 
 final class Error {
     public static function send_error_msg_and_die(int $code, string $msg): void {
@@ -14,10 +15,10 @@ final class Error {
     }
 
     public static function not_found(string $path): void {
-        $err = View::layout(View::template('error', data: [
+        $err = CommonView::layout(View::template('error', data: [
             'title' => '404 Not Found',
             'msg'   => "{$path} не найден.",
-        ]), title: 'Упс');
+        ]), title: 'Упс', page_name: 'error');
         ob_start();
         $err->render();
         $msg = ob_get_clean();
@@ -27,9 +28,9 @@ final class Error {
     }
 
     public static function method_not_allowed(): void {
-        $err = View::layout(View::template('error', data: [
+        $err = CommonView::layout(View::template('error', data: [
             'title' => '405 Method Not Allowed',
-        ]), title: 'Упс');
+        ]), title: 'Упс', page_name: 'error');
         ob_start();
         $err->render();
         $msg = ob_get_clean();
@@ -39,9 +40,9 @@ final class Error {
     }
 
     public static function internal_error(): void {
-        $err = View::layout(View::template('error', data: [
+        $err = CommonView::layout(View::template('error', data: [
             'title' => '500 Internal Server Error',
-        ]), title: 'Упс');
+        ]), title: 'Упс', page_name: 'error');
         ob_start();
         $err->render();
         $msg = ob_get_clean();

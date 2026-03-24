@@ -4,10 +4,10 @@ namespace App\Core\Route;
 
 final class Request {
     /*
-    * @param array<string, string> $form
-    * @param array<string, string> $form_files
-    * @param array<string, string> $headers
-    * @param array<string,mixed> $binds
+    * @param array<string,string> $form
+    * @param array<string,string> $form_files
+    * @param array<string,string> $headers
+    * @param array<string,string> $binds
     */
     public function __construct(
         public URL $url,

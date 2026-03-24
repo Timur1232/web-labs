@@ -38,14 +38,14 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Неправильный формат csv.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE);
+            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
         }
         $model = $res->val;
 
         if (!$model->validate(Messege::class)) {
             $msg = 'Неправильный формат заголовка.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE);
+            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
         }
 
         $res = $model->find_all(Messege::class);
@@ -53,7 +53,7 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Ошибка чтения записей.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE);
+            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
         }
         $values = $res->val;
 
@@ -72,7 +72,7 @@ final class Admin {
 
         $msg = 'Успешно!';
         if ($req->htmx) return View::msg_tag($msg);
-        return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE);
+        return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
     }
 
     public static function override_guest_book(Request $req): Component {

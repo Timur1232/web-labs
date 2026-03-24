@@ -15,7 +15,7 @@ final class GuestBook {
     public const TEMPLATE_PAGE = 'guest_book_form';
 
     public static function index(Request $req): Component {
-        $res = FileCSVModel::open_or_create(Messege::class, Messege::DB_PATH);
+        $res = FileCSVModel::open_or_create(Messege::DB_PATH, Messege::class);
         if (!$res->ok) {
             Log::error('GuestBook: unable to open '.Messege::DB_PATH.' database');
             Error::internal_error();
@@ -30,7 +30,7 @@ final class GuestBook {
             email: $req->form['email'],
             text: $req->form['text'],
         )->with_current_date();
-        $res = FileCSVModel::open_or_create($review::class, Messege::DB_PATH);
+        $res = FileCSVModel::open_or_create(Messege::DB_PATH, $review::class);
         if (!$res->ok) {
             Log::error('GuestBook: unable to open '.Messege::DB_PATH.' database');
             Error::internal_error();

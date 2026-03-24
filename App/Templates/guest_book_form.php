@@ -48,7 +48,7 @@ use App\Core\Model\FileCSVModel;
             </tr>
             <tr>
                 <td>
-                    Отправлено: <?= $r->get_date()->format('d.m.Y H:i') ?><br/>
+                    Отправлено: UTC <?= $r->format() ?><br/>
                     <a href="mailto:<?= $r->email ?? '' ?>">
                         <?= $r->email ?? '' ?>
                     </a>

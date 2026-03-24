@@ -13,7 +13,7 @@ final class SQLiteQueryBuilder implements ARQueryBuilder {
     /*
      * @param array<string,string> $bindings
      */
-    public function select_by_id(ARAttributes $props, int $limit = 0): string {
+    public function select_by_id(ARAttributes $props, int $limit = 1): string {
         $cols = implode(',', $props->normalized());
         $sql = "select {$cols} from {$props->ar_attr->table_name} where {$props->get_id_column_name()} = :id";
         if ($limit > 0) $sql .= " limit {$limit}";
@@ -23,11 +23,16 @@ final class SQLiteQueryBuilder implements ARQueryBuilder {
     /*
      * @param array<string,string> $bindings
      */
-    public function insert(ARAttributes $props): string {
+    public function insert(ARAttributes $props, int $count = 1): string {
         $norm = $props->normalized();
         $cols = implode(',', $norm);
-        $bindings = implode(',', array_map(fn ($c) => ":$c", $norm));
-        $sql = "insert into {$props->ar_attr->table_name} ({$cols}) values ({$bindings})";
+        $values = '';
+        foreach (range(0, $count-1) as $i) {
+            $bindings = implode(',', array_map(fn ($c) => ":{$c}{$i}", $norm));
+            $values .= "({$bindings})";
+            if ($i < $count-1) $values .= ',';
+        }
+        $sql = "insert into {$props->ar_attr->table_name} ({$cols}) values {$values}";
         return $sql;
     }
 

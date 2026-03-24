@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Models\GuestBook;
-use App\Core\Helpers\MyDateTime;
 use App\Core\Model\ARField;
 use App\Core\Model\ActiveRecord;
-use DateTime;
+use App\Models\MyDateTrait;
 
 #[ActiveRecord('guest_book')]
 final class Messege {
@@ -17,18 +16,5 @@ final class Messege {
     ) {}
 
     public const DB_PATH = 'public/messeges.inc';
-
-    public function get_date(): ?DateTime {
-        return MyDateTime::to_date($this->datestr);
-    }
-
-    public function with_date(DateTime $date): self {
-        $this->datestr = MyDateTime::from_date($date);
-        return $this;
-    }
-
-    public function with_current_date(): self {
-        $this->datestr = MyDateTime::now();
-        return $this;
-    }
+    use MyDateTrait;
 }

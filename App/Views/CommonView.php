@@ -68,7 +68,7 @@ final class CommonView {
                         </label>
                         <nav>
                             <ul class="top-nav-bar">
-                                <li>
+                                <li id="main-link">
                                     <a
                                         class="nav-link <?= $page_name == 'index' ? ' page-active' : '' ?>"
                                         href="/"

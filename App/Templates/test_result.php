@@ -54,5 +54,6 @@ use App\Models\TestModel;
                 </tr>
             </tbody>
         </table>
+        <a href="/study/test/all_results">Посмотреть все результаты</a>
     </div>
 </section>

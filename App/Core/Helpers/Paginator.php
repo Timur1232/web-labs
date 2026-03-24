@@ -5,7 +5,7 @@ namespace App\Core\Helpers;
  * @template T
  */
 final class Paginator {
-    public const DEFAUL_PER_PAGE = 10;
+    public final const DEFAUL_PER_PAGE = 10;
 
     /**
      * @param T[] $items
@@ -14,7 +14,7 @@ final class Paginator {
         public array $items,
         public int $per_page = self::DEFAUL_PER_PAGE,
     ) {
-        Error::assert($per_page > 0, "Paginator: per_page field must be greater than 0 (per_page > 0)");
+        Error::assert($per_page > 0, __CLASS__.": per_page field must be greater than 0 (per_page > 0)");
     }
 
     /**
@@ -35,6 +35,8 @@ final class Paginator {
 
     /**
      * @return ?T[]
+     *
+     * NOTE: 0 <= $page < page_count
      */
     public function nth_page(int $page): ?array {
         if ($page < 0 || $page >= $this->page_count()) return null;

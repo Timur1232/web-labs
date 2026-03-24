@@ -22,6 +22,7 @@ function appendDropMenuToElement(element, anchors) {
 }
 
 function addDropMenuEventLiseners(element, anchors) {
+    $(element).find('a').append(' ⌄');
     $(element).on('mouseenter', function() {
         appendDropMenuToElement(this, anchors);
     });
@@ -35,6 +36,10 @@ function addDropMenuEventLiseners(element, anchors) {
 }
 
 $(document).ready(function() {
+    addDropMenuEventLiseners($('#main-link'), [
+        { href: '/blog/all/0', text: 'Блог' },
+    ]);
+
     const interestsLink = $('#interests-link');
     addDropMenuEventLiseners(interestsLink, [
         { href: '/interests#hobbies', text: 'Мои хобби' },
@@ -45,6 +50,7 @@ $(document).ready(function() {
     const studesLink = $('#studies-link');
     addDropMenuEventLiseners(studesLink, [
         { href: '/study/test', text: 'Тест' },
+        { href: '/study/test/all_results', text: 'Результаты' },
     ]);
 
     addDropMenuEventLiseners($('#callback-link'), [
