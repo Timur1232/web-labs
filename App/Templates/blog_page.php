@@ -20,7 +20,7 @@ $has_image = !empty($post->image_path);
                 <h1 class="blog-post-title"><?= $post->title ?></h1>
                 <div class="blog-post-meta">
                     <span class="blog-post-author">Автор: <?= $post->author ?></span>
-                    <span class="blog-post-date"> | <?= $post->format() ?></span>
+                    <span class="blog-post-date"> | UTC <?= $post->format() ?></span>
                 </div>
             </div>
         </div>

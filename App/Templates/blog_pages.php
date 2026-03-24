@@ -64,7 +64,7 @@ $controls = View::func(function () use ($page, $page_count) {
                     </h2>
                     <div class="blog-list-meta">
                         <span class="blog-list-author">Автор: <?= $post->author ?></span>
-                        <span class="blog-list-date"> | <?= $post->format() ?></span>
+                        <span class="blog-list-date"> | UTC <?= $post->format() ?></span>
                     </div>
                 </div>
             </div>
