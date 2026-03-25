@@ -32,9 +32,8 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-spl_autoload_register(function ($class_name) {
-    require_once str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
-});
+require_once './App/Core/Init.php';
+spl_autoload_register(App\Core\Init::autoload(...));
 
 if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
@@ -93,6 +92,9 @@ $gb->POST('/', GuestBook::post_review(...));
 
 $admin = $router->group('/admin');
 $admin->GET('/', Admin::index(...));
+
+// ====================[/admin/blog]==================== //
+
 $admin_blog = $admin->group('/blog');
 $admin_blog->GET('/', Blog::post(...));
 $admin_blog->POST('/post', Blog::post(...));

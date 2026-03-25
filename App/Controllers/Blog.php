@@ -13,7 +13,7 @@ use App\Core\View\Component;
 use App\Core\View\View;
 use App\Models\BlogRecord;
 use App\Views\CommonView;
-use Config;
+use App\Config;
 
 final class Blog {
     public static function index(Request $req): Component {

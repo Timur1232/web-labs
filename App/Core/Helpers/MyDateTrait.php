@@ -1,7 +1,6 @@
 <?php
-namespace App\Models;
+namespace App\Core\Helpers;
 
-use App\Core\Helpers\MyDateTime;
 use DateTime;
 
 trait MyDateTrait {

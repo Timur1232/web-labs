@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Models\GuestBook;
+use App\Core\Helpers\MyDateTrait;
 use App\Core\Model\ARField;
 use App\Core\Model\ActiveRecord;
-use App\Models\MyDateTrait;
 
 #[ActiveRecord('guest_book')]
 final class Messege {

@@ -10,7 +10,7 @@ use App\Core\View\View;
 use App\Models\Test\TestModel;
 use App\Models\Test\TestResult;
 use App\Views\CommonView;
-use Config;
+use App\Config;
 
 final class Study {
     public const INDEX_PAGE_NAME = 'study';

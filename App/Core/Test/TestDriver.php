@@ -2,11 +2,9 @@
 namespace App\Core\Test;
 use App\Core\Helpers\Defer;
 use App\Core\Helpers\Log;
-use Exception;
-use ParseError;
+use App\Core\Init;
 use ReflectionClass;
 use Throwable;
-use TypeError;
 
 final class TestDriver {
 
@@ -23,9 +21,8 @@ final class TestDriver {
      * @param string[] $test_classes
      */
     public static function setup(array $test_classes = []): void {
-        spl_autoload_register(function ($class_name) {
-            require_once str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
-        });
+        require_once './App/Core/Init.php';
+        spl_autoload_register(Init::autoload(...));
         if (!defined('TEST_STDIN'))  define('TEST_STDIN',  fopen('php://stdin', 'rb'));
         if (!defined('TEST_STDOUT')) define('TEST_STDOUT', fopen('php://stdout', 'wb'));
         if (!defined('TEST_STDERR')) define('TEST_STDERR', fopen('php://stderr', 'wb'));

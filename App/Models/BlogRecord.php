@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Core\Helpers\MyDateTrait;
 use App\Core\Model\ARField;
 use App\Core\Model\ActiveRecord;
 
