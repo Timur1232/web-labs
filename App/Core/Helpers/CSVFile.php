@@ -239,7 +239,7 @@ final class CSVFile {
     private function parse_line(string $line): ?array {
         $splited = $this->split_escaped(trim($line));
         if (count($splited) !== count($this->head)) return null;
-        return $splited;
+        return array_map(fn($v) => strlen($v) === 0 ? null : $v, $splited);
     }
 
     // Helper

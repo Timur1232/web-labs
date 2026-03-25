@@ -59,6 +59,7 @@ $(document).ready(function() {
 
     addDropMenuEventLiseners($('#admin-link'), [
         { href: '/admin/guest_book', text: 'Загрузить гостевую книгу' },
-        { href: '/admin/blog', text: 'Ребактор блога' },
+        { href: '/admin/blog', text: 'Редактор блога' },
+        { href: '/admin/blog/load', text: 'Загрузить посты' },
     ]);
 });

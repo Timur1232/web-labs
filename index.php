@@ -93,6 +93,11 @@ $gb->POST('/', GuestBook::post_review(...));
 
 $admin = $router->group('/admin');
 $admin->GET('/', Admin::index(...));
+$admin_blog = $admin->group('/blog');
+$admin_blog->GET('/', Blog::post(...));
+$admin_blog->POST('/post', Blog::post(...));
+$admin_blog->GET('/load', Blog::load(...));
+$admin_blog->POST('/load', Blog::load(...));
 
 // ====================[/admin/guest_book]==================== //
 

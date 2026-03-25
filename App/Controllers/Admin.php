@@ -57,7 +57,7 @@ final class Admin {
         }
         $values = $res->val;
 
-        $res = FileCSVModel::open_or_create(Messege::class, Messege::DB_PATH);
+        $res = FileCSVModel::open_or_create(Messege::DB_PATH, Messege::class);
         if (!$res->ok) {
             $res->log(__METHOD__);
             Error::internal_error();
@@ -116,7 +116,7 @@ final class Admin {
             Log::error(__METHOD__.": Unable to delete file ".Messege::DB_PATH);
             Error::internal_error();
         }
-        $res = FileCSVModel::open_or_create(Messege::class, Messege::DB_PATH);
+        $res = FileCSVModel::open_or_create(Messege::DB_PATH, Messege::class);
         if (!$res->ok) {
             $res->log(__METHOD__);
             Error::internal_error();

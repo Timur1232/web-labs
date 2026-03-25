@@ -1,9 +1,13 @@
 <?php
 namespace App\Controllers;
 
+use App\Core\Helpers\CSVFile;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Paginator;
+use App\Core\Model\DataValidator;
 use App\Core\Model\DBModel;
+use App\Core\Model\FileCSVModel;
+use App\Core\Route\HTTPMethod;
 use App\Core\Route\Request;
 use App\Core\View\Component;
 use App\Core\View\View;
@@ -16,29 +20,6 @@ final class Blog {
         $page = $req->binds['page'] ?? 0;
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
 
-        // $posts = [
-        //     new BlogRecord(author: 'Тимур', title: 'Тест1',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест2',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест3',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест4',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест5',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест6',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест7',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест8',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест9',  text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест10', text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест11', text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        //     new BlogRecord(author: 'Тимур', title: 'Тест12', text: 'Бла бла бла мой блог бла бла бла.', image_path: '/public/media/me.jpg')->with_current_date(),
-        // ];
-        // $i = 0;
-        // foreach ($posts as $p) {
-        //     $p->datestr[0] = strval($i%10);
-        //     $i++;
-        // }
-        // $res = $model->insert($posts);
-        // $res->log();
-        // return View::empty();
-
         $res = $model->find_all(BlogRecord::class);
         if (!$res->ok) {
             $res->log();
@@ -49,8 +30,8 @@ final class Blog {
         usort($posts, function(BlogRecord $a, BlogRecord $b) {
             $da = $a->get_date();
             $db = $b->get_date();
-            if ($da > $db) return 1;
-            if ($da < $db) return -1;
+            if ($da > $db) return -1;
+            if ($da < $db) return 1;
             return 0;
         });
 
@@ -79,4 +60,130 @@ final class Blog {
         $comp = View::template('blog_page', data: ['post' => $res->val, 'page' => $page]);
         return CommonView::layout($comp, 'Блог', 'blog_page');
     }
+
+    public const TITLE = 'Редактор блога';
+    public const REDACTOR_PAGE_NAME = 'blog_redactor';
+
+    public static function post(Request $req): Component {
+        if ($req->method === HTTPMethod::GET) {
+            return CommonView::layout(
+                View::template(self::REDACTOR_PAGE_NAME),
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+        }
+        $image_file = $req->form_files['image'];
+        [$ok, $errors] = self::validate_file($image_file);
+        if (!$ok) {
+            $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
+            if ($req->htmx) return View::msg_tag($msg);
+            return CommonView::layout(
+                View::template(self::REDACTOR_PAGE_NAME, data: [ 'msg' => $msg]),
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+        }
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+
+        $post = new BlogRecord(title: $req->form['title'], author: $req->form['author'], text: $req->form['text'])
+            ->with_current_date();
+        $new_image_path = '/public/media/blog/blog_image_'.$post->title.'-'.$post->datestr;
+        rename($image_file['tmp_name'], '.'.$new_image_path);
+        $post->image_path = $new_image_path;
+
+        $res = $model->insert($post);
+        if (!$res->ok) {
+            $res->log();
+            Error::internal_error();
+        }
+        // TODO: add htmx support
+        /* header('HX-Redirect: /blog/all/0'); */
+        header('Location: /blog/all/0');
+        return View::empty();
+    }
+
+    public const LOAD_BLOGS_PAGE_NAME = 'blog_load_csv';
+    public static function load(Request $req): Component {
+        if ($req->method === HTTPMethod::GET) {
+            return CommonView::layout(
+                View::template(self::LOAD_BLOGS_PAGE_NAME),
+                title: self::TITLE, page_name: self::LOAD_BLOGS_PAGE_NAME);
+        }
+        $file = $req->form_files['posts'];
+        [$ok, $errors] = self::validate_csv_file($file);
+        if (!$ok) {
+            $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
+            if ($req->htmx) return View::msg_tag($msg);
+            return CommonView::layout(
+                View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+        }
+        $res = FileCSVModel::open($file['tmp_name'], sep: ',', expected_head: BlogRecord::class);
+        if (!$res->ok) {
+            $res->log();
+            Error::internal_error();
+        }
+        $csv = $res->val;
+
+        $res = $csv->find_all(BlogRecord::class);
+        if (!$res->ok) {
+            $res->log();
+            $msg = "Неправильный формат файла.";
+            if ($req->htmx) return View::msg_tag($msg);
+            return CommonView::layout(
+                View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+        }
+        $new_posts = $res->val;
+
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $res = $model->insert($new_posts);
+        if (!$res->ok) {
+            $res->log();
+            Error::internal_error();
+        }
+
+        // TODO: add htmx support
+        /* header('HX-Redirect: /blog/all/0'); */
+        header('Location: /blog/all/0');
+        return View::empty();
+    }
+
+    /**
+     * @param array<string,string> $file_info
+     * @return array[bool, string[]]
+     */
+    private static function validate_file(array $file_info): array {
+        $ext = [
+            'png', 'jpg', 'jpeg', 'webp', 'gif',
+        ];
+        $errors = DataValidator::for($file_info['name'])
+            ->with_rules([
+                'only_image' => fn($t) => in_array(array_last(explode('.', $t)), $ext),
+            ])->collect_errors();
+        if ($file_info['error'] !== 0) {
+            $errors[] = 'no_file_error';
+        }
+        return [count($errors) === 0, implode(";<br/>", DataValidator::map_error_messeges($errors, [
+            'is_empty' => '<li>Файл отсутствует;</li>',
+            'only_image' => '<li>Файл должен быть картинкой;</li>',
+        ]))];
+    }
+
+    /**
+     * @param array<string,string> $file_info
+     * @return array[bool, string[]]
+     *
+     * TODO: refactor this
+     */
+    private static function validate_csv_file(array $file_info): array {
+        $errors = DataValidator::for($file_info['name'])
+            ->with_rules([
+                'only_csv' => fn($t) => array_last(explode('.', $t)) === 'csv',
+            ])->collect_errors();
+        if ($file_info['error'] !== 0) {
+            $errors[] = 'no_file_error';
+        }
+        return [count($errors) === 0, implode(";<br/>", DataValidator::map_error_messeges($errors, [
+            'is_empty' => '<li>Файл отсутствует;</li>',
+            'only_csv' => '<li>Файл должен иметь расширение .csv;</li>',
+        ]))];
+    }
+
 }

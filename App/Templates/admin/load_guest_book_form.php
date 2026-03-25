@@ -7,7 +7,7 @@
     <h2>Скачать файл с записями</h2>
     <a href="/public/messeges.inc" download>Скачать</a>
 
-    <h2>Загрузить файл с записями с сервера</h2>
+    <h2>Загрузить файл с записями на сервер</h2>
     <form action="/admin/guest_book/append" method="post"
         enctype="multipart/form-data"
         class="callback-form"

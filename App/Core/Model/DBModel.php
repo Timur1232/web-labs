@@ -92,7 +92,6 @@ final class DBModel implements ARModel {
         }
 
         $sql = $this->query->insert($props, $count);
-        print_r($sql);
         /** @var PDOStatement $stmt */
         $stmt = $this->conn->prepare($sql);
         if ($stmt === false) return Result::ERROR(__METHOD__.": Unable to prepare an sql statement");

@@ -33,6 +33,7 @@
 
 # Идеи
 
+- [ ] Перенести добавление выпядающего меню на заголовке в php код
 - [x] Небольшие компоненты вместо классов представлений (идея [отсюда](https://github.com/a-h/templ/blob/main/runtime.go))
     - [x] layout и шаблоны одни из компонентов
 - [x] defer функциона через деконструкторы (взято [отсюда](https://github.com/php-defer/php-defer/blob/5.0/src/functions.inc.php))
