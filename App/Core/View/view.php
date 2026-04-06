@@ -1,8 +1,25 @@
-<?php
-
-namespace App\Core\View;
-
+<?php namespace App\Core\View;
 use Closure;
+
+enum JsScriptType : string {
+    case Text   = 'text/javascript';
+    case Module = 'module';
+}
+
+final class JsScript {
+    public function __construct(
+        public string $src = '',
+        public JsScriptType $type = JsScriptType::Text,
+    ) { }
+
+    public static function from(string $src, JsScriptType $type = JsScriptType::Text): self {
+        return new self($src, $type);
+    }
+
+    public function render_script(): string {
+        return "<script src=\"{$this->src}\" type=\"{$this->type->value}\"></script>";
+    }
+}
 
 final class View {
     public const DEFAULT_TITLE = 'Мой сайт';

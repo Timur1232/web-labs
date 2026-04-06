@@ -1,7 +1,4 @@
-<?php
-
-namespace App\Core\Model;
-
+<?php namespace App\Core\Model;
 use App\Core\Helpers\Log;
 use App\Core\Helpers\Error;
 use Closure;

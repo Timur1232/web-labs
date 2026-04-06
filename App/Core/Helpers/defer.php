@@ -1,4 +1,4 @@
-<?php
+<?php namespace App\Core\Helpers;
 
 // LINK: https://github.com/php-defer/php-defer
 //
@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-namespace App\Core\Helpers;
 use SplStack;
 
 final class Defer {

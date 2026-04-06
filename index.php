@@ -33,7 +33,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 require_once './App/Core/Init.php';
-spl_autoload_register(App\Core\Init::autoload(...));
+spl_autoload_register(\App\Core\Init::autoload(...));
 
 if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));

@@ -37,31 +37,31 @@ typedef struct {
 
 // =================== [Functions] =================== //
 
-bool filter_folders_and_chop(String_View* sv)
-{
-    if (!sv_ends_with_cstr(*sv, ".php")) return false;
-    for (size_t i = 0; i < ARRAY_LEN(excludes); i++) {
-        if (sv_starts_with(*sv, sv_from_cstr(excludes[i]))) return false;
-    }
-    sv_chop_prefix(sv, sv_from_cstr("./"));
-    sv_chop_suffix(sv, sv_from_cstr(".php"));
-    return true;
-}
+// bool filter_folders_and_chop(String_View* sv)
+// {
+//     if (!sv_ends_with_cstr(*sv, ".php")) return false;
+//     for (size_t i = 0; i < ARRAY_LEN(excludes); i++) {
+//         if (sv_starts_with(*sv, sv_from_cstr(excludes[i]))) return false;
+//     }
+//     sv_chop_prefix(sv, sv_from_cstr("./"));
+//     sv_chop_suffix(sv, sv_from_cstr(".php"));
+//     return true;
+// }
 
-bool on_file_test(Walk_Entry entry)
-{
-    if (entry.type != NOB_FILE_REGULAR) return true;
-    DA_String* paths = entry.data;
-    String_View sv = sv_from_cstr(entry.path);
-    if (filter_folders_and_chop(&sv)) {
-        char* path = temp_strndup(sv.data, sv.count);
-        for (size_t i = 0; i < sv.count; i++) {
-            if (path[i] == '/') path[i] = '\\';
-        }
-        da_append(paths, path);
-    }
-    return true;
-}
+// bool on_file_test(Walk_Entry entry)
+// {
+//     if (entry.type != NOB_FILE_REGULAR) return true;
+//     DA_String* paths = entry.data;
+//     String_View sv = sv_from_cstr(entry.path);
+//     if (filter_folders_and_chop(&sv)) {
+//         char* path = temp_strndup(sv.data, sv.count);
+//         for (size_t i = 0; i < sv.count; i++) {
+//             if (path[i] == '/') path[i] = '\\';
+//         }
+//         da_append(paths, path);
+//     }
+//     return true;
+// }
 
 bool on_file_watch(Walk_Entry entry)
 {
@@ -140,16 +140,19 @@ int main(int argc, char** argv)
     const char* command = argv[1];
 
     if (strcmp(command, "test") == 0) {
-        DA_String paths = {0};
-        if (!walk_dir(APP_DIR, on_file_test, .data = &paths)) {
-            nob_log(NOB_ERROR, "Unable to triverse %s directory for tests", APP_DIR);
-            return_defer(1);
-        }
+        // DA_String paths = {0};
+        // if (!walk_dir(APP_DIR, on_file_test, .data = &paths)) {
+        //     nob_log(NOB_ERROR, "Unable to triverse %s directory for tests", APP_DIR);
+        //     return_defer(1);
+        // }
+        //
+        // cmd_append(&cmd, "./tests.php");
+        // da_foreach(const char*, path, &paths) {
+        //     cmd_append(&cmd, *path);
+        // }
 
+        cmd_append(&cmd, "php");
         cmd_append(&cmd, "./tests.php");
-        da_foreach(const char*, path, &paths) {
-            cmd_append(&cmd, *path);
-        }
         if (!cmd_run(&cmd)) return 1;
     } else if (strcmp(command, "watch") == 0) {
         DA_Watch w = {0};

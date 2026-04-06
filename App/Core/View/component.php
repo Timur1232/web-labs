@@ -1,7 +1,31 @@
-<?php
-namespace App\Core\View;
-
+<?php namespace App\Core\View;
+use Closure;
 use App\Core\Helpers\Error;
+
+interface Component {
+    function render(): string;
+}
+
+final class ComponentFunc implements Component {
+    /**
+     * @param Closure(): string $comp
+     */
+    public function __construct(
+        public Closure $comp
+    ) {}
+
+    /**
+     * @param Closure(): string $comp
+     */
+    public static function from(Closure $comp): self {
+        return new self(comp: $comp);
+    }
+
+    public function render(): string {
+        $comp_fn = $this->comp;
+        return $comp_fn();
+    }
+}
 
 final class TemplateComponent implements Component {
 

@@ -1,5 +1,4 @@
-<?php
-namespace App\Core\Helpers;
+<?php namespace App\Core\Helpers;
 
 final class CSVFile {
     public const DEFAULT_SEPARATOR = ',';

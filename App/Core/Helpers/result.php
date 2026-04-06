@@ -1,5 +1,4 @@
-<?php
-namespace App\Core\Helpers;
+<?php namespace App\Core\Helpers;
 
 final class Result {
     public function __construct(
@@ -33,5 +32,4 @@ final class Result {
     public static function TODO(string $msg): self {
         return new self(ok: false, error: "[NOT IMPLEMENTED]: {$msg}");
     }
-
 }

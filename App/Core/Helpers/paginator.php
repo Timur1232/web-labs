@@ -1,5 +1,4 @@
-<?php
-namespace App\Core\Helpers;
+<?php namespace App\Core\Helpers;
 
 /*
  * @template T

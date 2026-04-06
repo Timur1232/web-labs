@@ -1,6 +1,24 @@
-<?php
+<?php namespace App\Core\Model;
+// WARNING: Deprecated (yep)
 
-namespace App\Core\Model;
+enum FormValidatorRule {
+    case NotEmpty;
+    case IsInteger;
+    case IsLess;
+    case IsGreater;
+    case IsEmail;
+}
+
+final class DependencyError {
+    public function __construct(
+        public string $rule,
+        public string $reason,
+    ) { }
+
+    public static function new(string $rule, string $reason): self {
+        return new self($rule, $reason);
+    }
+}
 
 class FormValidator {
     /*

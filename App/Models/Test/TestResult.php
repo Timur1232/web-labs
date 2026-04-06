@@ -3,7 +3,7 @@ namespace App\Models\Test;
 
 use App\Core\Model\ARField;
 use App\Core\Model\ActiveRecord;
-use App\Models\MyDateTrait;
+use App\Core\Helpers\MyDateTrait;
 
 #[ActiveRecord('test_result')]
 final class TestResult {
