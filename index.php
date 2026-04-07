@@ -43,61 +43,80 @@ if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Controllers\Admin;
 use App\Controllers\Blog;
+use App\Controllers\Login;
 use App\Controllers\Statistics;
 use App\Middleware\AdminAuth;
 use App\Core\Context\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
 };
+use App\Middleware\GetUser;
 use App\Middleware\Tracking;
+use App\Middleware\UserAuth;
 
 $router = Router::default();
 
-$tracking = $router->group('/', middleware: [
+$common = $router->group('/', middleware: [
     Tracking::class,
+    GetUser::class,
 ]);
 
 // ====================[/]==================== //
 
-$tracking->GET('/',           Index::index(...));
-$tracking->GET('/about_me',   AboutMe::index(...));
-$tracking->GET('/interests',  Interests::index(...));
+$common->GET('/',             Index::index(...));
+$common->GET('/about_me',     AboutMe::index(...));
+$common->GET('/interests',    Interests::index(...));
 
-$tracking->GET('/photoalbum', Photoalbum::index(...));
-$tracking->GET('/callback',   Callback::index(...));
-$tracking->GET('/history',    History::index(...));
+$common->GET('/photoalbum',   Photoalbum::index(...));
+$common->GET('/callback',     Callback::index(...));
+$common->GET('/history',      History::index(...));
 
-$tracking->GET('/raylib',     Raylib::raylib(...));
+$common->GET('/raylib',       Raylib::raylib(...));
 
-$tracking->GET('/login_admin',  Admin::login_admin(...));
-$tracking->POST('/login_admin', Admin::login_admin(...));
-$tracking->POST('/logout',      Admin::logout(...));
+$common->GET('/login_admin',  Login::login_admin(...));
+$common->POST('/login_admin', Login::login_admin(...));
+
+$common->POST('/logout',      Login::logout(...));
+
+// ====================[/login]==================== //
+
+$login = $common->group('/login');
+$login->GET('/',  Login::login_form(...));
+$login->POST('/', Login::login_post(...));
+
+// ====================[/register]==================== //
+
+$register = $common->group('/register');
+$register->GET('/',  Login::register_form(...));
+$register->POST('/', Login::register_post(...));
 
 // ====================[/blog]==================== //
 
-$blog = $tracking->group('/blog');
+$blog = $common->group('/blog');
 $blog->GET('/all',       Blog::index(...));
 $blog->GET('/all/:page', Blog::index(...));
 $blog->GET('/:id',       Blog::blog(...));
 
 // ====================[/study]==================== //
 
-$study = $tracking->group('/study');
-$study->GET('/', Study::index(...));
+$study = $common->group('/study');
+$study->GET('/',           Study::index(...));
 
-$test = $study->group('/test');
-$test->GET('/',  Study::test(...));
-$test->POST('/', Study::check_test(...));
+$test = $study->group('/test', middleware: [
+    UserAuth::class,
+]);
+$test->GET('/',            Study::test(...));
+$test->POST('/',           Study::check_test(...));
 $test->GET('/all_results', Study::show_test_results(...));
 
 // ====================[/api]==================== //
 
 $api = $router->group('/api');
-$api->POST('/callback',     Callback::check(...));
+$api->POST('/callback', Callback::check(...));
 
 // ====================[/guest_book]==================== //
 
-$gb = $tracking->group('/guest_book');
+$gb = $common->group('/guest_book');
 $gb->GET('/',  GuestBook::index(...));
 $gb->POST('/', GuestBook::post_review(...));
 
@@ -111,9 +130,9 @@ $admin->GET('/', Admin::index(...));
 // ====================[/admin/blog]==================== //
 
 $admin_blog = $admin->group('/blog');
-$admin_blog->GET('/', Blog::post(...));
+$admin_blog->GET('/',      Blog::post(...));
 $admin_blog->POST('/post', Blog::post(...));
-$admin_blog->GET('/load', Blog::load(...));
+$admin_blog->GET('/load',  Blog::load(...));
 $admin_blog->POST('/load', Blog::load(...));
 
 // ====================[/admin/guest_book]==================== //

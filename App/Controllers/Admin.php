@@ -146,42 +146,6 @@ final class Admin {
         return Response::view($comp);
     }
 
-    public const LOGIN_TITLE = 'Вход';
-    public const LOGIN_PAGE_NAME = 'login_admin';
-    public static function login_admin(Request $req): Response {
-        if ($req->method === HTTPMethod::GET) {
-            return Response::view(CommonView::layout(AdminView::login_admin(), title: self::LOGIN_TITLE, page_name: self::LOGIN_PAGE_NAME));
-        }
-
-        if ($_SESSION['is_admin'] === true) {
-            return Response::redirect('/admin');
-        }
-
-        $login = $req->form['login'];
-        $password = $req->form['password'];
-        if (!isset($login) || !isset($password)) {
-            $msg = 'Логин и пароль необходимы.';
-            $comp = AdminView::login_admin($msg);
-            return Response::view(CommonView::layout($comp, title: self::LOGIN_TITLE, page_name: self::LOGIN_PAGE_NAME));
-        }
-
-        $hash = md5($password);
-        if ($login === Config::ADMIN_LOGIN && $hash === Config::ADMIN_PASSWORD_HASH) {
-            $_SESSION['is_admin'] = true;
-            return Response::redirect('/admin');
-        } else {
-            $msg = 'неправильный логин или пароль.';
-            $comp = AdminView::login_admin($msg);
-            return Response::view(CommonView::layout($comp, title: self::LOGIN_TITLE, page_name: self::LOGIN_PAGE_NAME));
-        }
-    }
-
-    public static function logout(Request $req): Response {
-        $path = $req->url->query['path'];
-        $_SESSION['is_admin'] = false;
-        return Response::redirect($path);
-    }
-
     /**
      * @param array<string,string> $file_info
      * @return array[bool, string[]]

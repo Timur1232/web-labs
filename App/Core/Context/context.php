@@ -20,6 +20,7 @@ final class Request {
     * @param array<string,string> $form_files
     * @param array<string,string> $headers
     * @param array<string,string> $binds
+    * @param array<string,string> $additional
     */
     public function __construct(
         public URL        $url,
@@ -29,6 +30,7 @@ final class Request {
         public array      $headers    = [],
         public bool       $htmx       = false,
         public array      $binds      = [],
+        public array      $additional = [],
     ) { }
 
     public static function current(): self {

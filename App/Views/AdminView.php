@@ -67,10 +67,10 @@ final class AdminView {
                     <h2>Вход админа</h2>
 
                     <label for="login">Логин</label><br/>
-                    <input type="text" id="login" name="login" required /><br/>
+                    <input type="text" class="input-text" id="login" name="login" required /><br/>
 
                     <label for="password">Пароль</label><br/>
-                    <input type="password" id="password" name="password" required /><br/>
+                    <input type="password" class="input-text" id="password" name="password" required /><br/>
 
                     <input class="button-submit" type="submit" value="Вход" />
                     <input class="button-reset" type="reset" value="Сброс" />

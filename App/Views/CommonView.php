@@ -46,7 +46,7 @@ final class CommonView {
                     <script type="text/javascript" src="/public/js/clock.js"></script>
                     <!-- <script type="text/javascript" src="/public/js/history.js"></script> -->
                     <script>
-                        trackPage(document.title, getEndpoint());
+                        // trackPage(document.title, getEndpoint());
                         htmx.on("htmx:beforeSwap", function(evt) {
                             evt.detail.shouldSwap = true;
                         });
@@ -113,11 +113,28 @@ final class CommonView {
                         </nav>
                         <?php if ($_SESSION['is_admin']): ?>
                             <p style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 100px; color: var(--main-light-color);padding: 8px 16px;">Вход за админа</p>
-                            <form method="POST" action="/logout?path=<?= $_SERVER['REQUEST_URI'] ?>" >
+                            <form method="post" action="/logout?path=<?= $_SERVER['REQUEST_URI'] ?>" >
                                 <button id="logout"
                                     style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 25px; color: var(--main-text-color);background-color: var(--main-light-color);padding: 8px 16px;"
                                 >
                                     Выход
+                                </button>
+                            </form>
+                        <?php elseif (isset($_SESSION['login']) && isset($_SESSION['password_hash'])): ?>
+                            <p style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 100px; color: var(--main-light-color);padding: 8px 16px;"><?= $_SESSION['login'] ?></p>
+                            <form method="post" action="/logout?path=<?= $_SERVER['REQUEST_URI'] ?>" >
+                                <button id="logout"
+                                    style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 25px; color: var(--main-text-color);background-color: var(--main-light-color);padding: 8px 16px;"
+                                >
+                                    Выход
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <form method="get" action="/login" >
+                                <button id="login"
+                                    style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 25px; color: var(--main-text-color);background-color: var(--main-light-color);padding: 8px 16px;"
+                                >
+                                    Вход
                                 </button>
                             </form>
                         <?php endif ?>

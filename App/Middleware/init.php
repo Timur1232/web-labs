@@ -7,6 +7,7 @@ use App\Core\Helpers\Log;
 use App\Core\Middleware;
 use App\Core\Model\DBModel;
 use App\Models\Statistics\Statistic;
+use App\Models\User;
 use Closure;
 
 final class AdminAuth implements Middleware {
@@ -15,6 +16,35 @@ final class AdminAuth implements Middleware {
             if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                 $_SESSION['is_admin'] = false;
                 return Response::redirect('/login_admin');
+            }
+            return $next($req);
+        };
+    }
+}
+
+final class UserAuth implements Middleware {
+    public function apply(Request $req, Closure $next): Closure {
+        return function (Request $req) use($next) {
+            if (!isset($_SESSION['is_admin'])) {
+                return $next($req);
+            }
+            if (!isset($_SESSION['login']) && !isset($_SESSION['password_hash'])) {
+                return Response::redirect('/login');
+            }
+            return $next($req);
+        };
+    }
+}
+
+final class GetUser implements Middleware {
+    public function apply(Request $req, Closure $next): Closure {
+        return function (Request $req) use($next) {
+            if (!isset($_SESSION['is_admin']) && isset($_SESSION['login']) && isset($_SESSION['password_hash'])) {
+                $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+                $res = $model->find_by_id(User::class, $_SESSION['login']);
+                if ($res->ok) {
+                    $req->additional['user'] = $res->val;
+                }
             }
             return $next($req);
         };
