@@ -1,4 +1,4 @@
-<?php namespace App\Core\Route;
+<?php namespace App\Core\Context;
 use App\Core\Helpers\Helpers;
 use App\Core\Test\Test;
 

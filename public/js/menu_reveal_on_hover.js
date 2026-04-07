@@ -61,5 +61,6 @@ $(document).ready(function() {
         { href: '/admin/guest_book', text: 'Загрузить гостевую книгу' },
         { href: '/admin/blog', text: 'Редактор блога' },
         { href: '/admin/blog/load', text: 'Загрузить посты' },
+        { href: '/admin/stats/all/0', text: 'Статистика' },
     ]);
 });

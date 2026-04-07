@@ -1,13 +1,11 @@
-<?php
-
-namespace App\Controllers;
-
-use App\Core\Route\Request;
-use App\Core\View\Component;
+<?php namespace App\Controllers;
+use App\Core\Context\Request;
+use App\Core\Context\Response;
 use App\Views\CommonView;
 
 final class AboutMe {
-    public static function index(Request $req): Component {
-        return CommonView::template_with_layout(template_page: 'about_me', title: 'Обо мне');
+    public static function index(Request $req): Response {
+        $comp = CommonView::template_with_layout(template_page: 'about_me', title: 'Обо мне');
+        return Response::view($comp);
     }
 }

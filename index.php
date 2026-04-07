@@ -43,39 +43,46 @@ if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Controllers\Admin;
 use App\Controllers\Blog;
-use App\Core\Helpers\Log;
-use App\Core\Middleware\Middleware;
-use App\Core\Middleware\AdminAuth;
-use App\Core\Route\Request;
-use App\Core\Route\Router;
+use App\Controllers\Statistics;
+use App\Middleware\AdminAuth;
+use App\Core\Context\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
 };
+use App\Middleware\Tracking;
 
 $router = Router::default();
 
+$tracking = $router->group('/', middleware: [
+    Tracking::class,
+]);
+
 // ====================[/]==================== //
 
-$router->GET('/',           Index::index(...));
-$router->GET('/about_me',   AboutMe::index(...));
-$router->GET('/interests',  Interests::index(...));
+$tracking->GET('/',           Index::index(...));
+$tracking->GET('/about_me',   AboutMe::index(...));
+$tracking->GET('/interests',  Interests::index(...));
 
-$router->GET('/photoalbum', Photoalbum::index(...));
-$router->GET('/callback',   Callback::index(...));
-$router->GET('/history',    History::index(...));
+$tracking->GET('/photoalbum', Photoalbum::index(...));
+$tracking->GET('/callback',   Callback::index(...));
+$tracking->GET('/history',    History::index(...));
 
-$router->GET('/raylib',     Raylib::raylib(...));
+$tracking->GET('/raylib',     Raylib::raylib(...));
+
+$tracking->GET('/login_admin',  Admin::login_admin(...));
+$tracking->POST('/login_admin', Admin::login_admin(...));
+$tracking->POST('/logout',      Admin::logout(...));
 
 // ====================[/blog]==================== //
 
-$blog = $router->group('/blog');
+$blog = $tracking->group('/blog');
 $blog->GET('/all',       Blog::index(...));
 $blog->GET('/all/:page', Blog::index(...));
 $blog->GET('/:id',       Blog::blog(...));
 
 // ====================[/study]==================== //
 
-$study = $router->group('/study');
+$study = $tracking->group('/study');
 $study->GET('/', Study::index(...));
 
 $test = $study->group('/test');
@@ -90,7 +97,7 @@ $api->POST('/callback',     Callback::check(...));
 
 // ====================[/guest_book]==================== //
 
-$gb = $router->group('/guest_book');
+$gb = $tracking->group('/guest_book');
 $gb->GET('/',  GuestBook::index(...));
 $gb->POST('/', GuestBook::post_review(...));
 
@@ -115,5 +122,11 @@ $admin_gb = $admin->group('/guest_book');
 $admin_gb->GET('/',          Admin::load_guest_book_index(...));
 $admin_gb->POST('/append',   Admin::append_guest_book(...));
 $admin_gb->POST('/override', Admin::override_guest_book(...));
+
+// ====================[/admin/stats]==================== //
+
+$stats = $admin->group('/stats');
+$stats->GET('/all',       Statistics::index(...));
+$stats->GET('/all/:page', Statistics::index(...));
 
 $router->dispatch();

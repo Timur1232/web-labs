@@ -4,4 +4,5 @@
     'active_record_model',
     'ar_query_builder',
     'data_validator',
+    'json',
 ]);

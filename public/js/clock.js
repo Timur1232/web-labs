@@ -19,7 +19,7 @@ function formatClock(date) {
 
 function updateClock() {
     const now = new Date();
-    $('.clock').text(formatClock(now));
+    $('#clock').text(formatClock(now));
 }
 
 $(document).ready(function() {

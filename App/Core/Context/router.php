@@ -1,64 +1,12 @@
-<?php namespace App\Core\Route;
+<?php namespace App\Core\Context;
 use App\Core\Helpers\Error;
-use App\Core\Helpers\Log;
 use App\Core\View\Component;
 use App\Core\Middleware\Middleware;
 use Closure;
 
-enum HTTPMethod : string {
-    case NONE   = '';
-    case GET    = 'GET';
-    case POST   = 'POST';
-    case PUT    = 'PUT';
-    case PATCH  = 'PATCH';
-    case DELETE = 'DELETE';
-}
-
-final class Request {
-    /*
-    * @param array<string,string> $form
-    * @param array<string,string> $form_files
-    * @param array<string,string> $headers
-    * @param array<string,string> $binds
-    */
-    public function __construct(
-        public URL        $url,
-        public HTTPMethod $method     = HTTPMethod::NONE,
-        public array      $form       = [],
-        public array      $form_files = [],
-        public array      $headers    = [],
-        public bool       $htmx       = false,
-        public array      $binds      = [],
-    ) { }
-
-    public static function current(): self {
-        $method = HTTPMethod::tryFrom($_SERVER['REQUEST_METHOD']) ?? HTTPMethod::NONE;
-        $headers = getallheaders();
-        return new self(
-            url: URL::from($_SERVER['REQUEST_URI']),
-            method: $method,
-            form: match ($method) {
-                HTTPMethod::POST => $_POST,
-                HTTPMethod::GET => $_GET,
-            },
-            form_files: $_FILES,
-            headers: $headers,
-            htmx: isset($headers['HX-Request']),
-        );
-    }
-
-    public function match(string $template_path, HTTPMethod $method): bool {
-        return $this->url->match($template_path) && $this->method == $method;
-    }
-
-    public function bind_values(string $template_path): void {
-        $this->binds = $this->url->bind_values($template_path);
-    }
-}
-
 final class Router {
     /*
-     * @param ?((Closure(Request):Component)|Component) $handler
+     * @param ?(Closure(Request):Response) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function __construct(
@@ -82,11 +30,11 @@ final class Router {
     }
 
     /*
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Response) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function handle_rule(string $template_path, mixed $handler, HTTPMethod $method, array $middleware = []): bool {
-        Error::assert(self::validate_path($template_path), "Router::handle_rule: invalid path {$template_path} - дэбил");
+        Error::assert(self::validate_path($template_path), __METHOD__.": Invalid path {$template_path}");
         if (!$this->handled && $this->request->match($template_path, $method)) {
             $this->handler = $handler;
             $this->middleware = $middleware;
@@ -104,7 +52,7 @@ final class Router {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function GET(string $path, mixed $handler, array $middleware = []): bool {
@@ -112,7 +60,7 @@ final class Router {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function POST(string $path, mixed $handler, array $middleware = []): bool {
@@ -120,7 +68,7 @@ final class Router {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function PUT(string $path, mixed $handler, array $middleware = []): bool {
@@ -128,7 +76,7 @@ final class Router {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function PATCH(string $path, mixed $handler, array $middleware = []): bool {
@@ -136,7 +84,7 @@ final class Router {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function DELETE(string $path, mixed $handler, array $middleware = []): bool {
@@ -154,21 +102,20 @@ final class Router {
         }
 
         $handler = $this->handler;
-        Error::assert(isset($handler), 'no handler function - дэбил');
-        if ($handler instanceof Component) {
-            echo $handler->render();
-        } else {
-            if (count($this->middleware) !== 0) {
-                foreach (array_reverse($this->middleware) as $mw) {
-                    if (is_string($mw)) {
-                        $mw = new $mw;
-                    }
-                    $handler = $mw->apply($this->request, $handler);
+        Error::assert(isset($handler), __METHOD__.': No handler function');
+
+        if (count($this->middleware) !== 0) {
+            foreach (array_reverse($this->middleware) as $mw) {
+                if (is_string($mw)) {
+                    $mw = new $mw;
                 }
+                $handler = $mw->apply($this->request, $handler);
             }
-            $comp = $handler($this->request);
-            echo $comp->render();
         }
+
+        $response = $handler($this->request);
+        $comp = $response->apply();
+        echo $comp->render();
 
         return true;
     }
@@ -187,7 +134,7 @@ final class RouteGroup {
      * @param array<int,Middleware|class-string> $middleware
      */
     public static function new(string $group_path, Router $router, array $middleware = []): self {
-        Error::assert(Router::validate_path($group_path), "invalid group path {$group_path} - дэбил");
+        Error::assert(Router::validate_path($group_path), __METHOD__.": Invalid group path {$group_path}");
         return new self(
             router: $router,
             group_path: $group_path == '/' ? '' : $group_path,
@@ -196,7 +143,7 @@ final class RouteGroup {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function handle_rule(string $path, mixed $handler, HTTPMethod $method, array $middleware = []): bool {
@@ -212,7 +159,7 @@ final class RouteGroup {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function GET(string $path, mixed $handler, array $middleware = []): bool {
@@ -220,7 +167,7 @@ final class RouteGroup {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function POST(string $path, mixed $handler, array $middleware = []): bool {
@@ -228,7 +175,7 @@ final class RouteGroup {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function PUT(string $path, mixed $handler, array $middleware = []): bool {
@@ -236,7 +183,7 @@ final class RouteGroup {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function PATCH(string $path, mixed $handler, array $middleware = []): bool {
@@ -244,7 +191,7 @@ final class RouteGroup {
     }
 
     /**
-     * @param ((Closure(Request): Component)|Component) $handler
+     * @param (Closure(Request): Component) $handler
      * @param array<int,Middleware|class-string> $middleware
      */
     public function DELETE(string $path, mixed $handler, array $middleware = []): bool {

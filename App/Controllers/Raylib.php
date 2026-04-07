@@ -1,13 +1,12 @@
-<?php
-
-namespace App\Controllers;
-
+<?php namespace App\Controllers;
 use App\Core\Helpers\Error;
+use App\Core\View\View;
 use FFI;
-use App\Core\Route\Request;
+use App\Core\Context\Request;
+use App\Core\Context\Response;
 
 final class Raylib {
-    public static function raylib(Request $r): void {
+    public static function raylib(Request $r): Response {
         /** @var mixed $ffi */
         $ffi = FFI::load("./probe/raylib_ffi/raylib_php.h");
         Error::assert(isset($ffi), "Cannot load raylib.so");
@@ -61,7 +60,6 @@ final class Raylib {
             $ffi->EndDrawing();
         }
         $ffi->CloseWindow();
-        echo $msg;
-        echo '<br/><a href="/">Home</a>';
+        return Response::view(View::string("$msg<br/><a href="/">Home</a>"));
     }
 }

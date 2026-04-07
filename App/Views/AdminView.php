@@ -2,6 +2,7 @@
 namespace App\Views;
 
 use App\Core\View\Component;
+use App\Core\View\ComponentFunc;
 use App\Core\View\View;
 
 final class AdminView {
@@ -48,6 +49,31 @@ final class AdminView {
                         onclick="return confirm('Вы уверены? Это перезапишет существующие данные.')"
                         formaction="/admin/guest_book/override"
                     />
+                </form>
+                <span id="msg">{$msg}</span>
+            </section>
+            HTML;
+        });
+    }
+
+    public static function login_admin(?string $msg = null): ComponentFunc {
+        return View::func(function () use ($msg) {
+            $msg = $msg ?? '';
+            return <<<HTML
+            <section id="login_admin" class="content-container">
+                <form action="/login_admin" method="post"
+                    class="callback-form"
+                >
+                    <h2>Вход админа</h2>
+
+                    <label for="login">Логин</label><br/>
+                    <input type="text" id="login" name="login" required /><br/>
+
+                    <label for="password">Пароль</label><br/>
+                    <input type="password" id="password" name="password" required /><br/>
+
+                    <input class="button-submit" type="submit" value="Вход" />
+                    <input class="button-reset" type="reset" value="Сброс" />
                 </form>
                 <span id="msg">{$msg}</span>
             </section>

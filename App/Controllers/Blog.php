@@ -1,22 +1,20 @@
-<?php
-namespace App\Controllers;
-
-use App\Core\Helpers\CSVFile;
+<?php namespace App\Controllers;
+use App\Core\Context\HTTPMethod as AppHTTPMethod;
+use App\Core\Context\Response;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Paginator;
 use App\Core\Model\DataValidator;
 use App\Core\Model\DBModel;
 use App\Core\Model\FileCSVModel;
-use App\Core\Route\HTTPMethod;
-use App\Core\Route\Request;
-use App\Core\View\Component;
+use App\Core\Context\HTTPMethod;
+use App\Core\Context\Request;
 use App\Core\View\View;
 use App\Models\BlogRecord;
 use App\Views\CommonView;
 use App\Config;
 
 final class Blog {
-    public static function index(Request $req): Component {
+    public static function index(Request $req): Response {
         $page = $req->binds['page'] ?? 0;
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
 
@@ -41,10 +39,11 @@ final class Blog {
         }
         $posts = $p->nth_page($page);
         $comp = View::template('blog_pages', data: ['page' => $page, 'posts' => $posts, 'page_count' => $p->page_count()]);
-        return CommonView::layout($comp, 'Блог', 'blog_page');
+        $comp = CommonView::layout($comp, 'Блог', 'blog_page');
+        return Response::view($comp);
     }
 
-    public static function blog(Request $req): Component {
+    public static function blog(Request $req): Response {
         // TODO: redirecting to blogs if no id provided
         // make data validation
         $id = (int)$req->binds['id'];
@@ -58,26 +57,29 @@ final class Blog {
         }
 
         $comp = View::template('blog_page', data: ['post' => $res->val, 'page' => $page]);
-        return CommonView::layout($comp, 'Блог', 'blog_page');
+        $comp = CommonView::layout($comp, 'Блог', 'blog_page');
+        return Response::view($comp);
     }
 
     public const TITLE = 'Редактор блога';
     public const REDACTOR_PAGE_NAME = 'blog_redactor';
 
-    public static function post(Request $req): Component {
-        if ($req->method === HTTPMethod::GET) {
-            return CommonView::layout(
+    public static function post(Request $req): Response {
+        if ($req->method === AppHTTPMethod::GET) {
+            $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+            return Response::view($comp);
         }
         $image_file = $req->form_files['image'];
         [$ok, $errors] = self::validate_file($image_file);
         if (!$ok) {
             $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(
+            $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: [ 'msg' => $msg]),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+            return Response::view($comp);
         }
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
 
@@ -94,25 +96,26 @@ final class Blog {
         }
         // TODO: add htmx support
         /* header('HX-Redirect: /blog/all/0'); */
-        header('Location: /blog/all/0');
-        return View::empty();
+        return Response::redirect('/blog/all/0');
     }
 
     public const LOAD_BLOGS_PAGE_NAME = 'blog_load_csv';
-    public static function load(Request $req): Component {
+    public static function load(Request $req): Response {
         if ($req->method === HTTPMethod::GET) {
-            return CommonView::layout(
+            $comp = CommonView::layout(
                 View::template(self::LOAD_BLOGS_PAGE_NAME),
                 title: self::TITLE, page_name: self::LOAD_BLOGS_PAGE_NAME);
+            return Response::view($comp);
         }
         $file = $req->form_files['posts'];
         [$ok, $errors] = self::validate_csv_file($file);
         if (!$ok) {
             $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(
+            $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+            return Response::view($comp);
         }
         $res = FileCSVModel::open($file['tmp_name'], sep: ',', expected_head: BlogRecord::class);
         if (!$res->ok) {
@@ -126,9 +129,10 @@ final class Blog {
             $res->log();
             $msg = "Неправильный формат файла.";
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(
+            $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+            return Response::view($comp);
         }
         $new_posts = $res->val;
 
@@ -141,8 +145,7 @@ final class Blog {
 
         // TODO: add htmx support
         /* header('HX-Redirect: /blog/all/0'); */
-        header('Location: /blog/all/0');
-        return View::empty();
+        return Response::redirect('/blog/all/0');
     }
 
     /**

@@ -44,7 +44,7 @@ final class CommonView {
                     <script type="text/javascript" src="/public/js/jquery/jquery.js"></script>
                     <script type="text/javascript" src="/public/js/menu_reveal_on_hover.js"></script>
                     <script type="text/javascript" src="/public/js/clock.js"></script>
-                    <script type="text/javascript" src="/public/js/history.js"></script>
+                    <!-- <script type="text/javascript" src="/public/js/history.js"></script> -->
                     <script>
                         trackPage(document.title, getEndpoint());
                         htmx.on("htmx:beforeSwap", function(evt) {
@@ -58,14 +58,6 @@ final class CommonView {
 
                 <body class="flex-container">
                     <header>
-                        <input type="checkbox" id="burger-menu-checkbox" class="burger-menu"
-                            title="https://www.flaticon.com/ru/authors/andy-horvath" />
-                        <label for="burger-menu-checkbox" class="burger-icon-closed">
-                            <img src="/public/media/burger.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
-                        </label>
-                        <label for="burger-menu-checkbox" class="burger-icon-opened">
-                            <img src="/public/media/cross.png" alt="B" title="https://www.flaticon.com/ru/authors/andy-horvath" />
-                        </label>
                         <nav>
                             <ul class="top-nav-bar">
                                 <li id="main-link">
@@ -119,7 +111,17 @@ final class CommonView {
                                 </li>
                             </ul>
                         </nav>
-                        <div id="clock" class="clock"></div>
+                        <?php if ($_SESSION['is_admin']): ?>
+                            <p style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 100px; color: var(--main-light-color);padding: 8px 16px;">Вход за админа</p>
+                            <form method="POST" action="/logout?path=<?= $_SERVER['REQUEST_URI'] ?>" >
+                                <button id="logout"
+                                    style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 25px; color: var(--main-text-color);background-color: var(--main-light-color);padding: 8px 16px;"
+                                >
+                                    Выход
+                                </button>
+                            </form>
+                        <?php endif ?>
+                        <!-- <div id="clock" class="clock"></div> -->
                     </header>
                     <main>
                         <?= $comp->render() ?>

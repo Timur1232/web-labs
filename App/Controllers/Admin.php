@@ -1,36 +1,39 @@
-<?php
-namespace App\Controllers;
-
+<?php namespace App\Controllers;
+use App\Config;
+use App\Core\Context\HTTPMethod;
+use App\Core\Context\Response;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 use App\Core\Model\DataValidator;
 use App\Core\Model\FileCSVModel;
-use App\Core\Route\Request;
-use App\Core\View\Component;
+use App\Core\Context\Request;
 use App\Core\View\View;
 use App\Models\GuestBook\Messege;
 use App\Views\AdminView;
 use App\Views\CommonView;
 
 final class Admin {
-    public static function index(Request $req): Component {
+    public static function index(Request $req): Response {
         $comp = AdminView::home();
-        return CommonView::layout($comp, title: AdminView::TITLE, page_name: AdminView::HOME_PAGE_NAME);
+        $comp = CommonView::layout($comp, title: AdminView::TITLE, page_name: AdminView::HOME_PAGE_NAME);
+        return Response::view($comp);
     }
 
-    public static function load_guest_book_index(Request $req): Component {
+    public static function load_guest_book_index(Request $req): Response {
         $comp = AdminView::guest_book_load_form();
-        return CommonView::layout($comp, title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+        $comp = CommonView::layout($comp, title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+        return Response::view($comp);
     }
 
-    public static function append_guest_book(Request $req): Component {
+    public static function append_guest_book(Request $req): Response {
         $file = $req->form_files['messege'];
         [$ok, $errors] = self::validate_file($file);
 
         if (!$ok) {
             $msg = "Неправильный формат inc:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
 
         $res = FileCSVModel::open($file['tmp_name']);
@@ -38,14 +41,16 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Неправильный формат csv.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
         $model = $res->val;
 
         if (!$model->validate(Messege::class)) {
             $msg = 'Неправильный формат заголовка.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
 
         $res = $model->find_all(Messege::class);
@@ -53,7 +58,8 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Ошибка чтения записей.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
         $values = $res->val;
 
@@ -72,10 +78,11 @@ final class Admin {
 
         $msg = 'Успешно!';
         if ($req->htmx) return View::msg_tag($msg);
-        return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+        $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+        return Response::view($comp);
     }
 
-    public static function override_guest_book(Request $req): Component {
+    public static function override_guest_book(Request $req): Response {
         $file = $req->form_files['messege'];
         [$ok, $errors] = self::validate_file($file);
 
@@ -84,7 +91,8 @@ final class Admin {
         if (!$ok) {
             $msg = "Неправильный формат csv:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
 
         $res = FileCSVModel::open($file['tmp_name']);
@@ -92,14 +100,16 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Неправильный формат inc.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
         $model = $res->val;
 
         if (!$model->validate(Messege::class)) {
             $msg = 'Неправильный формат заголовка.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
 
         $res = $model->find_all(Messege::class);
@@ -107,7 +117,8 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Ошибка чтения записей.';
             if ($req->htmx) return View::msg_tag($msg);
-            return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+            return Response::view($comp);
         }
         $values = $res->val;
 
@@ -131,7 +142,44 @@ final class Admin {
 
         $msg = 'Успешно!';
         if ($req->htmx) return View::msg_tag($msg);
-        return CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+        $comp = CommonView::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME);
+        return Response::view($comp);
+    }
+
+    public const LOGIN_TITLE = 'Вход';
+    public const LOGIN_PAGE_NAME = 'login_admin';
+    public static function login_admin(Request $req): Response {
+        if ($req->method === HTTPMethod::GET) {
+            return Response::view(CommonView::layout(AdminView::login_admin(), title: self::LOGIN_TITLE, page_name: self::LOGIN_PAGE_NAME));
+        }
+
+        if ($_SESSION['is_admin'] === true) {
+            return Response::redirect('/admin');
+        }
+
+        $login = $req->form['login'];
+        $password = $req->form['password'];
+        if (!isset($login) || !isset($password)) {
+            $msg = 'Логин и пароль необходимы.';
+            $comp = AdminView::login_admin($msg);
+            return Response::view(CommonView::layout($comp, title: self::LOGIN_TITLE, page_name: self::LOGIN_PAGE_NAME));
+        }
+
+        $hash = md5($password);
+        if ($login === Config::ADMIN_LOGIN && $hash === Config::ADMIN_PASSWORD_HASH) {
+            $_SESSION['is_admin'] = true;
+            return Response::redirect('/admin');
+        } else {
+            $msg = 'неправильный логин или пароль.';
+            $comp = AdminView::login_admin($msg);
+            return Response::view(CommonView::layout($comp, title: self::LOGIN_TITLE, page_name: self::LOGIN_PAGE_NAME));
+        }
+    }
+
+    public static function logout(Request $req): Response {
+        $path = $req->url->query['path'];
+        $_SESSION['is_admin'] = false;
+        return Response::redirect($path);
     }
 
     /**

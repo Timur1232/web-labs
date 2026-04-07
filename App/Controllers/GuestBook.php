@@ -1,10 +1,9 @@
-<?php
-namespace App\Controllers;
-
+<?php namespace App\Controllers;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 use App\Core\Model\FileCSVModel;
-use App\Core\Route\Request;
+use App\Core\Context\Request;
+use App\Core\Context\Response;
 use App\Core\View\Component;
 use App\Models\GuestBook\Messege;
 use App\Views\CommonView;
@@ -14,17 +13,18 @@ final class GuestBook {
     public const TITLE = 'Гостевая книга';
     public const TEMPLATE_PAGE = 'guest_book_form';
 
-    public static function index(Request $req): Component {
+    public static function index(Request $req): Response {
         $res = FileCSVModel::open_or_create(Messege::DB_PATH, Messege::class);
         if (!$res->ok) {
             Log::error('GuestBook: unable to open '.Messege::DB_PATH.' database');
             Error::internal_error();
         }
         $comp = GuestBookView::form(self::messeges_sorted($res->val));
-        return CommonView::layout($comp, title: self::TITLE, page_name: self::TEMPLATE_PAGE);
+        $comp = CommonView::layout($comp, title: self::TITLE, page_name: self::TEMPLATE_PAGE);
+        return Response::view($comp);
     }
 
-    public static function post_review(Request $req): Component {
+    public static function post_review(Request $req): Response {
         $review = new Messege(
             fio: $req->form['fio'],
             email: $req->form['email'],
@@ -42,8 +42,9 @@ final class GuestBook {
             Error::internal_error();
         }
         $comp = GuestBookView::form(self::messeges_sorted($model));
-        if ($req->htmx) return $comp;
-        return CommonView::layout($comp, title: self::TITLE, page_name: self::TEMPLATE_PAGE);
+        if ($req->htmx) return Response::view($comp);
+        $comp = CommonView::layout($comp, title: self::TITLE, page_name: self::TEMPLATE_PAGE);
+        return Response::view($comp);
     }
 
     /**

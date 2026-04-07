@@ -45,26 +45,26 @@ $controls = View::func(function () use ($page, $page_count) {
 ?>
 <section class="content-container">
     <?= $controls->render() ?>
-    <div class="blog-list">
+    <div class="pagination-list">
         <?php foreach ($posts as $post): ?>
-        <article class="blog-list-item">
-            <div class="blog-list-row <?= !empty($post->image_path) ? 'blog-list-row-with-image' : 'blog-list-row-without-image' ?>">
+        <article class="pagination-item">
+            <div class="pagination-item-row <?= !empty($post->image_path) ? 'pagination-item-row-with-image' : 'pagination-item-row-without-image' ?>">
                 <?php if (!empty($post->image_path)): ?>
-                <div class="blog-list-image">
-                    <a href="/blog/<?= $post->id ?>?page=<?= $page ?>" class="blog-list-title-link">
+                <div class="pagination-item-image">
+                    <a href="/blog/<?= $post->id ?>?page=<?= $page ?>" class="pagination-item-title-link">
                         <img src="<?= $post->image_path ?>" alt="<?= $post->title ?>">
                     </a>
                 </div>
                 <?php endif; ?>
-                <div class="blog-list-header">
-                    <h2 class="blog-list-title">
-                        <a href="/blog/<?= $post->id ?>?page=<?= $page ?>" class="blog-list-title-link">
+                <div class="pagination-item-header">
+                    <h2 class="pagination-item-title">
+                        <a href="/blog/<?= $post->id ?>?page=<?= $page ?>" class="pagination-item-title-link">
                             <?= $post->title ?>
                         </a>
                     </h2>
-                    <div class="blog-list-meta">
-                        <span class="blog-list-author">Автор: <?= $post->author ?></span>
-                        <span class="blog-list-date"> | UTC <?= $post->format() ?></span>
+                    <div class="pagination-item-meta">
+                        <span class="pagination-item-author">Автор: <?= $post->author ?></span>
+                        <span class="pagination-item-date"> | UTC <?= $post->format() ?></span>
                     </div>
                 </div>
             </div>

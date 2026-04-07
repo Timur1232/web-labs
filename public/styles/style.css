@@ -1286,69 +1286,69 @@ textarea {
     margin-top: 20px;
 }
 
-.blog-list {
+.pagination-list {
     max-width: 950px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.blog-list-item {
+.pagination-item {
     margin-bottom: 40px;
     border-bottom: 1px solid #eee;
     padding-bottom: 30px;
 }
 
-.blog-list-item:last-child {
+.pagination-item:last-child {
     border-bottom: none;
 }
 
-.blog-list-row {
+.pagination-item-row {
     display: grid;
     gap: 20px;
     margin-bottom: 20px;
 }
 
-.blog-list-row-with-image {
+.pagination-item-row-with-image {
     grid-template-columns: auto 1fr;
 }
 
-.blog-list-row-without-image {
+.pagination-item-row-without-image {
     grid-template-columns: 1fr;
 }
 
-.blog-list-image img {
+.pagination-item-image img {
     max-width: 200px;
     height: auto;
     display: block;
     border-radius: 8px;
 }
 
-.blog-list-header {
+.pagination-item-header {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.blog-list-title {
+.pagination-item-title {
     margin: 0 0 10px 0;
     font-size: 1.8rem;
 }
 
-.blog-list-title-link {
+.pagination-item-title-link {
     text-decoration: none;
     color: #333;
 }
 
-.blog-list-title-link:hover {
+.pagination-item-title-link:hover {
     text-decoration: underline;
 }
 
-.blog-list-meta {
+.pagination-item-meta {
     color: #666;
     font-size: 0.9rem;
 }
 
-.blog-list-text {
+.pagination-item-text {
     text-align: center;
     line-height: 1.6;
 }
