@@ -35,12 +35,18 @@
 require_once './App/Core/Init.php';
 spl_autoload_register(\App\Core\Init::autoload(...));
 
+session_start();
+
 if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Controllers\Admin;
 use App\Controllers\Blog;
+use App\Core\Helpers\Log;
+use App\Core\Middleware\Middleware;
+use App\Core\Middleware\AdminAuth;
+use App\Core\Route\Request;
 use App\Core\Route\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
@@ -90,7 +96,9 @@ $gb->POST('/', GuestBook::post_review(...));
 
 // ====================[/admin]==================== //
 
-$admin = $router->group('/admin');
+$admin = $router->group('/admin', middleware: [
+    AdminAuth::class,
+]);
 $admin->GET('/', Admin::index(...));
 
 // ====================[/admin/blog]==================== //
