@@ -25,10 +25,7 @@ final class AdminAuth implements Middleware {
 final class UserAuth implements Middleware {
     public function apply(Request $req, Closure $next): Closure {
         return function (Request $req) use($next) {
-            if (!isset($_SESSION['is_admin'])) {
-                return $next($req);
-            }
-            if (!isset($_SESSION['login']) && !isset($_SESSION['password_hash'])) {
+            if (!(isset($_SESSION['is_admin']) && $_SESSION['is_admin']) && !isset($_SESSION['login'])) {
                 return Response::redirect('/login');
             }
             return $next($req);

@@ -32,7 +32,7 @@ final class Login {
         if ($_SESSION['is_admin']) {
             return Response::redirect('/admin');
         }
-        if (isset($_SESSION['login']) && isset($_SESSION['password_hash'])) {
+        if (isset($_SESSION['login'])) {
             return Response::redirect('/');
         }
 
@@ -85,7 +85,6 @@ final class Login {
         }
 
         $_SESSION['login'] = $login;
-        $_SESSION['password_hash'] = $password_hash;
 
         return Response::redirect('/');
     }
@@ -94,7 +93,7 @@ final class Login {
         if ($_SESSION['is_admin']) {
             return Response::redirect('/admin');
         }
-        if (isset($_SESSION['login']) && isset($_SESSION['password_hash'])) {
+        if (isset($_SESSION['login'])) {
             return Response::redirect('/');
         }
 
@@ -128,7 +127,6 @@ final class Login {
         }
 
         $_SESSION['login'] = $user->login;
-        $_SESSION['password_hash'] = $user->password_hash;
 
         return Response::redirect('/');
     }
@@ -136,7 +134,6 @@ final class Login {
     public static function logout(Request $req): Response {
         $path = $req->url->query['path'] ?? '/';
         unset($_SESSION['login']);
-        unset($_SESSION['password_hash']);
         $_SESSION['is_admin'] = false;
         return Response::redirect($path);
     }

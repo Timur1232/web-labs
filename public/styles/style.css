@@ -1284,6 +1284,8 @@ textarea {
     text-align: left;
     line-height: 1.6;
     margin-top: 20px;
+    overflow-wrap: break-word;
+    margin-bottom: 150px;
 }
 
 .pagination-list {
