@@ -216,8 +216,7 @@ final class CSVFile {
         $acc = '';
         $res = [];
         $escape = false;
-        // foreach (mb_str_split($str, encoding: 'UTF-8') as $ch) {
-        foreach (str_split($str) as $ch) {
+        foreach (mb_str_split($str, encoding: 'UTF-8') as $ch) {
             if ($ch === '\\') {
                 $escape = true;
             } else if ((!$escape && $ch !== $this->sep) || ($escape && $ch === $this->sep)) {

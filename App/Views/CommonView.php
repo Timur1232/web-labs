@@ -3,6 +3,7 @@ namespace App\Views;
 
 use App\Core\View\Component;
 use App\Core\View\View;
+use App\Models\User;
 
 final class CommonView {
     /**
@@ -12,12 +13,13 @@ final class CommonView {
     public static function template_with_layout(
         string $template_page,
         string $title,
+        ?User $user = null,
         array $data = [],
         ?string $page_name = null,
         array $scripts = []
     ): Component {
         $comp = View::template($template_page, data: $data);
-        return self::layout($comp, title: $title, page_name: $page_name ?? $template_page, scripts: $scripts);
+        return self::layout($comp, title: $title, page_name: $page_name ?? $template_page, user: $user, scripts: $scripts);
     }
 
     /**
@@ -27,9 +29,10 @@ final class CommonView {
         Component $comp,
         string $title,
         string $page_name,
+        ?User $user = null,
         array $scripts = [],
     ): Component {
-        return View::func(function () use ($comp, $title, $scripts, $page_name) {
+        return View::func(function () use ($comp, $title, $scripts, $page_name, $user) {
             ob_start();
             ?>
             <!DOCTYPE html>
@@ -102,16 +105,17 @@ final class CommonView {
                                         href="/history"
                                     >История</a>
                                 </li>
-                                <!-- TODO: add check for admin session to show this tab -->
-                                <li id="admin-link">
-                                    <a
-                                        class="nav-link <?= $page_name == 'admin' ? ' page-active' : '' ?>"
-                                        href="/admin"
-                                    >Админ</a>
-                                </li>
+                                <?php if (!is_null($user) && $user->is_admin): ?>
+                                    <li id="admin-link">
+                                        <a
+                                            class="nav-link <?= $page_name == 'admin' ? ' page-active' : '' ?>"
+                                            href="/admin"
+                                        >Админ</a>
+                                    </li>
+                                <?php endif ?>
                             </ul>
                         </nav>
-                        <?php if ($_SESSION['is_admin']): ?>
+                        <?php if (!is_null($user) && !is_null($user->is_admin) && $user->is_admin): ?>
                             <p style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 100px; color: var(--main-light-color);padding: 8px 16px;">Вход за админа</p>
                             <form method="post" action="/logout?path=<?= $_SERVER['REQUEST_URI'] ?>" >
                                 <button id="logout"
@@ -120,8 +124,8 @@ final class CommonView {
                                     Выход
                                 </button>
                             </form>
-                        <?php elseif (isset($_SESSION['login']) && isset($_SESSION['password_hash'])): ?>
-                            <p style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 100px; color: var(--main-light-color);padding: 8px 16px;"><?= $_SESSION['login'] ?></p>
+                        <?php elseif (!is_null($user)): ?>
+                            <p style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 100px; color: var(--main-light-color);padding: 8px 16px;"><?= $user->login ?></p>
                             <form method="post" action="/logout?path=<?= $_SERVER['REQUEST_URI'] ?>" >
                                 <button id="logout"
                                     style="position: fixed; top: calc(var(--header-height) / 2 - 17px);right: 25px; color: var(--main-text-color);background-color: var(--main-light-color);padding: 8px 16px;"

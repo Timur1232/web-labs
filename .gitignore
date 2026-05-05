@@ -3,3 +3,5 @@ views.old/
 *.pdf
 *.typ
 typst_templates/
+
+/vendor/

@@ -17,12 +17,12 @@ final class Study {
     public const SHOW_PAGE_NAME = 'show_test_page';
 
     public static function index(Request $req): Response {
-        $comp = CommonView::template_with_layout(self::INDEX_PAGE_NAME, title: 'Учеба');
+        $comp = CommonView::template_with_layout(self::INDEX_PAGE_NAME, title: 'Учеба', user: $req->additional['user']);
         return Response::view($comp);
     }
 
     public static function test(Request $req): Response {
-        $comp = CommonView::template_with_layout(self::TEST_FORM_PAGE_NAME, title: 'Тест');
+        $comp = CommonView::template_with_layout(self::TEST_FORM_PAGE_NAME, title: 'Тест', user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -36,7 +36,7 @@ final class Study {
         }
         $comp = View::template(self::RESULT_PAGE_NAME, data: ['model' => $model]);
         if ($req->htmx) return Response::view($comp);
-        $comp = CommonView::layout($comp, title: 'Тест', page_name: self::RESULT_PAGE_NAME);
+        $comp = CommonView::layout($comp, title: 'Тест', page_name: self::RESULT_PAGE_NAME, user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -49,7 +49,7 @@ final class Study {
         }
         $comp = View::template(self::SHOW_PAGE_NAME, data: ['results' => $res->val]);
         if ($req->htmx) return Response::view($comp);
-        $comp = CommonView::layout($comp, title: 'Результаты теста', page_name: self::SHOW_PAGE_NAME);
+        $comp = CommonView::layout($comp, title: 'Результаты теста', page_name: self::SHOW_PAGE_NAME, user: $req->additional['user']);
         return Response::view($comp);
     }
 }

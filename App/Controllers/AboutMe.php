@@ -5,7 +5,7 @@ use App\Views\CommonView;
 
 final class AboutMe {
     public static function index(Request $req): Response {
-        $comp = CommonView::template_with_layout(template_page: 'about_me', title: 'Обо мне');
+        $comp = CommonView::template_with_layout(template_page: 'about_me', title: 'Обо мне', user: $req->additional['user']);
         return Response::view($comp);
     }
 }

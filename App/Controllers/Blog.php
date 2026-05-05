@@ -39,7 +39,7 @@ final class Blog {
         }
         $posts = $p->nth_page($page);
         $comp = View::template('blog_pages', data: ['page' => $page, 'posts' => $posts, 'page_count' => $p->page_count()]);
-        $comp = CommonView::layout($comp, 'Блог', 'blog_page');
+        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -57,7 +57,7 @@ final class Blog {
         }
 
         $comp = View::template('blog_page', data: ['post' => $res->val, 'page' => $page]);
-        $comp = CommonView::layout($comp, 'Блог', 'blog_page');
+        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -68,17 +68,17 @@ final class Blog {
         if ($req->method === AppHTTPMethod::GET) {
             $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME),
-                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
         }
         $image_file = $req->form_files['image'];
         [$ok, $errors] = self::validate_file($image_file);
         if (!$ok) {
             $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
-            if ($req->htmx) return View::msg_tag($msg);
+            if ($req->htmx) return Response::view(View::msg_tag($msg));
             $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: [ 'msg' => $msg]),
-                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
         }
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
@@ -104,17 +104,17 @@ final class Blog {
         if ($req->method === HTTPMethod::GET) {
             $comp = CommonView::layout(
                 View::template(self::LOAD_BLOGS_PAGE_NAME),
-                title: self::TITLE, page_name: self::LOAD_BLOGS_PAGE_NAME);
+                title: self::TITLE, page_name: self::LOAD_BLOGS_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
         }
         $file = $req->form_files['posts'];
         [$ok, $errors] = self::validate_csv_file($file);
         if (!$ok) {
             $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
-            if ($req->htmx) return View::msg_tag($msg);
+            if ($req->htmx) return Response::view(View::msg_tag($msg));
             $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
-                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
         }
         $res = FileCSVModel::open($file['tmp_name'], sep: ',', expected_head: BlogRecord::class);
@@ -128,10 +128,10 @@ final class Blog {
         if (!$res->ok) {
             $res->log();
             $msg = "Неправильный формат файла.";
-            if ($req->htmx) return View::msg_tag($msg);
+            if ($req->htmx) return Response::view(View::msg_tag($msg));
             $comp = CommonView::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
-                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME);
+                title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
         }
         $new_posts = $res->val;

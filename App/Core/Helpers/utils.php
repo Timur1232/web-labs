@@ -22,6 +22,10 @@ final class Helpers {
     public static function zip(array ...$arrays): array {
         return array_map(null, ...$arrays);
     }
+
+    public static function get_cookie(string $name, string $path = '/'): ?string {
+        
+    }
 }
 
 final class Error {

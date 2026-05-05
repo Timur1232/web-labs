@@ -20,7 +20,7 @@ final class Request {
     * @param array<string,string> $form_files
     * @param array<string,string> $headers
     * @param array<string,string> $binds
-    * @param array<string,string> $additional
+    * @param array<string,mixed>  $additional
     */
     public function __construct(
         public URL        $url,

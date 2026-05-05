@@ -11,5 +11,6 @@ final class User {
         #[ARField('fio')]           public ?string $fio           = null,
         #[ARField('email')]         public ?string $email         = null,
         #[ARField('password_hash')] public ?string $password_hash = null,
+        #[ARField('is_admin')]      public ?bool   $is_admin      = null,
     ) {}
 }
