@@ -70,6 +70,7 @@ final class JsonComponent implements Component {
         public mixed $object,
         public JsonSerialization $type = JsonSerialization::DEFAULT,
     ) {}
+
     public function render(): string {
         $json = '';
         switch ($this->type) {

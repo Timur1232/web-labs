@@ -60,9 +60,9 @@ $register->POST('/', Login::register_post(...));
 // ====================[/blog]==================== //
 
 $blog = $common->group('/blog');
-$blog->GET('/all',       Blog::index(...));
-$blog->GET('/all/:page', Blog::index(...));
-$blog->GET('/:id',       Blog::blog(...));
+$blog->GET('/all',         Blog::index(...));
+$blog->GET('/all/:page',   Blog::index(...));
+$blog->GET('/:id',         Blog::blog(...));
 
 // ====================[/study]==================== //
 
@@ -81,6 +81,15 @@ $test->GET('/all_results', Study::show_test_results(...));
 $api = $router->group('/api');
 $api->POST('/callback', Callback::check(...));
 $api->POST('/check_login', Login::check_login(...));
+
+$api->GET('/blog/:id/comment', Blog::comment_form(...), middleware: [
+    GetUser::class,
+]);
+$api->POST('/blog/:id/comment', Blog::post_comment(...), middleware: [
+    GetUser::class,
+]);
+$api->GET('/blog/:id/get_comments', Blog::get_comments(...));
+$api->GET('/blog/:id/button',       Blog::comment_button(...));
 
 // ====================[/guest_book]==================== //
 

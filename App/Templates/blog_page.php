@@ -1,9 +1,13 @@
 <?php
-use App\Models\Test\BlogRecord;
 /*
 * @var BlogRecord $post
+* @var CommentRecord[] $comments
 * @var int $page
+* @var ?User $user
 */
+
+use App\Views\BlogView;
+
 $has_image = !empty($post->image_path);
 ?>
 <section class="content-container">
@@ -29,4 +33,25 @@ $has_image = !empty($post->image_path);
             <?= $post->text ?>
         </div>
     </article>
+
+    <h2 style="margin-bottom:25px;">Комментарии</h2>
+    <div id="comment">
+        <?php if (!is_null($user)): ?>
+            <?= BlogView::comment_button($post->id)->render() ?>
+        <?php else: ?>
+            <p>Войдите, чтобы оставлять комментарии.</p>
+        <?php endif ?>
+    </div>
+    <hr/>
+    <?php if (count($comments) !== 0): ?>
+        <div id="comments">
+        <?php foreach ($comments as $comment): ?>
+            <h4><?= $comment->user_name ?></h4>
+            <p><?= $comment->format() ?></p>
+            <p style="margin-bottom:15px; padding: 5px;"><?= $comment->text ?></p>
+        <?php endforeach ?>
+        </div>
+    <?php else: ?>
+        <p style="margin-bottom:25px;">Комментариев пока нет.</p>
+    <?php endif ?>
 </section>

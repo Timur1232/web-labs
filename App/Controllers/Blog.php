@@ -12,6 +12,10 @@ use App\Core\View\View;
 use App\Models\BlogRecord;
 use App\Views\CommonView;
 use App\Config;
+use App\Core\Helpers\Log;
+use App\Core\View\ComponentFunc;
+use App\Models\CommentRecord;
+use App\Views\BlogView;
 
 final class Blog {
     public static function index(Request $req): Response {
@@ -44,10 +48,11 @@ final class Blog {
     }
 
     public static function blog(Request $req): Response {
-        // TODO: redirecting to blogs if no id provided
-        // make data validation
-        $id = (int)$req->binds['id'];
-        $page = (int)$req->url->query['page'];
+        $id = (int)$req->binds['id'] ?? null;
+        $page = (int)$req->url->query['page'] ?? null;
+        if (is_null($id) || is_null($page)) {
+            return Response::redirect('/blog/all/0');
+        }
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
 
         $res = $model->find_by_id(BlogRecord::class, $id);
@@ -56,9 +61,63 @@ final class Blog {
             Error::internal_error();
         }
 
-        $comp = View::template('blog_page', data: ['post' => $res->val, 'page' => $page]);
-        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $req->additional['user']);
+        $post = $res->val;
+
+        $res = $model->find_all(CommentRecord::class);
+        if (!$res->ok) {
+            $res->log();
+            Error::internal_error();
+        }
+        $comments = array_filter($res->val, fn ($c) => $c->blog_id == $id);
+
+        $user = $req->additional['user'];
+        $comp = View::template('blog_page', data: ['post' => $post, 'page' => $page, 'user' => $user, 'comments' => $comments]);
+        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $user);
         return Response::view($comp);
+    }
+
+    public static function get_comments(Request $req): Response {
+        
+    }
+
+    public static function comment_form(Request $req): Response {
+        $blog_id = $req->binds['id'];
+        $comp = BlogView::comment_form($blog_id);
+        // TODO: make it work without htmx
+        if ($req->htmx) {
+            return Response::view($comp);
+        }
+        Error::internal_error();
+        return Response::view(View::empty());
+    }
+
+    public static function comment_button(Request $req): Response {
+        $blog_id = $req->binds['id'];
+        $comp = BlogView::comment_button($blog_id);
+        return Response::view($comp);
+    }
+
+    public static function post_comment(Request $req): Response {
+        // TODO: check all this things on null
+        $blog_id = $req->binds['id'];
+        $text = $req->form['text'];
+        $user = $req->additional['user'];
+
+        Log::trace("blog_id = $blog_id\nuser_name: $user->fio\ntext:\n$text");
+
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $comment = new CommentRecord(
+            blog_id: $blog_id,
+            user_name: $user->fio,
+            text: $text,
+        )->with_current_date();
+        $res = $model->insert($comment);
+
+        if (!$res->ok) {
+            Error::internal_error();
+        }
+
+        return Response::redirect("/blog/{$blog_id}");
     }
 
     public const TITLE = 'Редактор блога';
