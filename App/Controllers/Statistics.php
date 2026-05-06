@@ -36,7 +36,7 @@ final class Statistics {
         }
         $stats = $p->nth_page($page);
         $comp = View::template('statistics_pages', data: ['page' => $page, 'stats' => $stats, 'page_count' => $p->page_count()]);
-        $comp = CommonView::layout($comp, 'Статистика', 'statistics_pages');
+        $comp = CommonView::layout($comp, 'Статистика', 'statistics_pages', user: $req->additional['user']);
         return Response::view($comp);
     }
 }

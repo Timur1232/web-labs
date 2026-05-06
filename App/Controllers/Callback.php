@@ -2,7 +2,6 @@
 use App\Core\Context\Request;
 use App\Core\Context\Response;
 use App\Core\Helpers\{Error, Log};
-use App\Core\View\Component;
 use App\Core\View\View;
 use App\Models\CallbackValidator;
 use App\Views\CallbackView;
@@ -14,7 +13,7 @@ final class Callback {
     const CALLBACK_GOOD_TEMPLATE = 'callback_good';
 
     public static function index(Request $req): Response {
-        $comp = CommonView::template_with_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE);
+        $comp = CommonView::template_with_layout(template_page: self::CALLBACK_FORM_TEMPLATE, title: self::TITLE, user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -29,18 +28,19 @@ final class Callback {
             $comp = CallbackView::errors($errors);
             return Response::view($comp);
         } else if (count($req->url->query) === 0) {
+            $user = $req->additional['user'];
             $model->validate_all($req->form);
             if ($model->has_any_error()) {
                 $comp = View::template(template_page: self::CALLBACK_FORM_TEMPLATE, data: ['model' => $model]);
                 if ($req->htmx) return Response::view($comp);
-                $comp = CommonView::layout($comp, title: self::TITLE);
+                $comp = CommonView::layout($comp, title: self::TITLE, user: $user);
                 return Response::view($comp);
             } else {
                 // TODO: saving callback
                 Log::warning('saving not implemented');
                 $comp = View::template(template_page: self::CALLBACK_GOOD_TEMPLATE);
                 if ($req->htmx) return Response::view($comp);
-                $comp = CommonView::layout($comp, title: self::TITLE);
+                $comp = CommonView::layout($comp, title: self::TITLE, user: $user);
                 return Response::view($comp);
             }
         } else {

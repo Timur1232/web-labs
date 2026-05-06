@@ -9,9 +9,12 @@ use App\Views\CommonView;
 final class Interests {
     public static function index(Request $req): Response {
         $model = InterestsModel::default();
-        $comp = CommonView::template_with_layout('interests', title: 'Мои интересы',
-                                          data: ['model' => $model],
-                                          scripts: [JsScript::from('/public/js/lists.js')]);
+        $comp = CommonView::template_with_layout('interests',
+            title: 'Мои интересы',
+            data: ['model' => $model],
+            scripts: [JsScript::from('/public/js/lists.js')],
+            user: $req->additional['user'],
+        );
         return Response::view($comp);
     }
 }

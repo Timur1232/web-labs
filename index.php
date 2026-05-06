@@ -80,6 +80,7 @@ $test->GET('/all_results', Study::show_test_results(...));
 
 $api = $router->group('/api');
 $api->POST('/callback', Callback::check(...));
+$api->POST('/check_login', Login::check_login(...));
 
 // ====================[/guest_book]==================== //
 
@@ -91,6 +92,7 @@ $gb->POST('/', GuestBook::post_review(...));
 
 $admin = $router->group('/admin', middleware: [
     AdminAuth::class,
+    GetUser::class,
 ]);
 $admin->GET('/', Admin::index(...));
 

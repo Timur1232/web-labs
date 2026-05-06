@@ -30,6 +30,6 @@ final class JwtToken {
         $user_login = $decoded->user_login;
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
         $res = $model->find_by_id(User::class, $user_login);
-        return $res->val;
+        return $res->val ?? null;
     }
 }

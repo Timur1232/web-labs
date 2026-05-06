@@ -44,7 +44,7 @@ final class LoginView {
                         <input type="email" class="input-text" id="email" name="email"></input>
                         <br/>
                         <label for="login">Логин:</label>
-                        <input type="text" class="input-text" id="login" name="login"></input>
+                        <input type="text" class="input-text" id="login" name="login" onblur="check_login_callback()"></input>
                         <br/>
                         <label for="password">Пароль:</label>
                         <input type="password" class="input-text" id="password" name="password"></input>

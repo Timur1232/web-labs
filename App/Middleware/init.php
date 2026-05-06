@@ -8,7 +8,6 @@ use App\Core\JwtToken;
 use App\Core\Middleware;
 use App\Core\Model\DBModel;
 use App\Models\Statistics\Statistic;
-use App\Models\User;
 use Closure;
 
 final class AdminAuth implements Middleware {
@@ -42,20 +41,9 @@ final class GetUser implements Middleware {
         return function (Request $req) use($next) {
             $jwt = $_COOKIE['jwt_token'] ?? null;
             $user = JwtToken::get_user_from_jwt($jwt);
-            if (isset($user)) {
+            if (!is_null($user)) {
                 $req->additional['user'] = $user;
             }
-
-            /* if (!isset($_SESSION['is_admin'])) { */
-            /*     $_SESSION['is_admin'] = false; */
-            /* } */
-            /* if (isset($_SESSION['login'])) { */
-            /*     $model = DBModel::sqlite(Config::SQLITE_DB_PATH); */
-            /*     $res = $model->find_by_id(User::class, $_SESSION['login']); */
-            /*     if ($res->ok) { */
-            /*         $req->additional['user'] = $res->val; */
-            /*     } */
-            /* } */
             return $next($req);
         };
     }

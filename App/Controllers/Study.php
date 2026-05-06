@@ -3,7 +3,6 @@ use App\Core\Helpers\Error;
 use App\Core\Model\DBModel;
 use App\Core\Context\Request;
 use App\Core\Context\Response;
-use App\Core\View\Component;
 use App\Core\View\View;
 use App\Models\Test\TestModel;
 use App\Models\Test\TestResult;

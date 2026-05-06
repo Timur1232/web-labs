@@ -1,13 +1,14 @@
 <?php namespace App\Controllers;
-
 use App\Config;
-use App\Core\Context\HTTPMethod;
 use App\Core\Context\Request;
 use App\Core\Context\Response;
+use App\Core\Helpers\Error;
+use App\Core\Helpers\Log;
 use App\Core\JwtToken;
 use App\Core\Model\DBModel;
+use App\Core\View\JsScript;
+use App\Core\View\View;
 use App\Models\User;
-use App\Views\AdminView;
 use App\Views\CommonView;
 use App\Views\LoginView;
 
@@ -25,8 +26,28 @@ final class Login {
 
     public static function register_form(Request $req): Response {
         $comp = LoginView::register_form();
-        $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $req->additional['user']);
+        $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME,
+            user: $req->additional['user'],
+            scripts: [
+                JsScript::from('/public/js/check_login.js', defer: true)
+            ],
+        );
         return Response::view($comp);
+    }
+
+    public static function check_login(Request $req): Response {
+        $login = $req->form['login'] ?? null;
+        if (is_null($login)) {
+            return Response::view(View::string('false'));
+        }
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $res = $model->find_by_id(User::class, $login);
+        Log::trace(print_r($res, true));
+        if ($res->ok) {
+            return Response::view(View::string('false'));
+        } else {
+            return Response::view(View::string('true'));
+        }
     }
 
     public static function register_post(Request $req): Response {
@@ -44,27 +65,29 @@ final class Login {
         $password       = $req->form['password'];
         $password_again = $req->form['password_again'];
 
+        $user = $req->additional['user'];
+
         if (!isset($fio) ||
             !isset($email) ||
             !isset($login) ||
             !isset($password)) {
             $msg = 'Нужно заполнить все поля.';
             $comp = LoginView::register_form($msg);
-            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
         if ($password !== $password_again) {
             $msg = 'Пароли не совпадают.';
             $comp = LoginView::register_form($msg);
-            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
         $msg = 'Пользователь уже существует.';
         if ($login === Config::ADMIN_LOGIN) {
             $comp = LoginView::register_form($msg);
-            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -72,7 +95,7 @@ final class Login {
         $res = $model->find_by_id(User::class, $login);
         if ($res->ok) {
             $comp = LoginView::register_form($msg);
-            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -88,7 +111,7 @@ final class Login {
         if (!$res->ok) {
             $msg = 'Не удалось создать пользователя.';
             $comp = LoginView::register_form($msg);
-            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::REGISTER_TITLE, self::REGISTER_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -112,7 +135,7 @@ final class Login {
         if (!isset($login) || !isset($password)) {
             $msg = 'Нужно заполнить все поля.';
             $comp = LoginView::login_form($msg);
-            $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -124,7 +147,7 @@ final class Login {
             if (!$res->ok) {
                 $msg = 'Произошла ошибка :/ Обратитесь куда-нибудь хз.';
                 $comp = LoginView::login_form($msg);
-                $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $req->additional['user']);
+                $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $user);
                 return Response::view($comp);
             }
             $user = $res->val;
@@ -137,7 +160,7 @@ final class Login {
         if (!$res->ok) {
             $msg = 'Пользователя не существует.';
             $comp = LoginView::login_form($msg);
-            $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
         $user = $res->val;
@@ -145,7 +168,7 @@ final class Login {
         if ($password_hash !== $user->password_hash) {
             $msg = 'Неправильный пароль.';
             $comp = LoginView::login_form($msg);
-            $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $req->additional['user']);
+            $comp = CommonView::layout($comp, self::LOGIN_TITLE, self::LOGIN_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
