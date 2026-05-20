@@ -1384,6 +1384,49 @@ textarea {
     pointer-events: none;
 }
 
+.comment-btn {
+    border: 1px solid #aaa;
+    align-self: baseline;
+    width: 200px;
+    padding: 0.4rem 1rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+.comment-btn:hover {
+    background: #f0f0f0;
+}
+.hidden {
+    display: none;
+}
+
+.comment-form {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.comments {
+    margin-top: 1.5rem;
+}
+.comm {
+    border-bottom: 1px solid #eee;
+    padding: 0.8rem 0;
+}
+.comm strong {
+    font-weight: 600;
+    margin-right: 0.8rem;
+}
+.comm span {
+    font-size: 0.75rem;
+    color: #555;
+}
+.comm .text {
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+}
+
 /*====================================[fonts]===================================*/
 
 @font-face {

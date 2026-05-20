@@ -9,17 +9,6 @@ enum FormValidatorRule {
     case IsEmail;
 }
 
-final class DependencyError {
-    public function __construct(
-        public string $rule,
-        public string $reason,
-    ) { }
-
-    public static function new(string $rule, string $reason): self {
-        return new self($rule, $reason);
-    }
-}
-
 class FormValidator {
     /*
      * @param FormValidatorRule[] $errors

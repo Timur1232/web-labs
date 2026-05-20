@@ -13,7 +13,6 @@ use App\Models\BlogRecord;
 use App\Views\CommonView;
 use App\Config;
 use App\Core\Helpers\Log;
-use App\Core\View\ComponentFunc;
 use App\Models\CommentRecord;
 use App\Views\BlogView;
 
@@ -205,6 +204,28 @@ final class Blog {
         // TODO: add htmx support
         /* header('HX-Redirect: /blog/all/0'); */
         return Response::redirect('/blog/all/0');
+    }
+
+    public static function get_all_comments(Request $req): Response {
+        $blog_id = $req->binds['id'] ?? null;
+        if (is_null($blog_id) || !is_numeric($blog_id)) {
+            return Response::json(['error' => 'fuck you lether man'], code: 400);
+        }
+        $blog_id = (int)$blog_id;
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $res = $model->find_all(BlogComment::class);
+        if (!$res->ok) {
+            return Response::json(['error' => 'unable to find comments'], code: 404);
+        }
+        $comments = $res->val;
+        return Response::json($comments);
+    }
+
+    public static function add_comment(Request $req): Response {
+        $user = $req->additional['user'];
+        $json_data = json_decode(file_get_contents('php://input'), true);
+
+        return Response::json(['aboba' => 'yayaya']);
     }
 
     /**

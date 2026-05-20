@@ -1,7 +1,6 @@
 <?php namespace App\Views;
 use App\Core\View\ComponentFunc;
 use App\Core\View\View;
-use App\Models\BlogRecord;
 
 final class BlogView {
     public static function comment_form(int $blog_id): ComponentFunc {

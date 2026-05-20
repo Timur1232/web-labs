@@ -85,9 +85,16 @@ final class Response {
         );
     }
 
-    public static function json(mixed $obj, int $code = 200, JsonSerialization $type = JsonSerialization::DEFAULT): self {
+    public static function text(string $text, int $code = 200): self {
         return new self(
-            component: new JsonComponent($obj, $type),
+            component: View::string($text),
+            status_code: $code,
+        )->header('Content-Type', 'text/plain');
+    }
+
+    public static function json(mixed $obj, int $code = 200): self {
+        return new self(
+            component: new JsonComponent($obj),
             status_code: $code,
         )->header('Content-Type', 'application/json; charset=utf-8');
     }

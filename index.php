@@ -60,9 +60,10 @@ $register->POST('/', Login::register_post(...));
 // ====================[/blog]==================== //
 
 $blog = $common->group('/blog');
-$blog->GET('/all',         Blog::index(...));
-$blog->GET('/all/:page',   Blog::index(...));
-$blog->GET('/:id',         Blog::blog(...));
+$blog->GET('/all',       Blog::index(...));
+$blog->GET('/all/:page', Blog::index(...));
+$blog->GET('/:id',       Blog::blog(...));
+$blog->POST('/add_comment/:id', Blog::add_comment(...));
 
 // ====================[/study]==================== //
 

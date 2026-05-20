@@ -2,7 +2,6 @@
 use App\Config;
 use App\Core\Context\Request;
 use App\Core\Context\Response;
-use App\Core\Helpers\Error;
 use App\Core\Helpers\Log;
 use App\Core\JwtToken;
 use App\Core\Model\DBModel;
@@ -38,15 +37,14 @@ final class Login {
     public static function check_login(Request $req): Response {
         $login = $req->form['login'] ?? null;
         if (is_null($login)) {
-            return Response::view(View::string('false'));
+            return Response::text('false');
         }
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
         $res = $model->find_by_id(User::class, $login);
-        Log::trace(print_r($res, true));
         if ($res->ok) {
-            return Response::view(View::string('false'));
+            return Response::text('false');
         } else {
-            return Response::view(View::string('true'));
+            return Response::text('true');
         }
     }
 

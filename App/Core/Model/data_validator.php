@@ -1,7 +1,17 @@
 <?php namespace App\Core\Model;
 use App\Core\Helpers\Log;
 use App\Core\Helpers\Error;
-use Closure;
+
+final class DependencyError {
+    public function __construct(
+        public string $rule,
+        public string $reason,
+    ) { }
+
+    public static function new(string $rule, string $reason): self {
+        return new self($rule, $reason);
+    }
+}
 
 /*
  * WARNING: By default assumes that data is of type string.
