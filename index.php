@@ -83,10 +83,10 @@ $api = $router->group('/api');
 $api->POST('/callback', Callback::check(...));
 $api->POST('/check_login', Login::check_login(...));
 
-$api->GET('/blog/:id/comment', Blog::comment_form(...), middleware: [
+$api->GET('/blog/:id/add_comment', Blog::comment_form(...), middleware: [
     GetUser::class,
 ]);
-$api->POST('/blog/:id/comment', Blog::post_comment(...), middleware: [
+$api->POST('/blog/:id/add_comment', Blog::post_comment(...), middleware: [
     GetUser::class,
 ]);
 $api->GET('/blog/:id/get_comments', Blog::get_comments(...));

@@ -45,11 +45,7 @@ $has_image = !empty($post->image_path);
     <hr/>
     <?php if (count($comments) !== 0): ?>
         <div id="comments">
-        <?php foreach ($comments as $comment): ?>
-            <h4><?= $comment->user_name ?></h4>
-            <p><?= $comment->format() ?></p>
-            <p style="margin-bottom:15px; padding: 5px;"><?= $comment->text ?></p>
-        <?php endforeach ?>
+            <?= BlogView::comments_html($comments)->render() ?>
         </div>
     <?php else: ?>
         <p style="margin-bottom:25px;">Комментариев пока нет.</p>

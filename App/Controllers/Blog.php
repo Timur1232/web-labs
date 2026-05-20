@@ -13,6 +13,8 @@ use App\Models\BlogRecord;
 use App\Views\CommonView;
 use App\Config;
 use App\Core\Helpers\Log;
+use App\Core\View\ComponentFunc;
+use App\Core\View\JsScript;
 use App\Models\CommentRecord;
 use App\Views\BlogView;
 
@@ -71,12 +73,24 @@ final class Blog {
 
         $user = $req->additional['user'];
         $comp = View::template('blog_page', data: ['post' => $post, 'page' => $page, 'user' => $user, 'comments' => $comments]);
-        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $user);
+        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $user,
+            scripts: [
+                JsScript::from('/public/js/fetch_comments.js'),
+            ],
+        );
         return Response::view($comp);
     }
 
     public static function get_comments(Request $req): Response {
-        
+        $blog_id = $req->binds['id'];
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $res = $model->find_all(CommentRecord::class);
+        if (!$res->ok) {
+            $res->log();
+            Error::internal_error();
+        }
+        $comments = array_filter($res->val, fn ($c) => $c->blog_id == $blog_id);
+        return Response::view(BlogView::comments_html($comments));
     }
 
     public static function comment_form(Request $req): Response {
