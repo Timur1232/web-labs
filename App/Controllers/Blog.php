@@ -70,6 +70,13 @@ final class Blog {
             Error::internal_error();
         }
         $comments = array_filter($res->val, fn ($c) => $c->blog_id == $id);
+        usort($comments, function(CommentRecord $a, CommentRecord $b) {
+            $da = $a->get_date();
+            $db = $b->get_date();
+            if ($da > $db) return -1;
+            if ($da < $db) return 1;
+            return 0;
+        });
 
         $user = $req->additional['user'];
         $comp = View::template('blog_page', data: ['post' => $post, 'page' => $page, 'user' => $user, 'comments' => $comments]);
@@ -96,11 +103,9 @@ final class Blog {
     public static function comment_form(Request $req): Response {
         $blog_id = $req->binds['id'];
         $comp = BlogView::comment_form($blog_id);
-        // TODO: make it work without htmx
         if ($req->htmx) {
             return Response::view($comp);
         }
-        Error::internal_error();
         return Response::view(View::empty());
     }
 
@@ -111,12 +116,9 @@ final class Blog {
     }
 
     public static function post_comment(Request $req): Response {
-        // TODO: check all this things on null
         $blog_id = $req->binds['id'];
         $text = $req->form['text'];
         $user = $req->additional['user'];
-
-        Log::trace("blog_id = $blog_id\nuser_name: $user->fio\ntext:\n$text");
 
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
         $comment = new CommentRecord(
@@ -227,19 +229,60 @@ final class Blog {
         }
         $blog_id = (int)$blog_id;
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
-        $res = $model->find_all(BlogComment::class);
+        $res = $model->find_all(CommentRecord::class);
         if (!$res->ok) {
             return Response::json(['error' => 'unable to find comments'], code: 404);
         }
         $comments = $res->val;
+        $comments = array_filter($res->val, fn ($c) => $c->blog_id == $blog_id);
+        usort($comments, function(CommentRecord $a, CommentRecord $b) {
+            $da = $a->get_date();
+            $db = $b->get_date();
+            if ($da > $db) return -1;
+            if ($da < $db) return 1;
+            return 0;
+        });
+        $comments = array_map(function($c) {
+            return [
+                'user_name' => $c->user_name,
+                'date' => $c->format(),
+                'text' => $c->text,
+            ];
+        }, $comments);
         return Response::json($comments);
     }
 
     public static function add_comment(Request $req): Response {
         $user = $req->additional['user'];
-        $json_data = json_decode(file_get_contents('php://input'), true);
+        $post_body = file_get_contents('php://input');
+        Log::trace(print_r($post_body, true));
+        $json = json_decode($post_body, true);
+        Log::trace(print_r($json, true));
 
-        return Response::json(['aboba' => 'yayaya']);
+        $blog_id = $req->binds['id'] ?? null;
+        $text = $json['text'] ?? null;
+        $user = $req->additional['user'] ?? null;
+
+        if (is_null($blog_id) || is_null($text) || is_null($user)) {
+            return Response::json(['error' => 'invalid request'], 400);
+        }
+
+        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
+        $comment = new CommentRecord(
+            blog_id: $blog_id,
+            user_name: $user->fio,
+            text: $text,
+        )->with_current_date();
+        $res = $model->insert($comment);
+        if (!$res->ok) {
+            $res->log(__METHOD__.': ');
+            return Response::json(['error' => 'unable to insert comment'], 500);
+        }
+        return Response::json([
+            'user_name' => $comment->user_name,
+            'date' => $comment->format(),
+            'text' => $comment->text,
+        ]);
     }
 
     /**

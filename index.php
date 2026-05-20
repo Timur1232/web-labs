@@ -63,7 +63,6 @@ $blog = $common->group('/blog');
 $blog->GET('/all',       Blog::index(...));
 $blog->GET('/all/:page', Blog::index(...));
 $blog->GET('/:id',       Blog::blog(...));
-$blog->POST('/add_comment/:id', Blog::add_comment(...));
 
 // ====================[/study]==================== //
 
@@ -86,7 +85,10 @@ $api->POST('/check_login', Login::check_login(...));
 $api->GET('/blog/:id/add_comment', Blog::comment_form(...), middleware: [
     GetUser::class,
 ]);
-$api->POST('/blog/:id/add_comment', Blog::post_comment(...), middleware: [
+/* $api->POST('/blog/:id/add_comment', Blog::post_comment(...), middleware: [ */
+/*     GetUser::class, */
+/* ]); */
+$api->POST('/blog/:id/add_comment', Blog::add_comment(...), middleware: [
     GetUser::class,
 ]);
 $api->GET('/blog/:id/get_comments', Blog::get_comments(...));

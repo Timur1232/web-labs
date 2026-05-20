@@ -42,6 +42,8 @@ $has_image = !empty($post->image_path);
             <p>Войдите, чтобы оставлять комментарии.</p>
         <?php endif ?>
     </div>
+    <span id="comment_msg"></span>
+    <script src="/public/js/comments.js"></script>
     <hr/>
     <?php if (count($comments) !== 0): ?>
         <div id="comments">

@@ -1,28 +1,26 @@
 <?php namespace App\Views;
 use App\Core\View\ComponentFunc;
 use App\Core\View\View;
-use App\Models\BlogRecord;
-use App\Models\CommentRecord;
 
 final class BlogView {
     public static function comment_form(int $blog_id): ComponentFunc {
         return View::func(function () use ($blog_id): string {
             return <<<HTML
-                <form method="post" action="/api/blog/{$blog_id}/comment">
-                    <textarea id="text" name="text" rows="5"
+                <div id="comment_form">
+                    <textarea id="text" rows="5"
                         class="input-text"
                     ></textarea>
-                    <button class="button-submit" type="submit"
-                        onclick="send_comments({$blog_id})"
+                    <button class="button-submit"
+                        hx-on:click="send_comment({$blog_id})"
                     >
                         Отправить
                     </button>
-                    <button class="button-reset" type="reset"
+                    <button class="button-reset"
                         hx-get="/api/blog/{$blog_id}/button"
                         hx-target="#comment"
                         hx-swap="innerHTML"
                     >Отмена</button>
-                </form>
+                </div>
                 HTML;
         });
     }
