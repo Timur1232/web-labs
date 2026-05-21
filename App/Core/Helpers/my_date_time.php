@@ -1,7 +1,7 @@
 <?php namespace App\Core\Helpers;
 use DateTime;
 
-final class MyDateTime {
+final class My_Date_Time {
     public const FORMAT = 'Ymd-His';
 
     public static function from_date(DateTime $d): string {
@@ -20,19 +20,19 @@ final class MyDateTime {
 
 // WARNING: Class using this trait must have field $datestr with type string
 // TODO: Maybe add abstract methods for setting and getting $datestr to imply it's usage inside trait
-trait MyDateTrait {
+trait My_Date_Trait {
     public function get_date(): ?DateTime {
         if (!isset($this->datestr)) return null;
-        return MyDateTime::to_date($this->datestr);
+        return My_Date_Time::to_date($this->datestr);
     }
 
     public function with_date(DateTime $date): self {
-        $this->datestr = MyDateTime::from_date($date);
+        $this->datestr = My_Date_Time::from_date($date);
         return $this;
     }
 
     public function with_current_date(): self {
-        $this->datestr = MyDateTime::now();
+        $this->datestr = My_Date_Time::now();
         return $this;
     }
 

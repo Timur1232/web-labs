@@ -2,7 +2,7 @@
 use App\Core\Helpers\Log;
 use App\Core\Helpers\Error;
 
-final class DependencyError {
+final class Dependency_Error {
     public function __construct(
         public string $rule,
         public string $reason,
@@ -19,7 +19,7 @@ final class DependencyError {
  *
  * TODO: make lazy evaluation
  */
-final class DataValidator {
+final class Data_Validator {
     /*
      * @param array<string, Closure(mixed): bool> $rules
      * @param ?array<string, string[]> $dependences
@@ -50,7 +50,7 @@ final class DataValidator {
     public static function default_is_empty(mixed $data): bool {
         if (!isset($data)) return true;
         if (is_string($data)) return strlen(trim($data)) == 0;
-        Error::assert(false, 'DataValidator - invalid data type');
+        Error::assert(false, 'Data_Validator - invalid data type');
         return false;
     }
 
@@ -146,22 +146,22 @@ final class DataValidator {
      * Only for debugging.
      */
     public function debug_validate_dependences(): void {
-        /** @var DependencyError[] $invalid */
+        /** @var Dependency_Error[] $invalid */
         $invalid = [];
         foreach ($this->dependences as $rule => $deps) {
             if (!array_key_exists($rule, $this->rules)) {
-                $invalid[] = DependencyError::new($rule, 'not in rules set');
+                $invalid[] = Dependency_Error::new($rule, 'not in rules set');
                 continue;
             }
             foreach ($deps as $dep) {
                 if (!array_key_exists($dep, $this->rules)) {
-                    $invalid[] = DependencyError::new($dep, 'not in rules set');
+                    $invalid[] = Dependency_Error::new($dep, 'not in rules set');
                 }
                 // TODO: make detecting deep circular dependences
                 if ($dep === $rule) {
-                    $invalid[] = DependencyError::new($rule, "dependency on self");
+                    $invalid[] = Dependency_Error::new($rule, "dependency on self");
                 } else if (array_key_exists($dep, $this->dependences) && in_array($rule, $this->dependences[$dep])) {
-                    $invalid[] = DependencyError::new($rule, "circular denendency for '{$dep}'");
+                    $invalid[] = Dependency_Error::new($rule, "circular denendency for '{$dep}'");
                 }
             }
         }
@@ -172,7 +172,7 @@ final class DataValidator {
                 Log::println_err("[{$i}] '{$err->rule}': {$err->reason}");
                 $i += 1;
             }
-            Error::assert(false, 'DataValidator - invalid dependences');
+            Error::assert(false, 'Data_Validator - invalid dependences');
         }
     }
 

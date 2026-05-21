@@ -1,13 +1,13 @@
-<?php namespace App\Core;
-
+<?php namespace App;
 use App\Config;
-use App\Core\Model\DBModel;
+use App\Core\Model\AR_Reflect;
+use App\Core\Model\DB_Model;
 use App\Models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use stdClass;
 
-final class JwtToken {
+final class Jwt_Token {
     public static function generate_jwt(User $user): string {
         $key = Config::JWT_SECRET_KEY;
         $payload = [
@@ -16,7 +16,6 @@ final class JwtToken {
             'iat' => 1356999524,
             'nbf' => 1357000000,
             'user_login' => $user->login,
-            'is_admin' => $user->is_admin,
         ];
 
         $jwt = JWT::encode($payload, $key, 'HS256');
@@ -28,8 +27,12 @@ final class JwtToken {
         $headers = new stdClass();
         $decoded = JWT::decode($jwt, new Key(Config::JWT_SECRET_KEY, 'HS256'), $headers);
         $user_login = $decoded->user_login;
-        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
-        $res = $model->find_by_id(User::class, $user_login);
-        return $res->val ?? null;
+        $res = DB_Model::query(User::select_login())
+            ->bind_values(['login' => $user_login])
+            ->execute()
+            ->fetch();
+        if (!$res->ok) return null;
+        $user = AR_Reflect::construct(User::class, $res);
+        return $user;
     }
 }

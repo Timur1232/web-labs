@@ -1,10 +1,8 @@
 <?php
 use App\Core\View\View;
-
-
-use App\Models\BlogRecord;
+use App\Models\Blog_Record;
 /**
- * @var array<BlogRecord> $posts
+ * @var array<Blog_Record> $posts
  * @var int $page
  * @var int $page_count
  */

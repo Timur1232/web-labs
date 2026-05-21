@@ -1,19 +1,19 @@
 <?php namespace App\Core\View;
 use Closure;
 
-enum JsScriptType : string {
+enum Js_Script_Type : string {
     case Text   = 'text/javascript';
     case Module = 'module';
 }
 
-final class JsScript {
+final class Js_Script {
     public function __construct(
         public string $src = '',
-        public JsScriptType $type = JsScriptType::Text,
+        public Js_Script_Type $type = Js_Script_Type::Text,
         public bool $defer = false,
     ) { }
 
-    public static function from(string $src, JsScriptType $type = JsScriptType::Text, bool $defer = false): self {
+    public static function from(string $src, Js_Script_Type $type = Js_Script_Type::Text, bool $defer = false): self {
         return new self($src, $type, $defer);
     }
 
@@ -24,29 +24,41 @@ final class JsScript {
 }
 
 final class View {
+    private function __construct() {}
+
     public const DEFAULT_TITLE = 'Мой сайт';
+
     /*
     * @param array<string, mixed> $data
     */
-    public static function template(string $template_page, array $data = []): TemplateComponent {
-        return new TemplateComponent($template_page, $data);
+    public static function template(string $template_page, array $data = []): Template_Component {
+        return new Template_Component($template_page, $data);
     }
 
-    public static function empty(): ComponentFunc {
+    public static function empty(): Component_Func {
         return self::func(fn() => '');
     }
     /**
      * @param Closure(): string $callback
      */
-    public static function func(Closure $callback): ComponentFunc {
-        return new ComponentFunc($callback);
+    public static function func(Closure $callback): Component_Func {
+        return new Component_Func($callback);
     }
 
-    public static function string(string $str): ComponentFunc {
+    public static function string(string $str): Component_Func {
         return self::func(fn() => $str);
     }
 
-    public static function msg_tag(string $msg, string $id = 'msg'): ComponentFunc {
+    public static function error_component(string $title, string $msg): Component_Func {
+        return self::func(function () use ($title, $msg): string {
+            return <<<HTML
+                <h1>{$title}</h1>
+                <p>{$msg}</p>
+                HTML;
+        });
+    }
+
+    public static function msg_tag(string $msg, string $id = 'msg'): Component_Func {
         return self::func(function () use ($msg, $id) {
             return <<<HTML
             <span id="{$id}">{$msg}</span>
@@ -54,7 +66,7 @@ final class View {
         });
     }
 
-    public static function error_tag(string $err_msg, string $id = 'error'): ComponentFunc {
+    public static function error_tag(string $err_msg, string $id = 'error'): Component_Func {
         return self::msg_tag($err_msg, $id);
     }
 }

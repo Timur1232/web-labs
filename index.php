@@ -5,72 +5,72 @@ require_once './App/Core/Init.php';
 
 spl_autoload_register(\App\Core\Init::autoload(...));
 
-/* session_start(); */
-
 if (!defined('STDIN')) define('STDIN', fopen('php://stdin', 'rb'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
+use App\Config;
 use App\Controllers\Admin;
 use App\Controllers\Blog;
 use App\Controllers\Login;
 use App\Controllers\Statistics;
-use App\Middleware\AdminAuth;
 use App\Core\Context\Router;
 use App\Controllers\{
     Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
 };
-use App\Middleware\GetUser;
+use App\Core\Model\DB_Model;
+use App\Middleware\Get_User;
 use App\Middleware\Tracking;
-use App\Middleware\UserAuth;
+use App\Middleware\User_Auth;
+use App\Middleware\Admin_Auth;
 
-$router = Router::default();
-
-$common = $router->group('/', middleware: [
+DB_Model::sqlite_connect(Config::SQLITE_DB_PATH);
+Router::setup_current_request();
+Router::$global_middleware = [
     Tracking::class,
-    GetUser::class,
-]);
+    Get_User::class,
+];
 
 // ====================[/]==================== //
 
-$common->GET('/',             Index::index(...));
-$common->GET('/about_me',     AboutMe::index(...));
-$common->GET('/interests',    Interests::index(...));
+Router::GET('/',             Index::index(...));
+Router::GET('/about_me',     AboutMe::index(...));
+Router::GET('/interests',    Interests::index(...));
 
-$common->GET('/photoalbum',   Photoalbum::index(...));
-$common->GET('/callback',     Callback::index(...));
-$common->GET('/history',      History::index(...));
+Router::GET('/photoalbum',   Photoalbum::index(...));
+Router::GET('/callback',     Callback::index(...));
+Router::GET('/history',      History::index(...));
 
-$common->GET('/raylib',       Raylib::raylib(...));
+Router::GET('/raylib',       Raylib::raylib(...));
 
-$common->POST('/logout',      Login::logout(...));
+Router::POST('/logout',      Login::logout(...));
 
 // ====================[/login]==================== //
 
-$login = $common->group('/login');
+$login = Router::group('/login');
 $login->GET('/',  Login::login_form(...));
 $login->POST('/', Login::login_post(...));
 
 // ====================[/register]==================== //
 
-$register = $common->group('/register');
+$register = Router::group('/register');
 $register->GET('/',  Login::register_form(...));
 $register->POST('/', Login::register_post(...));
 
 // ====================[/blog]==================== //
 
-$blog = $common->group('/blog');
+$blog = Router::group('/blog');
 $blog->GET('/all',       Blog::index(...));
 $blog->GET('/all/:page', Blog::index(...));
 $blog->GET('/:id',       Blog::blog(...));
 
 // ====================[/study]==================== //
 
-$study = $common->group('/study');
+$study = Router::group('/study');
 $study->GET('/',           Study::index(...));
 
 $test = $study->group('/test', middleware: [
-    UserAuth::class,
+    User_Auth::class,
 ]);
 $test->GET('/',            Study::test(...));
 $test->POST('/',           Study::check_test(...));
@@ -78,33 +78,28 @@ $test->GET('/all_results', Study::show_test_results(...));
 
 // ====================[/api]==================== //
 
-$api = $router->group('/api');
+$api = Router::group('/api');
 $api->POST('/callback', Callback::check(...));
 $api->POST('/check_login', Login::check_login(...));
 
-$api->GET('/blog/:id/add_comment', Blog::comment_form(...), middleware: [
-    GetUser::class,
-]);
+$api->GET('/blog/:id/add_comment', Blog::comment_form(...));
 /* $api->POST('/blog/:id/add_comment', Blog::post_comment(...), middleware: [ */
 /*     GetUser::class, */
 /* ]); */
-$api->POST('/blog/:id/add_comment', Blog::add_comment(...), middleware: [
-    GetUser::class,
-]);
+$api->POST('/blog/:id/add_comment', Blog::add_comment(...));
 $api->GET('/blog/:id/get_comments', Blog::get_comments(...));
 $api->GET('/blog/:id/button',       Blog::comment_button(...));
 
 // ====================[/guest_book]==================== //
 
-$gb = $common->group('/guest_book');
+$gb = Router::group('/guest_book');
 $gb->GET('/',  GuestBook::index(...));
 $gb->POST('/', GuestBook::post_review(...));
 
 // ====================[/admin]==================== //
 
-$admin = $router->group('/admin', middleware: [
-    AdminAuth::class,
-    GetUser::class,
+$admin = Router::group('/admin', middleware: [
+    Admin_Auth::class,
 ]);
 $admin->GET('/', Admin::index(...));
 
@@ -128,5 +123,3 @@ $admin_gb->POST('/override', Admin::override_guest_book(...));
 $stats = $admin->group('/stats');
 $stats->GET('/all',       Statistics::index(...));
 $stats->GET('/all/:page', Statistics::index(...));
-
-$router->dispatch();

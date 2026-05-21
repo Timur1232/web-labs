@@ -5,7 +5,7 @@ use App\Core\View\Component;
 use App\Core\View\View;
 use App\Models\User;
 
-final class CommonView {
+final class Common_View {
     /**
      * @param JsScript[] $scripts
      * @param array<string,mixed> $data

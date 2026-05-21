@@ -1,12 +1,12 @@
 <?php
 /*
-* @var BlogRecord $post
-* @var CommentRecord[] $comments
+* @var Blog_Record $post
+* @var Comment_Record[] $comments
 * @var int $page
 * @var ?User $user
 */
 
-use App\Views\BlogView;
+use App\Views\Blog_View;
 
 $has_image = !empty($post->image_path);
 ?>
@@ -37,7 +37,7 @@ $has_image = !empty($post->image_path);
     <h2 style="margin-bottom:25px;">Комментарии</h2>
     <div id="comment">
         <?php if (!is_null($user)): ?>
-            <?= BlogView::comment_button($post->id)->render() ?>
+            <?= Blog_View::comment_button($post->id)->render() ?>
         <?php else: ?>
             <p>Войдите, чтобы оставлять комментарии.</p>
         <?php endif ?>
@@ -47,7 +47,7 @@ $has_image = !empty($post->image_path);
     <hr/>
     <?php if (count($comments) !== 0): ?>
         <div id="comments">
-            <?= BlogView::comments_html($comments)->render() ?>
+            <?= Blog_View::comments_html($comments)->render() ?>
         </div>
     <?php else: ?>
         <p style="margin-bottom:25px;">Комментариев пока нет.</p>

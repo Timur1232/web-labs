@@ -1,42 +1,33 @@
 <?php namespace App\Controllers;
-use App\Core\Context\HTTPMethod as AppHTTPMethod;
+use App\Core\Context\HTTP_Method;
 use App\Core\Context\Response;
 use App\Core\Helpers\Error;
 use App\Core\Helpers\Paginator;
-use App\Core\Model\DataValidator;
-use App\Core\Model\DBModel;
-use App\Core\Model\FileCSVModel;
-use App\Core\Context\HTTPMethod;
+use App\Core\Model\Data_Validator;
+use App\Core\Model\DB_Model;
+use App\Core\Model\File_CSV_Model;
 use App\Core\Context\Request;
 use App\Core\View\View;
-use App\Models\BlogRecord;
-use App\Views\CommonView;
+use App\Models\Blog_Record;
+use App\Views\Common_View;
 use App\Config;
 use App\Core\Helpers\Log;
-use App\Core\View\ComponentFunc;
-use App\Core\View\JsScript;
-use App\Models\CommentRecord;
-use App\Views\BlogView;
+use App\Core\Model\AR_Reflect;
+use App\Core\View\Js_Script;
+use App\Models\Comment_Record;
+use App\Views\Blog_View;
 
 final class Blog {
     public static function index(Request $req): Response {
         $page = $req->binds['page'] ?? 0;
-        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
-
-        $res = $model->find_all(BlogRecord::class);
+        $res = DB_Model::query(Blog_Record::select_all())
+            ->execute()
+            ->fetch_all();
         if (!$res->ok) {
             $res->log();
-            Error::internal_error();
+            Error::assert(false, 'unable to find blogs');
         }
-        $posts = $res->val;
-
-        usort($posts, function(BlogRecord $a, BlogRecord $b) {
-            $da = $a->get_date();
-            $db = $b->get_date();
-            if ($da > $db) return -1;
-            if ($da < $db) return 1;
-            return 0;
-        });
+        $posts = AR_Reflect::construct_many(Blog_Record::class, $res->val);
 
         $p = Paginator::from($posts, per_page: 5);
         if ($page > $p->page_count()) {
@@ -44,7 +35,7 @@ final class Blog {
         }
         $posts = $p->nth_page($page);
         $comp = View::template('blog_pages', data: ['page' => $page, 'posts' => $posts, 'page_count' => $p->page_count()]);
-        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $req->additional['user']);
+        $comp = Common_View::layout($comp, 'Блог', 'blog_page', user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -54,64 +45,65 @@ final class Blog {
         if (is_null($id) || is_null($page)) {
             return Response::redirect('/blog/all/0');
         }
-        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
 
-        $res = $model->find_by_id(BlogRecord::class, $id);
+        $res = DB_Model::query(Blog_Record::select_id())
+            ->bind_values(['id' => $id])
+            ->execute()
+            ->fetch();
+
         if (!$res->ok) {
             $res->log();
             Error::internal_error();
         }
+        $post = AR_Reflect::construct(Blog_Record::class, $res->val);
 
-        $post = $res->val;
+        $res = DB_Model::query(Comment_Record::select_blog_id())
+            ->bind_values(['blog_id' => $id])
+            ->execute()
+            ->fetch_all();
 
-        $res = $model->find_all(CommentRecord::class);
         if (!$res->ok) {
             $res->log();
             Error::internal_error();
         }
-        $comments = array_filter($res->val, fn ($c) => $c->blog_id == $id);
-        usort($comments, function(CommentRecord $a, CommentRecord $b) {
-            $da = $a->get_date();
-            $db = $b->get_date();
-            if ($da > $db) return -1;
-            if ($da < $db) return 1;
-            return 0;
-        });
+        $comments = AR_Reflect::construct_many(Comment_Record::class, $res->val);
 
         $user = $req->additional['user'];
         $comp = View::template('blog_page', data: ['post' => $post, 'page' => $page, 'user' => $user, 'comments' => $comments]);
-        $comp = CommonView::layout($comp, 'Блог', 'blog_page', user: $user,
+        $comp = Common_View::layout($comp, 'Блог', 'blog_page', user: $user,
             scripts: [
-                JsScript::from('/public/js/fetch_comments.js'),
+                Js_Script::from('/public/js/fetch_comments.js'),
             ],
         );
         return Response::view($comp);
     }
 
     public static function get_comments(Request $req): Response {
+        // TODO: data validating
         $blog_id = $req->binds['id'];
-        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
-        $res = $model->find_all(CommentRecord::class);
+        $res = DB_Model::query(Comment_Record::select_blog_id())
+            ->bind_values(['blog_id' => $blog_id])
+            ->execute()
+            ->fetch_all();
         if (!$res->ok) {
             $res->log();
             Error::internal_error();
         }
-        $comments = array_filter($res->val, fn ($c) => $c->blog_id == $blog_id);
-        return Response::view(BlogView::comments_html($comments));
+        return Response::view(Blog_View::comments_html($res->val));
     }
 
     public static function comment_form(Request $req): Response {
         $blog_id = $req->binds['id'];
-        $comp = BlogView::comment_form($blog_id);
+        $comp = Blog_View::comment_form($blog_id);
         if ($req->htmx) {
             return Response::view($comp);
         }
-        return Response::view(View::empty());
+        return Response::view(View::empty(), code: 405);
     }
 
     public static function comment_button(Request $req): Response {
         $blog_id = $req->binds['id'];
-        $comp = BlogView::comment_button($blog_id);
+        $comp = Blog_View::comment_button($blog_id);
         return Response::view($comp);
     }
 
@@ -120,13 +112,15 @@ final class Blog {
         $text = $req->form['text'];
         $user = $req->additional['user'];
 
-        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
-        $comment = new CommentRecord(
+        $comment = new Comment_Record(
             blog_id: $blog_id,
             user_name: $user->fio,
             text: $text,
         )->with_current_date();
-        $res = $model->insert($comment);
+
+        $res = DB_Model::query(Comment_Record::insert())
+            ->bind_values($comment)
+            ->execute();
 
         if (!$res->ok) {
             Error::internal_error();
@@ -139,22 +133,22 @@ final class Blog {
     public const REDACTOR_PAGE_NAME = 'blog_redactor';
 
     public static function post(Request $req): Response {
-        if ($req->method === AppHTTPMethod::GET) {
-            $comp = CommonView::layout(
+        if ($req->method === HTTP_Method::GET) {
+            $comp = Common_View::layout(
                 View::template(self::REDACTOR_PAGE_NAME),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
-        }
+        };
         $image_file = $req->form_files['image'];
         [$ok, $errors] = self::validate_file($image_file);
         if (!$ok) {
             $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = CommonView::layout(
+            $comp = Common_View::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: [ 'msg' => $msg]),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
-        }
+        };
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
 
         $post = new BlogRecord(title: $req->form['title'], author: $req->form['author'], text: $req->form['text'])
@@ -175,23 +169,23 @@ final class Blog {
 
     public const LOAD_BLOGS_PAGE_NAME = 'blog_load_csv';
     public static function load(Request $req): Response {
-        if ($req->method === HTTPMethod::GET) {
-            $comp = CommonView::layout(
+        if ($req->method === HTTP_Method::GET) {
+            $comp = Common_View::layout(
                 View::template(self::LOAD_BLOGS_PAGE_NAME),
                 title: self::TITLE, page_name: self::LOAD_BLOGS_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
-        }
+        };
         $file = $req->form_files['posts'];
         [$ok, $errors] = self::validate_csv_file($file);
         if (!$ok) {
             $msg = "Неправильный формат файла:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = CommonView::layout(
+            $comp = Common_View::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
-        }
-        $res = FileCSVModel::open($file['tmp_name'], sep: ',', expected_head: BlogRecord::class);
+        };
+        $res = File_CSV_Model::open($file['tmp_name'], sep: ',', expected_head: BlogRecord::class);
         if (!$res->ok) {
             $res->log();
             Error::internal_error();
@@ -203,11 +197,11 @@ final class Blog {
             $res->log();
             $msg = "Неправильный формат файла.";
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = CommonView::layout(
+            $comp = Common_View::layout(
                 View::template(self::REDACTOR_PAGE_NAME, data: ['msg' => $msg]),
                 title: self::TITLE, page_name: self::REDACTOR_PAGE_NAME, user: $req->additional['user']);
             return Response::view($comp);
-        }
+        };
         $new_posts = $res->val;
 
         $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
@@ -293,14 +287,14 @@ final class Blog {
         $ext = [
             'png', 'jpg', 'jpeg', 'webp', 'gif',
         ];
-        $errors = DataValidator::for($file_info['name'])
+        $errors = Data_Validator::for($file_info['name'])
             ->with_rules([
                 'only_image' => fn($t) => in_array(array_last(explode('.', $t)), $ext),
             ])->collect_errors();
         if ($file_info['error'] !== 0) {
             $errors[] = 'no_file_error';
         }
-        return [count($errors) === 0, implode(";<br/>", DataValidator::map_error_messeges($errors, [
+        return [count($errors) === 0, implode(";<br/>", Data_Validator::map_error_messeges($errors, [
             'is_empty' => '<li>Файл отсутствует;</li>',
             'only_image' => '<li>Файл должен быть картинкой;</li>',
         ]))];
@@ -313,14 +307,14 @@ final class Blog {
      * TODO: refactor this
      */
     private static function validate_csv_file(array $file_info): array {
-        $errors = DataValidator::for($file_info['name'])
+        $errors = Data_Validator::for($file_info['name'])
             ->with_rules([
                 'only_csv' => fn($t) => array_last(explode('.', $t)) === 'csv',
             ])->collect_errors();
         if ($file_info['error'] !== 0) {
             $errors[] = 'no_file_error';
         }
-        return [count($errors) === 0, implode(";<br/>", DataValidator::map_error_messeges($errors, [
+        return [count($errors) === 0, implode(";<br/>", Data_Validator::map_error_messeges($errors, [
             'is_empty' => '<li>Файл отсутствует;</li>',
             'only_csv' => '<li>Файл должен иметь расширение .csv;</li>',
         ]))];

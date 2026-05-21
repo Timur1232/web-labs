@@ -1,9 +1,9 @@
 <?php namespace App\Views;
-use App\Core\View\ComponentFunc;
+use App\Core\View\Component_Func;
 use App\Core\View\View;
 
-final class BlogView {
-    public static function comment_form(int $blog_id): ComponentFunc {
+final class Blog_View {
+    public static function comment_form(int $blog_id): Component_Func {
         return View::func(function () use ($blog_id): string {
             return <<<HTML
                 <div id="comment_form">
@@ -25,7 +25,7 @@ final class BlogView {
         });
     }
 
-    public static function comment_button(int $blog_id): ComponentFunc {
+    public static function comment_button(int $blog_id): Component_Func {
         return View::func(function () use ($blog_id): string {
             return <<<HTML
                 <form method="GET" action="/api/blog/{$blog_id}/add_comment"
@@ -42,7 +42,7 @@ final class BlogView {
     /*
     * @param CommentRecord[] $comments
     */
-    public static function comments_html(array $comments): ComponentFunc {
+    public static function comments_html(array $comments): Component_Func {
         return View::func(function () use ($comments): string {
             $result = '';
             foreach ($comments as $comment) {

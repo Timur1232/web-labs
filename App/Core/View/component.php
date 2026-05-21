@@ -1,16 +1,12 @@
 <?php namespace App\Core\View;
-use App\Core\Helpers\Log;
-use App\Core\Model\Json;
 use Closure;
 use App\Core\Helpers\Error;
-use Exception;
-use JsonSerializable;
 
 interface Component {
     function render(): string;
 }
 
-final class ComponentFunc implements Component {
+final class Component_Func implements Component {
     /**
      * @param Closure(): string $comp
      */
@@ -31,7 +27,7 @@ final class ComponentFunc implements Component {
     }
 }
 
-final class TemplateComponent implements Component {
+final class Template_Component implements Component {
 
     public static string $template_prefix = 'App/Templates/';
 
@@ -59,7 +55,7 @@ final class TemplateComponent implements Component {
     }
 }
 
-final class JsonComponent implements Component {
+final class Json_Component implements Component {
     public function __construct(
         public mixed $object,
     ) {}

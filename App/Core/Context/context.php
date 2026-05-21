@@ -1,11 +1,9 @@
 <?php namespace App\Core\Context;
-
 use App\Core\View\Component;
-use App\Core\View\JsonComponent;
-use App\Core\View\JsonSerialization;
+use App\Core\View\Json_Component;
 use App\Core\View\View;
 
-enum HTTPMethod : string {
+enum HTTP_Method : string {
     case NONE   = '';
     case GET    = 'GET';
     case POST   = 'POST';
@@ -24,7 +22,7 @@ final class Request {
     */
     public function __construct(
         public URL        $url,
-        public HTTPMethod $method     = HTTPMethod::NONE,
+        public HTTP_Method $method     = HTTP_Method::NONE,
         public array      $form       = [],
         public array      $form_files = [],
         public array      $headers    = [],
@@ -34,14 +32,14 @@ final class Request {
     ) { }
 
     public static function current(): self {
-        $method = HTTPMethod::tryFrom($_SERVER['REQUEST_METHOD']) ?? HTTPMethod::NONE;
+        $method = HTTP_Method::tryFrom($_SERVER['REQUEST_METHOD']) ?? HTTP_Method::NONE;
         $headers = getallheaders();
         return new self(
             url: URL::from($_SERVER['REQUEST_URI']),
             method: $method,
             form: match ($method) {
-                HTTPMethod::POST => $_POST,
-                HTTPMethod::GET  => $_GET,
+                HTTP_Method::POST => $_POST,
+                HTTP_Method::GET  => $_GET,
             },
             form_files: $_FILES,
             headers: $headers,
@@ -49,7 +47,7 @@ final class Request {
         );
     }
 
-    public function match(string $template_path, HTTPMethod $method): bool {
+    public function match(string $template_path, HTTP_Method $method): bool {
         return $this->url->match($template_path) && $this->method == $method;
     }
 
@@ -94,7 +92,7 @@ final class Response {
 
     public static function json(mixed $obj, int $code = 200): self {
         return new self(
-            component: new JsonComponent($obj),
+            component: new Json_Component($obj),
             status_code: $code,
         )->header('Content-Type', 'application/json; charset=utf-8');
     }
