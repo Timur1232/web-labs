@@ -10,19 +10,15 @@ if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 use App\Config;
-use App\Controllers\Admin;
-use App\Controllers\Blog;
-use App\Controllers\Login;
-use App\Controllers\Statistics;
 use App\Core\Context\Router;
 use App\Controllers\{
-    Index, AboutMe, Interests, Study, Photoalbum, Callback, History, Raylib, GuestBook,
+    Index, About, Interests, Study, Photoalbum, Callback, History, Raylib,
+    Guest_Book, Admin, Blog, Login, Statistics,
 };
 use App\Core\Model\DB_Model;
-use App\Middleware\Get_User;
-use App\Middleware\Tracking;
-use App\Middleware\User_Auth;
-use App\Middleware\Admin_Auth;
+use App\Middleware\{
+    Get_User, Tracking, User_Auth, Admin_Auth,
+};
 
 DB_Model::sqlite_connect(Config::SQLITE_DB_PATH);
 Router::setup_current_request();
@@ -34,7 +30,7 @@ Router::$global_middleware = [
 // ====================[/]==================== //
 
 Router::GET('/',             Index::index(...));
-Router::GET('/about_me',     AboutMe::index(...));
+Router::GET('/about_me',     About::index(...));
 Router::GET('/interests',    Interests::index(...));
 
 Router::GET('/photoalbum',   Photoalbum::index(...));
@@ -93,8 +89,8 @@ $api->GET('/blog/:id/button',       Blog::comment_button(...));
 // ====================[/guest_book]==================== //
 
 $gb = Router::group('/guest_book');
-$gb->GET('/',  GuestBook::index(...));
-$gb->POST('/', GuestBook::post_review(...));
+$gb->GET('/',  Guest_Book::index(...));
+$gb->POST('/', Guest_Book::post_review(...));
 
 // ====================[/admin]==================== //
 
@@ -106,10 +102,13 @@ $admin->GET('/', Admin::index(...));
 // ====================[/admin/blog]==================== //
 
 $admin_blog = $admin->group('/blog');
-$admin_blog->GET('/',      Blog::post(...));
-$admin_blog->POST('/post', Blog::post(...));
-$admin_blog->GET('/load',  Blog::load(...));
-$admin_blog->POST('/load', Blog::load(...));
+$admin_blog->GET('/',         Blog::post(...));
+$admin_blog->POST('/post',    Blog::post(...));
+$admin_blog->GET('/load',     Blog::load(...));
+$admin_blog->POST('/load',    Blog::load(...));
+$admin_blog->GET('/:id/edit', Blog::edit_form(...));
+$admin_blog->POST('/:id/edit', Blog::edit_blog(...));
+
 
 // ====================[/admin/guest_book]==================== //
 

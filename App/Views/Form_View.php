@@ -1,14 +1,14 @@
-<?php
-namespace App\Views;
+<?php namespace App\Views;
 
-use App\Core\View\ComponentFunc;
+use App\Core\View\Component_Func;
+use App\Core\View\Component;
 use App\Core\View\View;
 
-final class FormView {
+final class Form_View {
     /**
      * @param array<string,string> $attrs
      */
-    public static function input(string $type, string $id, ?string $label = null, array $attrs = []): ComponentFunc {
+    public static function input(string $type, string $id, ?string $label = null, array $attrs = []): Component_Func {
         return View::func(function() use ($type, $id, $label, $attrs) {
             $label = isset($label) ? <<<HTML
                 <label for="{$id}">$label</label>
@@ -25,8 +25,8 @@ final class FormView {
     /**
      * @param array<string,string> $attrs
      */
-    public static function textarea(string $id, int $row = 1, ?string $lable = null, array $attrs = []): ComponentFunc {
-        return View::func(function() use ($id, $row, $lable, $attrs) {
+    public static function textarea(string $id, int $row = 1, ?string $label = null, array $attrs = []): Component_Func {
+        return View::func(function() use ($id, $row, $label, $attrs) {
             $label = isset($label) ? <<<HTML
                 <label for="{$id}">$label</label>
                 HTML
@@ -41,7 +41,7 @@ final class FormView {
     /**
      * @param Component[] $comps
      */
-    public static function form(string $action, string $method, array $comps, string $enctype = 'text/plain'): ComponentFunc {
+    public static function form(string $action, string $method, array $comps, string $enctype = 'text/plain'): Component_Func {
         return View::func(function() use ($action, $method, $comps, $enctype) {
             $form = <<<HTML
                 <form class="callback-form" action="{$action}" method="{$method}" enctype="$enctype">

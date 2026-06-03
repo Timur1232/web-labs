@@ -2,6 +2,7 @@
 \App\Core\Init::load([
     'reflect',
     'db_model',
+    'active_record',
     'active_record_model',
     'data_validator',
 ]);

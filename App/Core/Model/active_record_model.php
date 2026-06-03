@@ -3,6 +3,7 @@ use App\Core\Helpers\Result;
 use App\Core\Helpers\CSV_File;
 use App\Core\Helpers\Log;
 use App\Core\Test\Test;
+use App\Core\Model\AR_Attributes;
 
 /*
  * @template T
@@ -47,9 +48,9 @@ final class File_CSV_Model implements AR_Model {
      * @return Result<self>
      */
     public static function open_or_create(string $file_path, string $class_name, string $sep = ';'): Result {
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
-            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$class_name}");
         }
 
         $head = array_values($props->normalized());
@@ -70,9 +71,9 @@ final class File_CSV_Model implements AR_Model {
      */
     public static function open(string $file_path, string $sep = ';', mixed $expected_head = null): Result {
         if (is_string($expected_head)) {
-            $props = ARAttributes::from($expected_head);
+            $props = AR_Attributes::from($expected_head);
             if (!isset($props)) {
-                return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$expected_head}");
+                return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$expected_head}");
             }
             $expected_head = array_values($props->normalized());
         }
@@ -85,7 +86,7 @@ final class File_CSV_Model implements AR_Model {
      * @param class-string<T> $class_name
      */
     public function validate(string $class_name): bool {
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
             return false;
         }
@@ -102,9 +103,9 @@ final class File_CSV_Model implements AR_Model {
      * @return Result<T[]>
      */
     public function find_all(string $class_name): Result {
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
-            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$class_name}");
         }
         $objs = [];
         foreach ($this->csv->combine_key_value() as $row) {
@@ -118,9 +119,9 @@ final class File_CSV_Model implements AR_Model {
      * @return Result<?T>
      */
     public function find_by_id(string $class_name, $id): Result {
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
-            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$class_name}");
         } else if (!$props->has_id()) {
             return Result::ERROR(__METHOD__.": ID property must be set to find by id in {$class_name}");
         }
@@ -147,9 +148,9 @@ final class File_CSV_Model implements AR_Model {
         } else {
             $class_name = $class_obj::class;
         }
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
-            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$class_name}");
         }
         if (is_array($class_obj)) {
             return $this->csv->append(array_map(fn($v) => $props->combine_columns_values($v), $class_obj));
@@ -163,9 +164,9 @@ final class File_CSV_Model implements AR_Model {
      */
     public function update_by_id(mixed $class_obj): Result {
         $class_name = $class_obj::class;
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
-            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$class_name}");
         } else if (!$props->has_id()) {
             return Result::ERROR(__METHOD__.": ID property must be set to update by id in {$class_name}");
         }
@@ -182,9 +183,9 @@ final class File_CSV_Model implements AR_Model {
      * @return Result<int>
      */
     public function delete_by_id(string $class_name, $id): Result {
-        $props = ARAttributes::from($class_name);
+        $props = AR_Attributes::from($class_name);
         if (!isset($props)) {
-            return Result::ERROR(__METHOD__.": No ActiveRecord attribute on class {$class_name}");
+            return Result::ERROR(__METHOD__.": No Active_Record attribute on class {$class_name}");
         } else if (!$props->has_id()) {
             return Result::ERROR(__METHOD__.": ID property must be set to delete by id in {$class_name}");
         }
@@ -196,9 +197,9 @@ final class File_CSV_Model implements AR_Model {
     }
 
     private static function test_class(?int $a = null, ?string $b = null): mixed {
-        $c = new #[ActiveRecord('test_table')] class {
-            #[ARField('column_a', ARField::ID_FIELD)] public ?int $a    = null;
-            #[ARField('column_b')]                    public ?string $b = null;
+        $c = new #[Active_Record('test_table')] class {
+            #[AR_Field('column_a')] public ?int $a    = null;
+            #[AR_Field('column_b')]                    public ?string $b = null;
         };
         $c->a = $a;
         $c->b = $b;
@@ -401,7 +402,7 @@ final class File_CSV_Model implements AR_Model {
         Test::assert($updated_count3 === 0, 'updated count should be 0 for non existing id');
     }
 
-    #[Test('invalid: missing ActiveRecord attribute')]
+    #[Test('invalid: missing Active_Record attribute')]
     private static function test_invalid_missing_attr(): void {
         $bad_class = new class {
             public int $a;
@@ -428,9 +429,9 @@ final class File_CSV_Model implements AR_Model {
 
     #[Test('invalid: missing ID field')]
     private static function test_invalid_missing_id(): void {
-        $class_without_id = new #[ActiveRecord('test')] class {
+        $class_without_id = new #[Active_Record('test')] class {
             public function __construct(
-                #[ARField('col_a')] public int $a = 5,
+                #[AR_Field('col_a')] public int $a = 5,
             ) {}
         };
         $class_name = $class_without_id::class;

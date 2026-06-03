@@ -1,8 +1,8 @@
 <?php
-use App\Models\GuestBook\Messege;
-use App\Core\Model\FileCSVModel;
-/*
-* @var FileCSVModel $model
+use App\Models\Dto\Messege;
+use App\Core\Model\File_CSV_Model;
+/**
+* @var File_CSV_Model $model
 */
 ?>
 <section id="guest_book_form_cantainer" class="content-container">

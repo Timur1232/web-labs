@@ -2,7 +2,7 @@
 use App\Config;
 use App\Core\Model\AR_Reflect;
 use App\Core\Model\DB_Model;
-use App\Models\User;
+use App\Models\Dto\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use stdClass;
@@ -32,7 +32,7 @@ final class Jwt_Token {
             ->execute()
             ->fetch();
         if (!$res->ok) return null;
-        $user = AR_Reflect::construct(User::class, $res);
+        $user = AR_Reflect::construct(User::class, $res->val);
         return $user;
     }
 }

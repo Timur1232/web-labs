@@ -1,41 +1,23 @@
 <?php namespace App\Core\Model;
 use ReflectionClass;
-use Attribute;
 
-#[Attribute(Attribute::TARGET_CLASS)]
-final class ActiveRecord {
-    public function __construct(
-        public string $table_name,
-    ) {}
-}
-
-#[Attribute(Attribute::TARGET_PROPERTY)]
-final class ARField {
-    public function __construct(
-        public string $column_name,
-        public int $flags = 0,
-    ) {}
-
-    public const ID_FIELD = 0x1 << 0;
-}
-
-/*
+/**
  * @template T of object
  */
-final class ARAttributes {
+final class AR_Attributes {
     /*
-     * @param array<string, ARField> $attrs
+     * @param array<string, AR_Field> $attrs
      * @param class-string<T> $class_name
      */
     public function __construct(
-        public ActiveRecord $ar_attr,
+        public Active_Record $ar_attr,
         public string $class_name,
         public array $attrs = [],
         public ?string $id_index = null,
     ) {}
 
     /*
-     * @var array<string, ARAttributes> $reflection_cache
+     * @var array<string, AR_Attributes> $reflection_cache
      */
     public static array $reflection_cache = [];
 
@@ -51,11 +33,8 @@ final class ARAttributes {
         $self = new self($ar_attr, $class_name);
         foreach ($r->getProperties() as $prop) {
             foreach ($prop->getAttributes() as $prop_attr) {
-                if ($prop_attr->getName() === ARField::class) {
+                if ($prop_attr->getName() === AR_Field::class) {
                     $attr = $prop_attr->newInstance();
-                    if ($attr->flags & ARField::ID_FIELD !== 0) {
-                        $self->id_index = $prop->getName();
-                    }
                     $self->attrs[$prop->getName()] = $attr;
                 }
             }
@@ -81,7 +60,7 @@ final class ARAttributes {
     }
 
     /*
-    * @return array[string, ARField]
+    * @return array[string, AR_Field]
     */
     public function get_id_attr(): array {
         return [$this->id_index, $this->attrs[$this->id_index]];
@@ -120,11 +99,11 @@ final class ARAttributes {
     /*
      * @param ReflectionClass<T> $r
      */
-    private static function get_ar_attribute(ReflectionClass $r): ?ActiveRecord {
-        /** @var ?ActiveRecord $ar */
+    private static function get_ar_attribute(ReflectionClass $r): ?Active_Record {
+        /** @var ?Active_Record $ar */
         $ar = null;
         foreach ($r->getAttributes() as $attr) {
-            if ($attr->getName() === ActiveRecord::class) {
+            if ($attr->getName() === Active_Record::class) {
                 $ar = $attr->newInstance();
                 break;
             }

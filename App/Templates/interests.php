@@ -1,6 +1,6 @@
 <?php 
-use App\Models\InterestsModel;
-/** @var InterestsModel $model */
+use App\Models\Interests\Interests_Model;
+/** @var Interests_Model $model */
 ?>
 <section class="content-with-aside">
     <section class="content-container">

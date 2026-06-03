@@ -1,17 +1,14 @@
-<?php
-namespace App\Views;
-
-use App\Core\View\Component;
-use App\Core\View\ComponentFunc;
+<?php namespace App\Views;
+use App\Core\View\Component_Func;
 use App\Core\View\View;
 
-final class AdminView {
+final class Admin_View {
 
     public const TITLE = 'Im in da house';
     public const HOME_PAGE_NAME = 'home';
     public const LOAD_GB_PAGE_NAME = 'load_guest_book';
 
-    public static function home(): Component {
+    public static function home(): Component_Func {
         return View::func(function () {
             return <<<HTML
             <section class="content-container">
@@ -24,7 +21,7 @@ final class AdminView {
         });
     }
 
-    public static function guest_book_load_form(?string $msg = null): Component {
+    public static function guest_book_load_form(?string $msg = null): Component_Func {
         return View::func(function () use ($msg) {
             $msg = $msg ?? '';
             return <<<HTML
@@ -56,7 +53,7 @@ final class AdminView {
         });
     }
 
-    public static function login_admin(?string $msg = null): ComponentFunc {
+    public static function login_admin(?string $msg = null): Component_Func {
         return View::func(function () use ($msg) {
             $msg = $msg ?? '';
             return <<<HTML

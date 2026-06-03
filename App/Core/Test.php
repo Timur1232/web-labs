@@ -1,5 +1,4 @@
 <?php namespace App\Core\Test;
-
 use App\Core\Helpers\Result;
 use App\Core\Helpers\Defer;
 use App\Core\Helpers\Log;
@@ -175,8 +174,7 @@ final class Test {
     }
 }
 
-final class TestDriver {
-
+final class Test_Driver {
     /**
      * @var string[] $test_classes
      */

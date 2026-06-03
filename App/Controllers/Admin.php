@@ -6,20 +6,20 @@ use App\Core\Model\Data_Validator;
 use App\Core\Model\File_CSV_Model;
 use App\Core\Context\Request;
 use App\Core\View\View;
-use App\Models\GuestBook\Messege;
-use App\Views\AdminView;
+use App\Models\Dto\Messege;
+use App\Views\Admin_View;
 use App\Views\Common_View;
 
 final class Admin {
     public static function index(Request $req): Response {
-        $comp = AdminView::home();
-        $comp = Common_View::layout($comp, title: AdminView::TITLE, page_name: AdminView::HOME_PAGE_NAME, user: $req->additional['user']);
+        $comp = Admin_View::home();
+        $comp = Common_View::layout($comp, title: Admin_View::TITLE, page_name: Admin_View::HOME_PAGE_NAME, user: $req->additional['user']);
         return Response::view($comp);
     }
 
     public static function load_guest_book_index(Request $req): Response {
-        $comp = AdminView::guest_book_load_form();
-        $comp = Common_View::layout($comp, title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $req->additional['user']);
+        $comp = Admin_View::guest_book_load_form();
+        $comp = Common_View::layout($comp, title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $req->additional['user']);
         return Response::view($comp);
     }
 
@@ -32,7 +32,7 @@ final class Admin {
         if (!$ok) {
             $msg = "Неправильный формат inc:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -41,7 +41,7 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Неправильный формат csv.';
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
         $model = $res->val;
@@ -49,7 +49,7 @@ final class Admin {
         if (!$model->validate(Messege::class)) {
             $msg = 'Неправильный формат заголовка.';
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -58,7 +58,7 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Ошибка чтения записей.';
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
         $values = $res->val;
@@ -78,7 +78,7 @@ final class Admin {
 
         $msg = 'Успешно!';
         if ($req->htmx) return Response::view(View::msg_tag($msg));
-        $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+        $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
         return Response::view($comp);
     }
 
@@ -90,7 +90,7 @@ final class Admin {
         if (!$ok) {
             $msg = "Неправильный формат csv:<br/><ul>{$errors}</ul><br/>";
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -99,7 +99,7 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Неправильный формат inc.';
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
         $model = $res->val;
@@ -107,7 +107,7 @@ final class Admin {
         if (!$model->validate(Messege::class)) {
             $msg = 'Неправильный формат заголовка.';
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
 
@@ -116,7 +116,7 @@ final class Admin {
             $res->log(__METHOD__);
             $msg = 'Ошибка чтения записей.';
             if ($req->htmx) return Response::view(View::msg_tag($msg));
-            $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+            $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
             return Response::view($comp);
         }
         $values = $res->val;
@@ -141,13 +141,13 @@ final class Admin {
 
         $msg = 'Успешно!';
         if ($req->htmx) return Response::view(View::msg_tag($msg));
-        $comp = Common_View::layout(AdminView::guest_book_load_form($msg), title: AdminView::TITLE, page_name: AdminView::LOAD_GB_PAGE_NAME, user: $user);
+        $comp = Common_View::layout(Admin_View::guest_book_load_form($msg), title: Admin_View::TITLE, page_name: Admin_View::LOAD_GB_PAGE_NAME, user: $user);
         return Response::view($comp);
     }
 
     /**
      * @param array<string,string> $file_info
-     * @return array[bool, string[]]
+     * @return array{bool, string[]}
      */
     private static function validate_file(array $file_info): array {
         $errors = Data_Validator::for($file_info['name'])

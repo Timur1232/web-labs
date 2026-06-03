@@ -1,5 +1,5 @@
 <?php
-use App\Models\Statistics\Statistic;
+use App\Models\Dto\Statistic;
 use App\Core\View\View;
 /**
  * @var array<Statistic> $stats

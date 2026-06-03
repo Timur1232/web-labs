@@ -1,14 +1,10 @@
-<?php
-
-namespace App\Models\Test;
-
+<?php namespace App\Models;
+use App\Core\Model\DB_Model;
 use App\Core\Helpers\Result;
-use App\Core\Model\DBModel;
-use App\Core\Model\DataValidator;
-use Config;
+use App\Core\Model\Data_Validator;
+use App\Models\Dto\Test_Result;
 
-final class TestModel {
-
+final class Test_Model {
     /*
      * @param string[] $user_answers
      * @param string[] $lim_errs
@@ -23,8 +19,7 @@ final class TestModel {
     ) { }
 
     public function save_results(string $fio): Result {
-        $model = DBModel::sqlite(Config::SQLITE_DB_PATH);
-        $record = new TestResult(fio: $fio)
+        $record = new Test_Result(fio: $fio)
             ->with_current_date();
         if (count($this->lim_errs) !== 0) {
             $record->lim_answ = "Ожидалось: 5. Получено: {$this->user_answers['lim']}.";
@@ -35,7 +30,10 @@ final class TestModel {
         if (count($this->hard_errs) !== 0) {
             $record->hard_answ = "Ожидалось: ???. Получено: {$this->user_answers['hard_one']}.";
         }
-        return $model->insert($record);
+        $res = DB_Model::query(Test_Result::insert())
+            ->bind_values($record)
+            ->execute();
+        return $res;
     }
 
     /*
@@ -47,22 +45,22 @@ final class TestModel {
 
     public function check_test(): void {
         $this->lim_errs =
-            DataValidator::for($this->user_answers['lim'])
+            Data_Validator::for($this->user_answers['lim'])
             ->with_rules([
-                'is_int'   => DataValidator::is_integer(...),
+                'is_int'   => Data_Validator::is_integer(...),
                 'solution' => fn($d) => (int)$d == 5])
             ->with_dependences([
                 'solution' => ['is_int']])
             ->collect_errors();
 
         $this->series_errs =
-            DataValidator::for($this->user_answers['series'])
+            Data_Validator::for($this->user_answers['series'])
             ->with_rules([
                 'solution' => fn($d) => $d === '2'])
             ->collect_errors();
 
         $this->hard_errs =
-            DataValidator::for($this->user_answers['hard_one'])
+            Data_Validator::for($this->user_answers['hard_one'])
             ->with_rules([
                 'solution' => fn($d) => $d !== '4'])
             ->collect_errors();
@@ -90,7 +88,7 @@ final class TestModel {
     * @return iterable<string>
     */
     public function get_lim_messeges(): iterable {
-        return DataValidator::map_error_messeges($this->lim_errs, [
+        return Data_Validator::map_error_messeges($this->lim_errs, [
             'is_empty' => 'Ну и что я должен с этим делать? Нужно вписать что-нибудь, идиот.',
             'is_int'   => "Нужно целое число, а получено {$this->user_answers['lim']}, идиот.",
             'solution' => "Правильный ответ - 5, а получено {$this->user_answers['lim']}, идиот. Это БесПРЕДЕЛ!",
@@ -101,7 +99,7 @@ final class TestModel {
     * @return iterable<string>
     */
     public function get_series_messeges(): iterable {
-        return DataValidator::map_error_messeges($this->series_errs, [
+        return Data_Validator::map_error_messeges($this->series_errs, [
             'is_empty' => 'Ну и что я должен с этим делать? Нужно вписать что-нибудь, идиот.',
             'solution' => "Правильный ответ - 2). Получено {$this->user_answers['series']}, идиот. Ольшанская уже выехала за тобой."
         ]);
@@ -111,7 +109,7 @@ final class TestModel {
     * @return iterable<string>
     */
     public function get_hard_messeges(): iterable {
-        return DataValidator::map_error_messeges($this->hard_errs, [
+        return Data_Validator::map_error_messeges($this->hard_errs, [
             'is_empty' => 'Ну и что я должен с этим делать? Нужно вписать что-нибудь, идиот.',
             'solution' => <<<TEXT
             Правильный ответ -

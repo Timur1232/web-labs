@@ -1,18 +1,29 @@
 <?php
-/*
+
+use App\Models\Dto\Blog_Record;
+use App\Models\Dto\Comment_Record;
+use App\Models\Dto\User;
+use App\Views\Blog_View;
+
+/**
 * @var Blog_Record $post
 * @var Comment_Record[] $comments
 * @var int $page
 * @var ?User $user
 */
-
-use App\Views\Blog_View;
-
 $has_image = !empty($post->image_path);
 ?>
-<section class="content-container">
+<section class="content-container" id="blog-content-container">
+    <?php if ($user->is_admin): ?>
+        <iframe id="blog-iframe" style="border:0;display:none;">
+        </iframe>
+    <?php endif ?>
     <article class="blog-post">
         <a class="pagination-link" href="/blog/all/<?= $page ?? 0 ?>">Назад</a>
+        <?php if ($user->is_admin): ?>
+            <button class="pagination-link" onclick="edit_form(<?= $post->id ?>)">Редактировать</button>
+            <script src="/public/js/blog_edit.js"></script>
+        <?php endif ?>
         <br/><br/><br/>
         <div class="blog-post-row <?= $has_image ? 'blog-post-row-with-image' : 'blog-post-row-without-image' ?>">
             <?php if ($has_image): ?>

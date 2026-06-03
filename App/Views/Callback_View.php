@@ -1,19 +1,16 @@
-<?php
-
-namespace App\Views;
-
-use App\Core\View\Component;
+<?php namespace App\Views;
+use App\Core\View\Component_Func;
 use App\Core\View\View;
 
-final class CallbackView {
+final class Callback_View {
     /**
      * @param string[] $errors
      */
-    public static function errors(array $errors): Component {
+    public static function errors(array $errors): Component_Func {
         return View::func(function () use ($errors) {
             $str = '';
             foreach ($errors as $err) {
-                $str .= CallbackView::error_tag($err);
+                $str .= self::error_tag($err);
             }
             return $str;
         });

@@ -18,7 +18,7 @@ final class CSV_File {
      * @param string[]|null $expected_head -- head for validating, pass null for no validation
      * @return Result<self>
      */
-    public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, array $expected_head = null): Result {
+    public static function open(string $file_path, string $sep = self::DEFAULT_SEPARATOR, ?array $expected_head = null): Result {
         $handle = fopen($file_path, 'r');
         if ($handle === false) {
             return Result::ERROR(__METHOD__.": unable to open file {$file_path}");

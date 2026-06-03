@@ -5,7 +5,8 @@ use App\Core\Helpers\Log;
 use App\Jwt_Token;
 use App\Core\Middleware;
 use App\Core\Model\DB_Model;
-use App\Models\Statistics\Statistic;
+use App\Models\Common_Sql\Common_Sql;
+use App\Models\Dto\Statistic;
 use Closure;
 
 final class Admin_Auth implements Middleware {

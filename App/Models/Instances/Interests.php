@@ -1,35 +1,34 @@
 <?php
-
-use App\Models\Interests\InterestsArticle;
-use App\Models\Interests\InterestsModel;
-use App\Models\Interests\InterestsSection;
-use App\Models\Interests\ImgTag;
+use App\Models\Interests\Interests_Article;
+use App\Models\Interests\Interests_Model;
+use App\Models\Interests\Interests_Section;
+use App\Models\Interests\Img_Tag;
 
 /**
-* @param stirng[] $classes
+* @param string[] $classes
 */
 function img(
     string $src = '', string $alt = '', string $title = '',
-    string $id = '', array $classes = []): ImgTag
+    string $id = '', array $classes = []): Img_Tag
 {
-    return ImgTag::new($src, $alt, $title, $id, $classes);
+    return Img_Tag::new($src, $alt, $title, $id, $classes);
 }
 
-/** @param ImgTag[] $images */
+/** @param Img_Tag[] $images */
 function article(
     string $title,
     string $caption,
     array $images
-): InterestsArticle {
-    return InterestsArticle::new($title, $caption, $images);
+): Interests_Article {
+    return Interests_Article::new($title, $caption, $images);
 }
 
 function section(
     string $id,
     string $title,
     array $articles,
-): InterestsSection {
-    return InterestsSection::new($id, $title, $articles);
+): Interests_Section {
+    return Interests_Section::new($id, $title, $articles);
 }
 
 // single image default classes
@@ -37,7 +36,7 @@ const sc = ['interest-image-single', 'rounded', 'shadow'];
 // multiple image default classes (for music)
 const mc = ['interest-image', 'rounded', 'shadow'];
 
-return InterestsModel::new([
+return Interests_Model::new([
     section('hobbies', 'Мои хобби', [
         article('Программирование', 'Люблю программировать программы.', [
             img(

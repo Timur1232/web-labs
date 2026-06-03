@@ -1,13 +1,13 @@
-<?php
-namespace App\Views;
+<?php namespace App\Views;
 
 use App\Core\View\Component;
+use App\Core\View\Js_Script;
 use App\Core\View\View;
-use App\Models\User;
+use App\Models\Dto\User;
 
 final class Common_View {
     /**
-     * @param JsScript[] $scripts
+     * @param Js_Script[] $scripts
      * @param array<string,mixed> $data
      */
     public static function template_with_layout(
@@ -23,7 +23,7 @@ final class Common_View {
     }
 
     /**
-     * @param JsScript[] $scripts
+     * @param Js_Script[] $scripts
      */
     public static function layout(
         Component $comp,

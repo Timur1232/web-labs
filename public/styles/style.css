@@ -1427,6 +1427,17 @@ textarea {
     white-space: pre-wrap;
 }
 
+.msg_good,
+.msg_bad {
+    margin: 10px;
+}
+.msg_good {
+    color: green;
+}
+.msg_bad {
+    color: red;
+}
+
 /*====================================[fonts]===================================*/
 
 @font-face {

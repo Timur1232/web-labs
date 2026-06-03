@@ -1,14 +1,8 @@
-<?php
+<?php namespace App\Views;
+use App\Models\Photoalbum_Model;
 
-namespace App\Views;
-
-use App\Models\Photoalbum\PhotoalbumModel;
-
-final class PhotoalbumView {
-    /**
-    * @param PhotoItem[] $photos
-    */
-    public static function render_imgs(PhotoalbumModel $album): string {
+final class Photoalbum_View {
+    public static function render_imgs(Photoalbum_Model $album): string {
         $str = '';
         foreach ($album->photos as $photo) {
             $str .= <<<HTML

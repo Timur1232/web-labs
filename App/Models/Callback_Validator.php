@@ -1,10 +1,7 @@
-<?php
+<?php namespace App\Models;
+use App\Core\Model\Data_Validator;
 
-namespace App\Models;
-
-use App\Core\Model\DataValidator;
-
-final class CallbackValidator {
+final class Callback_Validator {
 
     /**
      * @param string[] $form
@@ -23,7 +20,6 @@ final class CallbackValidator {
         private array $email_errors = [],
         private array $phone_errors = [],
         private array $text_errors = [],
-        private bool $has_any_errors = false,
     ) {}
 
     /**
@@ -81,7 +77,7 @@ final class CallbackValidator {
 
     public function validate_fio(): self {
         $this->fio_errors =
-            DataValidator::for($this->form['fio'])
+            Data_Validator::for($this->form['fio'])
             ->with_rules(
                 [ 'has_3_words' => fn($d) => count(explode(' ', $d)) === 3 ])
             ->collect_errors();
@@ -96,7 +92,7 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_fio_errors(): iterable {
-        return DataValidator::map_error_messeges($this->fio_errors, [
+        return Data_Validator::map_error_messeges($this->fio_errors, [
             'is_empty'    => 'Введите имя.',
             'has_3_words' => 'Фио должно иметь 3 слова.',
         ]);
@@ -104,7 +100,7 @@ final class CallbackValidator {
 
     public function validate_gender(): self {
         $this->gender_errors =
-            DataValidator::for($this->form['gender'])
+            Data_Validator::for($this->form['gender'])
             ->with_rules(
                 [ 'valid' => fn($d) => $d === 'male' || $d === 'female' ])
             ->collect_errors();
@@ -119,7 +115,7 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_gender_errors(): iterable {
-        return DataValidator::map_error_messeges($this->gender_errors, [
+        return Data_Validator::map_error_messeges($this->gender_errors, [
             'is_empty' => 'Выберите один из элементов.',
             'valid'    => 'Некорректный гендер.',
         ]);
@@ -127,7 +123,7 @@ final class CallbackValidator {
 
     public function validate_birthday(): self {
         $this->birthday_errors =
-            DataValidator::for($this->form['birthday'])
+            Data_Validator::for($this->form['birthday'])
             ->with_rules([
                 'format' => self::check_date_format(...),
                 'future' => self::check_date_future(...),
@@ -147,7 +143,7 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_birthday_errors(): iterable {
-        return DataValidator::map_error_messeges($this->birthday_errors, [
+        return Data_Validator::map_error_messeges($this->birthday_errors, [
             'is_empty' => 'Выберите дату.',
             'format'   => 'Некорректный формат.',
             'future'   => 'Выберите дату в прошлом.',
@@ -159,7 +155,7 @@ final class CallbackValidator {
         $splited = explode('-', $date);
         if (count($splited) != 3) return false;
         foreach ($splited as $num) {
-            if (!DataValidator::is_integer($num)) return false;
+            if (!Data_Validator::is_integer($num)) return false;
         }
         [$year, $month, $day] = $splited;
         return checkdate((int) $month, (int) $day, (int) $year);
@@ -183,9 +179,9 @@ final class CallbackValidator {
 
     public function validate_email(): self {
         $this->email_errors =
-            DataValidator::for($this->form['email'])
+            Data_Validator::for($this->form['email'])
             ->with_rules(
-                [ 'is_email' => DataValidator::is_email(...) ])
+                [ 'is_email' => Data_Validator::is_email(...) ])
             ->collect_errors();
         return $this;
     }
@@ -198,7 +194,7 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_email_errors(): iterable {
-        return DataValidator::map_error_messeges($this->email_errors, [
+        return Data_Validator::map_error_messeges($this->email_errors, [
             'is_empty' => 'Введите почту.',
             'is_email' => 'Некорректный формат почты.',
         ]);
@@ -206,7 +202,7 @@ final class CallbackValidator {
 
     public function validate_phone(): self {
         $this->phone_errors =
-            DataValidator::for($this->form['phone'])
+            Data_Validator::for($this->form['phone'])
             ->with_rules([
                 'start'          => self::check_phone_start(...),
                 'no_whitespace'  => self::check_phone_whitespace(...),
@@ -226,7 +222,7 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_phone_errors(): iterable {
-        return DataValidator::map_error_messeges($this->phone_errors, [
+        return Data_Validator::map_error_messeges($this->phone_errors, [
             'is_empty'       => 'Введите номер.',
             'start'          => 'Номер телефона должен начинать с +7 или +3.',
             'no_whitespace'  => 'Номер телефона не должен иметь пробелов.',
@@ -263,7 +259,7 @@ final class CallbackValidator {
 
     public function validate_text(): self {
         $this->text_errors =
-            DataValidator::for($this->form['text'])
+            Data_Validator::for($this->form['text'])
             ->collect_errors();
         return $this;
     }
@@ -276,7 +272,7 @@ final class CallbackValidator {
     * @return iterable<string>
     */
     public function get_text_errors(): iterable {
-        return DataValidator::map_error_messeges($this->text_errors, [
+        return Data_Validator::map_error_messeges($this->text_errors, [
             'is_empty' => 'Введите текст письма.',
         ]);
     }

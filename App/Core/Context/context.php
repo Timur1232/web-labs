@@ -90,6 +90,13 @@ final class Response {
         )->header('Content-Type', 'text/plain');
     }
 
+    public static function empty(int $code): self {
+        return new self(
+            component: View::empty(),
+            status_code: $code,
+        );
+    }
+
     public static function json(mixed $obj, int $code = 200): self {
         return new self(
             component: new Json_Component($obj),

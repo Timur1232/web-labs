@@ -35,6 +35,8 @@ final class DB_Stmt {
     */
     public function fetch(): Result {
         if (is_null($this->stmt)) return Result::ERROR('pdo statement is null');
+        $execute_res = $this->execute();
+        if (!$execute_res->ok) return $execute_res;
         $ret = $this->stmt->fetch(PDO::FETCH_ASSOC);
         if ($ret === false) return Result::ERROR('error during executing, info: '.print_r($this->stmt->errorInfo(), true));
         return Result::OK($ret);
@@ -45,6 +47,8 @@ final class DB_Stmt {
     */
     public function fetch_all(): Result {
         if (is_null($this->stmt)) return Result::ERROR('pdo statement is null');
+        $execute_res = $this->execute();
+        if (!$execute_res->ok) return $execute_res;
         return Result::OK($this->stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -52,7 +56,7 @@ final class DB_Stmt {
      * @param mixed|array<int|string,mixed> $data
      * @return Result<self>
      */
-    public function bind_values(mixed $data): Result {
+    public function bind_values(mixed $data, bool $numbered = false): Result {
         if (is_null($this->stmt)) return Result::ERROR('pdo statement is null');
 
         $vals = [];
@@ -66,20 +70,34 @@ final class DB_Stmt {
             }
         }
 
-        $count = 1;
+        $i = 0;
         foreach ($vals as $index => $val) {
             if (is_int($index)) {
-                if (!$this->stmt->bindValue($count, $val)) {
+                if (!$this->stmt->bindValue($i+1, $val)) {
                     return Result::ERROR('unable to bind value with index = '.print_r($index, true));
                 }
-                $count += 1;
             } else if (is_string($index)) {
+                if ($numbered) $index .= strval($i);
                 if (!$this->stmt->bindValue($index, $val)) {
                     return Result::ERROR('Unable to bind value with index = '.print_r($index, true));
                 }
             } else {
                 return Result::ERROR('Incorrect index type: '.print_r($index, true));
             }
+            $i += 1;
+        }
+        return Result::OK($this);
+    }
+
+    /**
+    * @param array<mixed> $data
+    * @return Result<self>
+    */
+    public function bind_many_values(array $data): Result {
+        if (is_null($this->stmt)) return Result::ERROR('pdo statement is null');
+        foreach ($data as $obj) {
+            $res = $this->bind_values($obj);
+            if (!$res->ok) return $res;
         }
         return Result::OK($this);
     }
@@ -99,10 +117,13 @@ final class DB_Model {
         self::$current_db = DB_Type::SQLITE;
     }
 
-    public static function query(string $sql): ?DB_Stmt {
+    /**
+    * @return Result<DB_Stmt>
+    */
+    public static function query(string $sql): Result {
         $stmt = self::$conn->prepare($sql);
-        if ($stmt === false) return null;
-        return new DB_Stmt($stmt);
+        if ($stmt === false) return Result::ERROR('unable to prepare query: '.$sql);
+        return Result::OK(new DB_Stmt($stmt));
     }
 
     public static function begin_transaction(): bool {

@@ -1,7 +1,7 @@
 <?php
-use App\Models\Test\TestResult;
-/*
-* @var array<TestResult> $results
+use App\Models\Dto\Test_Result;
+/**
+* @var array<Test_Result> $results
 */
 ?>
 <section class="content-container">

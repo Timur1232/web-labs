@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\TestModel;
+use App\Models\Test_Model;
 
-/*
-* @var TestModel $model
+/**
+* @var Test_Model $model
 */
 ?>
 <section class="form-container">

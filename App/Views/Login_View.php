@@ -1,10 +1,9 @@
 <?php namespace App\Views;
-
-use App\Core\View\ComponentFunc;
+use App\Core\View\Component_Func;
 use App\Core\View\View;
 
-final class LoginView {
-    public static function login_form(?string $msg = null): ComponentFunc {
+final class Login_View {
+    public static function login_form(?string $msg = null): Component_Func {
         return View::func(function () use ($msg) {
             $msg ??= '';
             return <<<HTML
@@ -29,7 +28,7 @@ final class LoginView {
         });
     }
 
-    public static function register_form(?string $msg = null): ComponentFunc {
+    public static function register_form(?string $msg = null): Component_Func {
         return View::func(function () use ($msg) {
             $msg ??= '';
             return <<<HTML

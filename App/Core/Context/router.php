@@ -96,12 +96,12 @@ final class Router {
         if (!self::$handled) {
             header('HX-Retarget: body');
             header('HX-Reswap: innerHTML');
-            if (self::$request->method == HTTP_Method::NONE) {
+            if (self::$request->method === HTTP_Method::NONE) {
                 http_response_code(405);
                 $err_comp = self::$method_not_allowed ?? View::error_component('405 Method Now Allowed', 'Oops...');
             } else {
                 http_response_code(404);
-                $err_comp = self::$method_not_allowed ?? View::error_component('404 Not Found', 'Oops...');
+                $err_comp = self::$not_found ?? View::error_component('404 Not Found', 'Oops...');
             }
             echo $err_comp->render();
             return false;

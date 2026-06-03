@@ -1,6 +1,6 @@
 <?php
 use App\Core\View\View;
-use App\Models\Blog_Record;
+use App\Models\Dto\Blog_Record;
 /**
  * @var array<Blog_Record> $posts
  * @var int $page

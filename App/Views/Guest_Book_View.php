@@ -1,14 +1,13 @@
-<?php
-namespace App\Views;
-use App\Core\View\Component;
+<?php namespace App\Views;
+use App\Core\View\Component_Func;
 use App\Core\View\View;
-use App\Models\GuestBook\Messege;
+use App\Models\Dto\Messege;
 
-final class GuestBookView {
+final class Guest_Book_View {
     /**
      * @param array<int,Messege> $messeges
      */
-    public static function form(array $messeges): Component {
+    public static function form(array $messeges): Component_Func {
         return View::func(function () use ($messeges) {
             ob_start();
             ?>
